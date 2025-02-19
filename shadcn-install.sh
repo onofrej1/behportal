@@ -13,11 +13,8 @@ components=(
     "card"
     "checkbox"
     "collapsible"
-    "combobox"
     "command"
     "context-menu"
-    "data-table"
-    "date-picker"
     "dialog"
     "dropdown-menu"
     "form"
@@ -26,6 +23,7 @@ components=(
     "label"
     "menubar"
     "navigation-menu"
+    "pagination"
     "popover"
     "progress"
     "radio-group"
@@ -35,19 +33,22 @@ components=(
     "sheet"
     "skeleton"
     "slider"
+    "sonner"
     "switch"
     "table"
     "tabs"
     "textarea"
     "toast"
     "toggle"
+    "toggle-group"
     "tooltip"
 )
 
 # Loop through each component and install it
 for component in "${components[@]}"; do
     echo "Installing $component..."
-    echo yes | npx shadcn-ui@latest add $component
+    #echo yes | npx shadcn@latest add $component
+    npx shadcn@latest add $component
     echo "$component installed!"
 done
 

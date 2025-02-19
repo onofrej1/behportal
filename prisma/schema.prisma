@@ -1,0 +1,466 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/**
+ * model Preferences {
+ * timezone String?
+ * language String?
+ * weekStart String?
+ * dateFormat String?
+ * }
+ */
+
+model User {
+  id             String           @id @default(cuid())
+  firstName      String
+  lastName       String
+  userName       String?
+  email          String?          @unique
+  emailVerified  Boolean          @default(false)
+  dateOfBirth    DateTime?
+  password       String
+  avatar         String?
+  profileImage   String?
+  role           String
+  status         UserStatus
+  gender         Gender?
+  phone          String?
+  intro          String?
+  bio            String?
+  location       String?
+  registeredAt   DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime? // soft delete
+  lastLogin      DateTime         @default(now())
+  socialProfiles SocialProfiles[]
+
+  // auth
+  accounts         Account[]
+  sessions         Session[]
+  oauthTokens      OAuthToken[]
+  resetTokens      ResetToken[]
+  // blog
+  posts            Post[]
+  comments         Comment[]
+  likes            Like[]
+  // events
+  events           Event[]
+  eventAttachments EventAttachment[]
+  attendees        Attendee[]
+  // runs
+  registrations    Registration[]
+  runResults       RunResult[]
+  // galleries
+  media            Media[]
+  mediaComments    MediaComment[]
+  galleries        Gallery[]
+  // other
+  activityFeeds    ActivityFeed[]
+  // address String?
+  // activities          Activity[]
+  // activityAttachments ActivityAttachment[]
+  // profile          Profile?
+}
+
+model SocialProfiles {
+  id           Int    @id @default(autoincrement())
+  platform     String
+  platformUser String
+  user         User   @relation(fields: [userId], references: [id])
+  userId       String @unique
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BANNED
+}
+
+model Account {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  provider              String
+  providerAccountId     String
+  refreshToken          String?  @db.Text
+  accessToken           String?  @db.Text
+  expiresAt             Int?
+  tokenType             String?
+  scope                 String?
+  idToken               String?  @db.Text
+  sessionState          String?
+  refreshTokenExpiresAt Int?
+  user                  User?    @relation(fields: [userId], references: [id])
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  //type                     String
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model ResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model OAuthToken {
+  id           Int     @id @default(autoincrement())
+  user         User    @relation(fields: [userId], references: [id])
+  userId       String
+  accessToken  String?
+  refreshToken String?
+  provider     String?
+}
+
+model Post {
+  id              Int        @id @default(autoincrement())
+  title           String
+  content         String     @db.Text
+  summary         String?    @db.Text
+  cover           String?    @db.Text
+  slug            String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  enableComments  Boolean    @default(true)
+  status          PostStatus @default(DRAFT)
+  publishedAt     DateTime?
+  metaTitle       String?
+  metaDescription String?
+  author          User       @relation(fields: [authorId], references: [id])
+  authorId        String
+  categories      Category[]
+  tags            Tag[]
+  comments        Comment[]
+  likes           Like[]
+  views           PostViews?
+  galleries       Gallery[]
+  // published       Boolean   @default(false)
+  // metaKeywords String?
+}
+
+model PostViews {
+  id     Int  @id @default(autoincrement())
+  views  Int  @default(0)
+  post   Post @relation(fields: [postId], references: [id])
+  postId Int  @unique
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Comment {
+  id          Int           @id @default(autoincrement())
+  comment     String        @db.Text
+  status      CommentStatus @default(PENDING)
+  publishedAt DateTime      @default(now())
+  editedAt    DateTime?
+  user        User          @relation(fields: [userId], references: [id])
+  userId      String
+  post        Post?         @relation(fields: [postId], references: [id])
+  postId      Int?
+  parent      Comment?      @relation("parent", fields: [parentId], references: [id])
+  parentId    Int?
+  comments    Comment[]     @relation("parent")
+  likes       Like[]
+}
+
+enum CommentStatus {
+  PENDING
+  APPROVED
+  SPAM
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  post      Post?    @relation(fields: [postId], references: [id])
+  postId    Int?
+  comment   Comment? @relation(fields: [commentId], references: [id])
+  commentId Int?
+}
+
+model Tag {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String?
+  slug        String?
+  posts       Post[]
+}
+
+model Category {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String?
+  slug        String?
+  posts       Post[]
+}
+
+model Media {
+  id          Int            @id @default(autoincrement())
+  name        String
+  description String         @db.Text
+  file        String         @db.Text
+  size        Int
+  orientation Orientation?
+  likes       Int            @default(0)
+  views       Int            @default(0)
+  downloads   Int            @default(0)
+  createdAt   DateTime       @default(now())
+  user        User           @relation(fields: [userId], references: [id])
+  userId      String
+  category    MediaCategory  @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  mediaType   MediaType      @relation(fields: [mediaTypeId], references: [id])
+  mediaTypeId Int
+  gallery     Gallery        @relation(fields: [galleryId], references: [id])
+  galleryId   Int
+  comments    MediaComment[]
+}
+
+model Gallery {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String   @db.Text
+  views       Int      @default(0)
+  downloads   Int      @default(0)
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  event       Event?   @relation(fields: [eventId], references: [id])
+  eventId     Int?
+  post        Post?    @relation(fields: [postId], references: [id])
+  postId      Int?
+  media       Media[]
+}
+
+model MediaComment {
+  id          Int           @id @default(autoincrement())
+  comment     String        @db.Text
+  status      CommentStatus @default(PENDING)
+  publishedAt DateTime      @default(now())
+  user        User          @relation(fields: [userId], references: [id])
+  userId      String
+  media       Media?        @relation(fields: [mediaId], references: [id])
+  mediaId     Int?
+}
+
+model MediaType {
+  id    Int     @id @default(autoincrement())
+  name  String
+  slug  String
+  media Media[]
+}
+
+model MediaCategory {
+  id      Int     @id @default(autoincrement())
+  name    String
+  details String? @db.Text
+  media   Media[]
+}
+
+model Event {
+  id             Int               @id @default(autoincrement())
+  name           String
+  description    String?           @db.Text
+  color          String?
+  status         String?
+  location       String?
+  contact        String?
+  maxAttendees   Int?
+  onlineLink     String?
+  eventUrl       String?
+  startDate      DateTime
+  endDate        DateTime
+  allDay         Boolean           @default(false)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  createdBy      User              @relation(fields: [createdById], references: [id])
+  createdById    String
+  venue          Venue?            @relation(fields: [venueId], references: [id])
+  venueId        Int?
+  eventSchedules EventSchedule[]
+  attendees      Attendee[]
+  organizer      Organizer?        @relation(fields: [organizerId], references: [id])
+  organizerId    Int?
+  eventType      EventType         @relation(fields: [eventTypeId], references: [id])
+  eventTypeId    Int
+  runs           Run[]
+  attachments    EventAttachment[]
+  galleries      Gallery[]
+}
+
+model EventType {
+  id    Int     @id @default(autoincrement())
+  type  String
+  event Event[]
+}
+
+model EventAttachment {
+  id           Int     @id @default(autoincrement())
+  fileName     String
+  fileTitle    String?
+  fileType     String
+  fileUrl      String
+  event        Event   @relation(fields: [eventId], references: [id])
+  eventId      Int
+  uploadedBy   User    @relation(fields: [uploadedById], references: [id])
+  uploadedById String
+}
+
+model Organizer {
+  id     Int     @id @default(autoincrement())
+  name   String
+  events Event[]
+}
+
+model Venue {
+  id       Int     @id @default(autoincrement())
+  location String
+  events   Event[]
+}
+
+model Attendee {
+  id      Int     @id @default(autoincrement())
+  user    User    @relation(fields: [userId], references: [id])
+  userId  String
+  event   Event   @relation(fields: [eventId], references: [id])
+  eventId Int
+  status  String?
+}
+
+model EventSchedule {
+  id        Int      @id @default(autoincrement())
+  activity  String
+  location  String?
+  startTime DateTime
+  endTime   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  event     Event    @relation(fields: [eventId], references: [id])
+  eventId   Int
+}
+
+model Run {
+  id            Int            @id @default(autoincrement())
+  title         String
+  distance      Int
+  price         Int
+  elevation     Int?
+  surface       String?
+  tshirt        Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  event         Event          @relation(fields: [eventId], references: [id])
+  eventId       Int
+  registrations Registration[]
+  runResults    RunResult[]
+  runCategories RunCategory[]
+}
+
+model RunCategory {
+  id       Int    @id @default(autoincrement())
+  category String
+  title    String
+  runs     Run[]
+}
+
+model Registration {
+  id          Int         @id @default(autoincrement())
+  createdAt   DateTime    @default(now())
+  firstName   String
+  lastName    String
+  gender      Gender
+  dateOfBirth DateTime
+  email       String
+  nation      String
+  city        String
+  club        String?
+  phone       String?
+  presented   Boolean     @default(false)
+  paid        Boolean     @default(false)
+  tshirtSize  TshirtSize?
+  user        User?       @relation(fields: [userId], references: [id])
+  userId      String?
+  run         Run         @relation(fields: [runId], references: [id])
+  runId       Int
+}
+
+model RunResult {
+  id          Int     @id @default(autoincrement())
+  rank        Int
+  bib         Int
+  name        String
+  category    String
+  gender      Gender
+  yearOfBirth Int
+  club        String
+  time        Int
+  user        User?   @relation(fields: [userId], references: [id])
+  userId      String?
+  run         Run     @relation(fields: [runId], references: [id])
+  runId       Int
+}
+
+enum Orientation {
+  VERTICAL
+  HORIZONTAL
+  SQUARE
+}
+
+enum TshirtSize {
+  S
+  M
+  L
+  XL
+  XXL
+  XXXL
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+model ActivityFeed {
+  id         Int      @id @default(autoincrement())
+  actor      User     @relation(fields: [actorId], references: [id])
+  actorId    String
+  verb       String
+  objectType String
+  objectId   Int
+  targetType String?
+  targetId   Int?
+  time       DateTime
+}

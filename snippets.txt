@@ -1,0 +1,1 @@
+npm i video-js zustand zod react-hook-form nodemailer lucide-react iron-session handlebars date-fns crypto
