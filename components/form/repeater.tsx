@@ -1,62 +1,39 @@
 "use client";
 
-import { ErrorMessage } from "@hookform/error-message";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import Form, { DefaultFormData } from "./form";
 import {
-  FieldErrors,
-  RegisterOptions,
+  Control,
+  ControllerRenderProps,
   useFieldArray,
-  UseFormRegister,
+  UseFormUnregister,
 } from "react-hook-form";
-import { renderError } from "./utils";
-import { ChangeEvent, ChangeEventHandler, ReactElement, useState } from "react";
+import { JSX, ReactElement } from "react";
 import { FormField } from "@/resources/resources.types";
 import { Button } from "../ui/button";
+import { DefaultFormData } from "./form";
+import { FormItem, FormLabel } from "../ui/form";
 
-export type RepeaterRenderFunc = (props: RepeaterRenderProps) => ReactElement;
+export type RepeaterRenderFunc = (props: RepeaterProps) => ReactElement;
 
 interface RepeaterProps {
   label?: string;
-  type: string;
-  name: string;
-  value: any;
-  className?: string;
-  placeholder?: string;
   fields: FormField[];
-  onChange?: ChangeEventHandler<HTMLInputElement>;
-  errors: FieldErrors<DefaultFormData>;
-  renderField: any;
-  unregister: any;
+  renderField: (formField: FormField) => JSX.Element;
+  unregister: UseFormUnregister<DefaultFormData>;
+  field: ControllerRenderProps;
+  control: Control;
   render?: RepeaterRenderFunc;
-  control: any;
-}
-
-interface RepeaterRenderProps {
-  label?: string;
-  name: string;
-  fields: FormField[][];
-  errors: FieldErrors<DefaultFormData>;
-  addField: any;
-  removeField: any;
-  renderField: any;
 }
 
 export default function RepeaterInput(props: RepeaterProps) {
-  const { label, name, onChange, fields, renderField, render, control } = props;
+  const { label, field, fields, renderField, render, control } = props;
 
   const {
     fields: arrayFields,
     append,
-    prepend,
     remove,
-    swap,
-    move,
-    insert,
   } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormProvider)
-    name,
+    name: field.name,
   });
 
   const defaultValue = fields.reduce((acc, current) => {
@@ -64,38 +41,34 @@ export default function RepeaterInput(props: RepeaterProps) {
     return acc;
   }, {} as Record<string, string>);
 
-  if (fields.length === 0) {
+  if (arrayFields.length === 0) {
     append(defaultValue);
   }
 
-  const registerOptions: RegisterOptions = {};
-  if (onChange) {
-    registerOptions["onChange"] = (e: ChangeEvent<HTMLInputElement>) =>
-      onChange(e);
-  }
-
   if (render) {
-    //return render({ fields: formFields, name, label, errors, append, remove });
+    return render(props);
   }
 
   return (
-    <>
-      <label>{label}</label>
+    <FormItem>
+      <FormLabel>{label}</FormLabel>
       <div className="flex flex-col ga-3">
-        {arrayFields.map((item: any, index) => {
+        {arrayFields.map((item, index) => {
           return (
-            <div key={item.id}>
-              <div>
-                {fields.map((f) => (
-                  <div key={f.name}>
-                    {renderField({
-                      ...f,
-                      name: name + "." + index + "." + f.name,
-                    })}
-                  </div>
-                ))}
-              </div>
-              <Button type="button" onClick={() => remove(index)}>
+            <div className="mb-5 flex flex-col gap-3" key={item.id}>
+              {fields.map((f) => (
+                <div key={f.name}>
+                  {renderField({
+                    ...f,
+                    name: field.name + "." + index + "." + f.name,
+                  })}
+                </div>
+              ))}
+              <Button
+                className="self-end"
+                type="button"
+                onClick={() => remove(index)}
+              >
                 Remove field
               </Button>
             </div>
@@ -105,6 +78,6 @@ export default function RepeaterInput(props: RepeaterProps) {
           Add field
         </Button>
       </div>
-    </>
+    </FormItem>
   );
 }

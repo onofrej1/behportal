@@ -251,6 +251,37 @@ export default function Form_({
             render={({ field }) => <RichEditor field={field} label={label} />}
           />
         )}
+
+        {["fileUpload"].includes(type) && (
+          <FormField
+            control={form.control}
+            name={formField.name}
+            render={({ field }) => (
+              <FileUploader
+                field={field}
+                allowedTypes={["image/png", "image/jpeg", "video/mp4"]}
+              />
+            )}
+          />
+        )}
+
+        {["repeater"].includes(type) && (
+          <FormField
+            control={form.control}
+            name={formField.name}
+            render={({ field }) => (
+              <RepeaterInput
+                control={form.control}
+                field={field}
+                label={label}
+                unregister={form.unregister}
+                fields={(formField as RepeaterType).fields}
+                render={(formField as RepeaterType).render}
+                renderField={renderField}
+              />
+            )}
+          />
+        )}
       </>
     );
   };

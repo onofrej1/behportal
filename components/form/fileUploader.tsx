@@ -2,38 +2,30 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Trash2, Upload } from "lucide-react";
 import { generateVideoThumbnail } from "@/utils";
+import { ControllerRenderProps } from "react-hook-form";
 
 interface FileUploaderProps {
-  name?: any;
-  onChange: (args?: {
-    file: File | null;
-    persistedFile?: File | null;
-    isDirty: boolean;
-  }) => void;
-  value?: { file: File | null; previousFile: File | null; isDirty: boolean };
+  field: ControllerRenderProps;
   allowedTypes?: string[];
   maxSize?: number;
-  uploadText?: string;
 }
 
 export default function FileUploader(props: FileUploaderProps) {
   const allowedFileTypes = ["image/png", "image/jpeg", "image/jpg"];
-  const {
-    value,
-    onChange,
+  const {    
+    field,
     allowedTypes = allowedFileTypes,
     maxSize = 1024 * 1024,
-    //uploadText,
   } = props;
   const [file, setFile] = useState<File | null>();
   const imageRef = useRef<HTMLImageElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (value?.file) {
-      setFile(value.file);
+    if (field.value?.file) {
+      setFile(field.value.file);
     }
-  }, [value]);
+  }, [field.value]);
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -42,8 +34,8 @@ export default function FileUploader(props: FileUploaderProps) {
     if (!uploadedFile) return;
 
     if (!allowedTypes.includes(uploadedFile.type)) {
-      //alert("This file type is not supported !");
-      //return;
+      alert("This file type is not supported !");
+      return;
     }
 
     if (uploadedFile.size > maxSize) {
@@ -58,12 +50,12 @@ export default function FileUploader(props: FileUploaderProps) {
       }
     }
     setFile(uploadedFile);
-    onChange({ ...value, file: uploadedFile, isDirty: true });
+    field.onChange({ ...field.value, file: uploadedFile, isDirty: true });
   };
 
   const removeFile = async () => {
     setFile(null);
-    onChange({ ...value, file: null, isDirty: true });
+    field.onChange({ ...field.value, file: null, isDirty: true });
   };
 
   const isImageFile = (type: string) => {
