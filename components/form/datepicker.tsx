@@ -23,6 +23,14 @@ interface DatePickerProps {
 
 export function DatePicker(props: DatePickerProps) {
   const { label, field, className } = props;
+  const value = field.value;
+
+  React.useEffect(() => {
+    if (value && typeof value === "string") {
+      const dateValue = new Date(value);
+      field.onChange(dateValue);
+    }
+  }, [value]);
 
   const Element = (
     <Popover>
@@ -31,19 +39,22 @@ export function DatePicker(props: DatePickerProps) {
           variant={"outline"}
           className={cn(
             "justify-start text-left font-normal w-full",
-            !field.value && "text-muted-foreground",
+            !value && "text-muted-foreground",
             className
           )}
         >
           <CalendarIcon />
-          {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+          {field.value ? format(value, "PPP") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
-          selected={field.value}
-          onSelect={field.onChange}
+          selected={value}
+          onSelect={(e) => {
+            console.log(e);
+            field.onChange(e);
+          }}
           //initialFocus
         />
       </PopoverContent>

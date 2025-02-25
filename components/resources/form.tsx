@@ -1,38 +1,92 @@
 "use client";
 import React from "react";
 import Form from "@/components/form/form";
-import { addResource, updateResource } from "@/actions/resources";
-import { resources } from "@/resources";
+import { models, resources } from "@/resources";
 import { useFormFields } from "@/hooks/useFormFields";
 import { deleteFile, uploadFiles } from "@/actions/files";
+import axios from "axios";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useParams, useRouter } from "next/navigation";
+
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 interface ResourceFormProps {
   resource: string;
-  data?: any;
 }
 
+interface SaveResourceArgs {
+  method: "post" | "patch";
+  resource: string;
+  data: any;
+}
+
+const saveResource = async (args: SaveResourceArgs) => {
+  const { method, resource, data } = args;
+  let url = `${baseUrl}/api/resources/${resource}`;
+  if (method === 'patch') {
+    url += `/${data.id}`;
+    delete data.id;
+  }
+  return await axios[method](url, data);
+};
+
+const fetchResource = async (args: { resource: string, id: string, include: string[] }) => {
+  const { resource, id, include = [] } = args;
+  if (!id) return {};
+
+  const includeQuery = include.length > 0 ? `include=${include.join(',')}` : '';
+  const url = `${baseUrl}/api/resources/${resource}/${id}?${includeQuery}`;
+  const response = await axios.get(url);
+  return response.data.data;
+};
+
 export default function ResourceForm(props: ResourceFormProps) {
-  const { resource: resourceName, data = {} } = props;
+  const { id } = useParams();
+  const { resource: resourceName } = props;
+  const router = useRouter();
   const resource = resources.find((r) => r.resource === resourceName);
+  const model = models.find(m => m.resource === resourceName);
+  if (!resource || !model) {
+    return;
+  }
+
+  const { data } = useQuery({
+    queryKey: ["fetchResource", resource.resource],
+    queryFn: () => fetchResource({ resource: resource.resource, id: id as string, include: model.relations }),
+  });
+
+  const { isPending, mutate } = useMutation({
+    mutationFn: saveResource,
+    onSuccess: (data) => {
+      if (data.status === 200) {
+        return router.push("/resource/" + resource?.resource);
+      }
+    },
+  });
 
   if (!resource) {
     throw new Error("Resource not found");
   }
-  const fields = useFormFields(resource.form, !!data.id);
+
+  const fields = useFormFields(resource.form, !!id);
+
+  if (id && !data) {
+    return;
+  }
 
   const submit = async (data: any) => {
     const uploadData = new FormData();
-    for(const field of fields) {
-      if (field.type === 'fileUpload') {
+    for (const field of fields) {
+      if (field.type === "fileUpload") {
         const { file, previousFile, isDirty } = data[field.name];
         if (!isDirty) {
           delete data[field.name];
           continue;
-        } 
+        }
         if (previousFile) {
           await deleteFile(previousFile.name);
         }
-        if (file) {          
+        if (file) {
           uploadData.append(field.name, file, file.name);
           data[field.name] = file.name;
         } else {
@@ -45,11 +99,11 @@ export default function ResourceForm(props: ResourceFormProps) {
       await uploadFiles(uploadData);
     }
     if (data?.id) {
-      return updateResource(resource, data);
+      return mutate({ method: "patch", resource: resource.resource, data });
     } else {
-      return addResource(resource, data);
+      return mutate({ method: "post", resource: resource.resource, data });
     }
-  }
+  };
 
   return (
     <div className="mx-auto">

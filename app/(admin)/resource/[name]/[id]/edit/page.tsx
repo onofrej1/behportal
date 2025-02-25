@@ -1,6 +1,5 @@
 import ResourceForm from "@/components/resources/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { prismaQuery } from "@/db";
 import { models } from "@/resources";
 
 interface ResourceProps {
@@ -12,14 +11,11 @@ interface ResourceProps {
 }
 
 export default async function EditResource({ params }: ResourceProps) {
-  const { name: resourceName, id } = await params;
+  const { name: resourceName } = await params;
   const model = models.find(m => m.resource === resourceName);
   if (!model) {
     throw new Error(`Resource ${resourceName} not found !`);
   }
-
-  const args = { where: { id: Number(id) }, include: model.relations };
-  const data = await prismaQuery(model.model, 'findUnique', args);
 
   return (
     <>
@@ -28,7 +24,7 @@ export default async function EditResource({ params }: ResourceProps) {
           <CardTitle>Edit item</CardTitle>
         </CardHeader>
         <CardContent>
-          <ResourceForm resource={model.resource} data={data} />
+          <ResourceForm resource={model.resource} />
         </CardContent>
       </Card>
     </>

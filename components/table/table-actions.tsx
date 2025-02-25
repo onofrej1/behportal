@@ -2,12 +2,14 @@
 import React from "react";
 import { TableAction, TableData } from "./table";
 import { useParams, useRouter } from "next/navigation";
-import { useDialog } from "@/state";
+import { useAlert } from "@/state";
 import { Button } from "../ui/button";
 import { LucideIcon, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { DeleteResource } from "@/actions/resources";
 import { resources } from "@/resources";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { revalidatePath } from "next/cache";
 
 type IconNames = "edit" | "delete";
 
@@ -16,15 +18,34 @@ export const Icons: Record<IconNames, LucideIcon> = {
   delete: Trash2,
 };
 
+const deleteResource = async (args: { resource: string; id: number }) => {
+  const { resource, id } = args;
+  return await axios.delete(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/resources/${resource}/${id}`
+  );
+};
+
 export default function TableActions({ row }: { row?: any }) {
-  const { open: openDialog, setTitle, setAction } = useDialog();
+  const { open: openDialog, setTitle, setAction } = useAlert();
   const { push } = useRouter();
+  const { isPending, mutate } = useMutation({
+    mutationFn: deleteResource,
+    onSuccess: (data) => {
+      if (data.status === 200) {
+        console.log("revalidate");
+        const resourcePath = `/resource/${resource?.resource}`;
+        revalidatePath(resourcePath);
+      }
+    },
+  });
   const params = useParams();
   const resource = resources.find((r) => r.resource === params.name);
   if (!resource) {
-    throw new Error('Resource not found');
+    throw new Error("Resource not found");
   }
-  const deleteRow = DeleteResource.bind(null, resource, row.id);
+  const deleteRow = () => {
+    mutate({ resource: resource.resource, id: row.id });
+  };
 
   const resourcePath = `/resource/${resource.resource}`;
 

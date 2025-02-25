@@ -1,76 +1,85 @@
+"use client";
 import Table from "@/components/resources/table";
 import { resources } from "@/resources";
-import { redirect } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import TableFilter from "@/components/table/table-filter";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { prismaQuery } from "@/db";
 import TablePagination from "@/components/table/table-pagination";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
-interface ResourceProps {
-  params: Promise<{
-    name: string;
-  }>;
-  searchParams: Promise<{ [key: string]: string }>;
+interface SaveResourceArgs {
+  resource?: string;
+  data: any;
 }
 
-export default async function Resource({
-  params,
-  searchParams,
-}: ResourceProps) {
+const getResource = async (args: SaveResourceArgs) => {
+  const { resource, data } = args;
+  const { where, ...rest } = data;
+  const query = new URLSearchParams(rest);
+  const whereQuery = new URLSearchParams(where);
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/resources/${resource}?${query}&${whereQuery}`;
 
-  const {
-    page,
-    pageCount,
-    sortBy = "id",
-    sortDir = "asc",
-    ...where
-  } = await searchParams;
-  const resourceName = (await params).name;
+  const response = await axios.get<any[]>(url, data);
+  return response.data;
+};
 
-  //const author = await prisma.user.findFirstOrThrow();
-  for (let i = 0; i < 20; i++) {
-    //await prisma.post.create({ data: { title: 'Title'+i, content: 'Content'+i, author: { connect: { id: author.id }} }});
-  }
+export default function Resource() {
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const { name: resourceName } = params;
+  const page = searchParams.get("page");
+  const pageCount = searchParams.get("pageCount");
+  const sortBy = searchParams.get("sortBy") || "id";
+  const sortDir = searchParams.get("sortDir") || "asc";
+  const where: any = {};
 
   const resource = resources.find((r) => r.resource === resourceName);
+
+  resource?.filter.forEach((f) => {
+    const value = searchParams.get(f.name);
+    if (value) {
+      where[f.name] = `contains,${value}`;
+    }
+  });
+
   const resourcePath = `/resource/${resourceName}`;
   if (!resource) {
     throw new Error(`Resource ${resourceName} not found !`);
   }
 
-  const whereQuery = Object.keys(where).reduce((acc, k) => {
-    const value = where[k];
-    if (value === "") return acc;
-    acc[k] = { contains: value };
-    return acc;
-  }, {} as Record<string, unknown>);
-
-  const totalRows = await prismaQuery(resource.model, "count", {
-    where: whereQuery,
-  });
-
   const skip = (Number(page) || 1) - 1;
   const take = Number(pageCount) || 10;
 
   const args: any = {
-    where: whereQuery,
+    where,
     skip: skip * take,
     take: take,
-    orderBy: [{ [sortBy]: sortDir }],
+    sortBy,
+    sortDir,
   };
-  if (resource.relations) {
-    args['include'] = resource.relations.reduce((obj, item) => { 
-      obj[item] = true; 
-      return obj;
-     }, {} as Record<string, boolean>);
-  }
-  const data = await prismaQuery(resource.model, "findMany", args);
+
+  const { data = [], isFetching } = useQuery({
+    queryKey: [
+      "getResources",
+      args.skip,
+      args.take,
+      args.sortBy,
+      args.sortDir,
+      args.where,
+    ],
+    queryFn: () => getResource({ resource: resource?.resource, data: args }),
+  });
 
   const createResource = async () => {
-    "use server";
-    redirect(`${resourcePath}/add`);
+    router.push(`${resourcePath}/add`);
   };
+
+  const totalRows = 100;
 
   return (
     <div className="w-full">

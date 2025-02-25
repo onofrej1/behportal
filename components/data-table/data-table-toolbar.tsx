@@ -65,7 +65,6 @@ export function DataTableToolbar<TData>({
       {...props}
     >
       <div className="flex flex-1 items-center gap-2">
-        aa
         {searchableColumns.length > 0 &&
           searchableColumns.map(
             (column) =>
