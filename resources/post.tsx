@@ -1,3 +1,4 @@
+import { TableData } from '@/components/table/table';
 import { Resource } from '@/resources/resources.types';
 
 const post: Resource = {
@@ -10,20 +11,8 @@ const post: Resource = {
   menuIcon: '',
   filter: [
     { name: 'title', type: 'text', label: 'Title' },    
-    { name: 'content', type: 'select', className: 'w-60', label: 'Content', options: [
-      {
-        label: 'All',
-        value: 'all'
-      },
-      {
-        label: 'first',
-        value: 'first'
-      },
-      {
-        label: 'sedond',
-        value: 'second'
-      }
-    ]},
+    { name: 'categories', search: 'categories_some_id', type: 'select-filter', textField: 'id', label: 'Category' },
+    /*{ name: 'authorId', type: 'select-filter', textField: 'lastName', className: 'w-60', label: 'Author'},*/
   ],
   form: [
     { name: 'title', type: 'text', label: 'Title' },
@@ -56,6 +45,10 @@ const post: Resource = {
   list: [
     { name: 'id', header: 'Id'},
     { name: 'title', header: 'Title' },
+    { name: 'cover', header: 'Cover' },
+    { name: 'status', header: 'Status' },
+    { name: 'authorId', header: 'AuthorId' },
+    { name: 'categories', header: 'Categories', render: (row: TableData) => <span>{row.categories.map((c: any) => c.id).join(',')}</span> },
     /*{ 
       name: 'content', 
       header: 'Content', 

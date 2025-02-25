@@ -27,6 +27,8 @@ export interface TableData {
 export interface TableHeader {
   name: string;
   header: string;
+  enableSort?: boolean;
+  enableHide?: boolean;
   render?: (data: TableData) => JSX.Element;
 }
 

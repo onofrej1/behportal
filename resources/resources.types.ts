@@ -50,6 +50,13 @@ export interface SelectType extends BaseFormType {
   options?: SelectOption[] | MultiSelectOption[];
 }
 
+export interface SelectFilterType extends BaseFormType {
+  type: "select-filter";
+  textField?: string;
+  search?: string;
+  options?: { label: string; value: string }[];
+}
+
 export interface ForeignKeyType extends BaseFormType {
   type: "fk";
   resource: PrismaModel;
@@ -102,6 +109,7 @@ type FormField =
   | InputType
   | TextAreaType
   | SelectType
+  | SelectFilterType
   | ForeignKeyType
   | CheckboxType
   | DatePickerType

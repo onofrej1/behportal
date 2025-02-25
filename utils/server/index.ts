@@ -29,11 +29,28 @@ export function slugify(title: string) {
 }
 
 export function getWhere(where: any) {
-  return Object.keys(where).reduce((acc, k) => {
-    const value = where[k];
-    if (value !== "") {
-      const [op, val] = value.split(",");
-      acc[k] = { [op]: val };
+  return Object.keys(where).reduce((acc, key) => {
+    let value = where[key];
+    if (value === null || value === undefined || value === "") {
+      return acc;
+    }
+
+    if (value.includes("__")) {
+      let [operator, val] = value.split("__");
+      if (operator === "in") {
+        val = val.split(",").map((v: any) => parseFloat(v) || v);
+      }
+      console.log(val);
+      value = { [operator]: val };
+    }
+
+    if (key.includes("_")) {
+      const arr = key.split("_");
+      const field = arr.shift();
+      const query = arr.reverse().reduce((res, key) => ({ [key]: res }), value);
+      acc[field!] = query;
+    } else {
+      acc[key] = value;
     }
     return acc;
   }, {} as Record<string, unknown>);
@@ -43,13 +60,17 @@ export function getInclude(includeModels: string) {
   if (!includeModels) {
     return {};
   }
-  return includeModels.split(',').reduce((acc, model) => {
+  return includeModels.split(",").reduce((acc, model) => {
     acc[model] = true;
     return acc;
   }, {} as Record<string, true>);
 }
 
-export function setRelations(data: Record<string, any>, fields: FormField[], isUpdate: boolean = false) {
+export function setRelations(
+  data: Record<string, any>,
+  fields: FormField[],
+  isUpdate: boolean = false
+) {
   for (const field of fields) {
     if (field.type === "fk") {
       if (data[field.name]) {
@@ -59,7 +80,7 @@ export function setRelations(data: Record<string, any>, fields: FormField[], isU
       }
       delete data[field.name!];
     }
-    
+
     if (field.type === "m2m") {
       const values = data[field.name]
         .filter(Boolean)
@@ -67,7 +88,7 @@ export function setRelations(data: Record<string, any>, fields: FormField[], isU
       if (values && values.length > 0) {
         data[field.name] = { connect: values };
       } else {
-        isUpdate ? data[field.name] = { set: [] } : delete data[field.name];
+        isUpdate ? (data[field.name] = { set: [] }) : delete data[field.name];
       }
     }
   }

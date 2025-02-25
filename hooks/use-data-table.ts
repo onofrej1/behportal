@@ -142,7 +142,7 @@ export function useDataTable<TData>({
   history = "replace",
   scroll = false,
   shallow = true,
-  throttleMs = 1000,
+  throttleMs = 50,
   debounceMs = 300,
   clearOnDefault = false,
   startTransition,
@@ -170,7 +170,7 @@ export function useDataTable<TData>({
     clearOnDefault,
     startTransition,
   ]);
-  console.log(queryStateOptions);
+  //console.log(queryStateOptions);
 
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>(
     initialState?.rowSelection ?? {},

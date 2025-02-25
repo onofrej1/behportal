@@ -7,16 +7,22 @@ export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
   const { take, skip, sortBy, sortDir, ...where } = Object.fromEntries(
     searchParams.entries()
-  );
+  );  
 
+  const filter = getWhere(where);
   const data = await prisma.[MODEL].findMany({
     take: Number(take),
     skip: Number(skip),
-    orderBy: [{ [sortBy]: sortDir }],
-    where: getWhere(where)
+    orderBy: [{ [sortBy]: sortDir }],    
+    where: filter
   });
 
-  return NextResponse.json(data);
+  const count = await prisma.[MODEL].count({
+    where: filter,
+  });
+  const numPages = Math.ceil(count / Number(take));
+
+  return NextResponse.json({ data, count, numPages });
 }
 
 export async function POST(req: Request) {

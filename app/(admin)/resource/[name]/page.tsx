@@ -1,28 +1,33 @@
 "use client";
-import Table from "@/components/resources/table";
+import { Table } from "@/components/resources/table/table";
 import { resources } from "@/resources";
 import { useParams, useSearchParams } from "next/navigation";
-import TableFilter from "@/components/table/table-filter";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import TablePagination from "@/components/table/table-pagination";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import React from "react";
+import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 
 interface SaveResourceArgs {
   resource?: string;
   data: any;
 }
 
-const getResource = async (args: SaveResourceArgs) => {
+interface ResourceResponse {
+  numPages: number;
+  data: any[];
+}
+
+const getData = async (args: SaveResourceArgs) => {
   const { resource, data } = args;
   const { where, ...rest } = data;
   const query = new URLSearchParams(rest);
   const whereQuery = new URLSearchParams(where);
   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/resources/${resource}?${query}&${whereQuery}`;
 
-  const response = await axios.get<any[]>(url, data);
+  const response = await axios.get(url, data);
   return response.data;
 };
 
@@ -40,10 +45,14 @@ export default function Resource() {
 
   const resource = resources.find((r) => r.resource === resourceName);
 
-  resource?.filter.forEach((f) => {
-    const value = searchParams.get(f.name);
+  resource?.filter.forEach((field) => {
+    const value = searchParams.get(field.name);
     if (value) {
-      where[f.name] = `contains,${value}`;
+      if (field.type === "text") {
+        where[field.name] = `contains__${value}`;
+      } else if (field.type === "select-filter") {
+        where[field.search!] = `in__${value}`;
+      }
     }
   });
 
@@ -63,28 +72,28 @@ export default function Resource() {
     sortDir,
   };
 
-  const { data = [], isFetching } = useQuery({
-    queryKey: [
-      "getResources",
-      args.skip,
-      args.take,
-      args.sortBy,
-      args.sortDir,
-      args.where,
-    ],
-    queryFn: () => getResource({ resource: resource?.resource, data: args }),
-  });
+  const { data: resourceData = { data: [], numPages: 0 }, isFetching } =
+    useQuery<ResourceResponse>({
+      queryKey: [
+        "getResourceData",
+        args.skip,
+        args.take,
+        args.sortBy,
+        args.sortDir,
+        args.where,
+      ],
+      queryFn: () => getData({ resource: resource?.resource, data: args }),
+    });
+
+  const { data, numPages } = resourceData;
 
   const createResource = async () => {
     router.push(`${resourcePath}/add`);
   };
 
-  const totalRows = 100;
-
   return (
     <div className="w-full">
       <div className="flex flex-row items-end justify-between">
-        <TableFilter />
         <form action={createResource}>
           <Button variant="outline" type="submit">
             <Plus className="h-5 w-5" /> Add item
@@ -92,8 +101,19 @@ export default function Resource() {
         </form>
       </div>
       <div>
-        <Table resource={resource.resource} data={data} totalRows={totalRows} />
-        <TablePagination totalRows={totalRows} />
+        {/*<React.Suspense
+        fallback={
+          <DataTableSkeleton
+            columnCount={6}
+            searchableColumnCount={1}
+            filterableColumnCount={2}
+            cellWidths={["10rem", "40rem", "12rem", "12rem", "8rem", "8rem"]}
+            shrinkZero
+          />
+        }
+      >*/}
+        <Table resource={resource.resource} data={data} pageCount={numPages} />
+        {/*</React.Suspense>*/}
       </div>
     </div>
   );
