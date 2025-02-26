@@ -1,6 +1,6 @@
 import { prisma } from "@/db/prisma";
 import { resources } from "@/resources";
-import { getInclude, setRelations } from "@/utils/server";
+import { arrayToObj, setRelations } from "@/utils/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -14,7 +14,7 @@ export async function GET(
 
   const data = await prisma.[MODEL].findFirst({
     where: { id: Number(id) },
-    include: getInclude(include),
+    include: arrayToObj(include),
   });
 
   return NextResponse.json({ status: "success", data });

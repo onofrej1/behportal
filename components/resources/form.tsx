@@ -1,14 +1,13 @@
 "use client";
 import React from "react";
 import Form from "@/components/form/form";
-import { models, resources } from "@/resources";
+import { resources } from "@/resources";
 import { useFormFields } from "@/hooks/useFormFields";
 import { deleteFile, uploadFiles } from "@/actions/files";
 import axios from "axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
-
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+import { baseUrl } from "@/constants";
 
 interface ResourceFormProps {
   resource: string;
@@ -30,7 +29,7 @@ const saveResource = async (args: SaveResourceArgs) => {
   return await axios[method](url, data);
 };
 
-const fetchResource = async (args: { resource: string, id: string, include: string[] }) => {
+const fetchResource = async (args: { resource: string, id: string, include?: string[] }) => {
   const { resource, id, include = [] } = args;
   if (!id) return {};
 
@@ -45,14 +44,13 @@ export default function ResourceForm(props: ResourceFormProps) {
   const { resource: resourceName } = props;
   const router = useRouter();
   const resource = resources.find((r) => r.resource === resourceName);
-  const model = models.find(m => m.resource === resourceName);
-  if (!resource || !model) {
+  if (!resource) {
     return;
   }
 
   const { data } = useQuery({
     queryKey: ["fetchResource", resource.resource],
-    queryFn: () => fetchResource({ resource: resource.resource, id: id as string, include: model.relations }),
+    queryFn: () => fetchResource({ resource: resource.resource, id: id as string, include: resource.relations }),
   });
 
   const { isPending, mutate } = useMutation({
@@ -74,7 +72,7 @@ export default function ResourceForm(props: ResourceFormProps) {
     return;
   }
 
-  const submit = async (data: any) => {
+  const submit = async (data: Record<string, any>) => {
     const uploadData = new FormData();
     for (const field of fields) {
       if (field.type === "fileUpload") {
@@ -84,7 +82,7 @@ export default function ResourceForm(props: ResourceFormProps) {
           continue;
         }
         if (previousFile) {
-          await deleteFile(previousFile.name);
+          //await deleteFile(previousFile.name);
         }
         if (file) {
           uploadData.append(field.name, file, file.name);

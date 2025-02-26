@@ -10,6 +10,7 @@ import { resources } from "@/resources";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { revalidatePath } from "next/cache";
+import { baseUrl } from "@/constants";
 
 type IconNames = "edit" | "delete";
 
@@ -20,9 +21,7 @@ export const Icons: Record<IconNames, LucideIcon> = {
 
 const deleteResource = async (args: { resource: string; id: number }) => {
   const { resource, id } = args;
-  return await axios.delete(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/resources/${resource}/${id}`
-  );
+  return await axios.delete(`${baseUrl}/api/resources/${resource}/${id}`);
 };
 
 export default function TableActions({ row }: { row?: any }) {

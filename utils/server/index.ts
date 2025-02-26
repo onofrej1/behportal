@@ -56,11 +56,11 @@ export function getWhere(where: any) {
   }, {} as Record<string, unknown>);
 }
 
-export function getInclude(includeModels: string) {
-  if (!includeModels) {
+export function arrayToObj(arr: string) {
+  if (!arr) {
     return {};
   }
-  return includeModels.split(",").reduce((acc, model) => {
+  return arr.split(",").reduce((acc, model) => {
     acc[model] = true;
     return acc;
   }, {} as Record<string, true>);

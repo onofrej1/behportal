@@ -52,8 +52,10 @@ export interface SelectType extends BaseFormType {
 
 export interface SelectFilterType extends BaseFormType {
   type: "select-filter";
-  textField?: string;
-  search?: string;
+  fields: string[],
+  search: string;
+  resource: string;  
+  renderOption?: any,
   options?: { label: string; value: string }[];
 }
 
@@ -61,7 +63,7 @@ export interface ForeignKeyType extends BaseFormType {
   type: "fk";
   resource: PrismaModel;
   relation: string;
-  textField?: string;
+  fields: string[];
   renderLabel?: any;
   options?: SelectOption[] | MultiSelectOption[];
 }
@@ -71,7 +73,7 @@ export interface MultiSelectType extends BaseFormType {
   options?: SelectOption[] | MultiSelectOption[];
   resource: PrismaModel;
   renderLabel?: any;
-  textField: string;
+  fields: string[];
 }
 
 export interface DatePickerType extends BaseFormType {
@@ -136,7 +138,7 @@ type Resource = {
   canEditItem?: boolean;
 };
 
-type PrismaModel =
+/*type PrismaModel =
   | "user"
   | "post"
   | "category"
@@ -152,6 +154,8 @@ type PrismaModel =
   | "activity"
   | "runResult"
   | "registration"
-  | "project";
+  | "project";*/
+
+  type PrismaModel = any;
 
 export type { Resource, FormField, PrismaModel };

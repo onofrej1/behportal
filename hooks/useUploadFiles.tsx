@@ -1,7 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
+import { baseUrl } from "@/constants";
 
-const defaultUploadUrl = process.env.NEXT_PUBLIC_BASE_URL + "/api/upload-files";
+const defaultUploadUrl = baseUrl + "/api/upload-files";
 
 interface UploadFile {
   fileName: string;

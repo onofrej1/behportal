@@ -1,24 +1,25 @@
 import { prisma } from "@/db/prisma";
 import { resources } from "@/resources";
-import { getWhere, setRelations } from "@/utils/server";
+import { arrayToObj, getWhere, setRelations } from "@/utils/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
-  const { take, skip, sortBy, sortDir, ...where } = Object.fromEntries(
+  const { take, skip, sortBy, sortDir, include, ...whereQuery } = Object.fromEntries(
     searchParams.entries()
   );  
 
-  const filter = getWhere(where);
+  const where = getWhere(whereQuery);
   const data = await prisma.[MODEL].findMany({
     take: Number(take),
     skip: Number(skip),
     orderBy: [{ [sortBy]: sortDir }],    
-    where: filter
+    where,
+    include: arrayToObj(include),
   });
 
   const count = await prisma.[MODEL].count({
-    where: filter,
+    where,
   });
   const numPages = Math.ceil(count / Number(take));
 

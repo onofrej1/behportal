@@ -8,6 +8,7 @@ import bcrypt from "bcryptjs";
 import { SessionData, sessionOptions } from "@/utils/session";
 import { v4 as uuidv4 } from "uuid";
 import { sendEmail } from "@/utils/email";
+import { baseUrl } from "@/constants";
 const crypto = require("crypto");
 
 export async function isAuthenticated() {
@@ -161,7 +162,7 @@ export async function resetPasswordRequest(email: string) {
     },
   });
 
-  const link = `${process.env.BASE_URL}/reset-password?token=${resetToken}&id=${user.id}`;
+  const link = `${baseUrl}/reset-password?token=${resetToken}&id=${user.id}`;
 
   sendEmail(
     user.email!,

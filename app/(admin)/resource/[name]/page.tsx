@@ -9,6 +9,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
+import { baseUrl } from "@/constants";
 
 interface SaveResourceArgs {
   resource?: string;
@@ -25,23 +26,20 @@ const getData = async (args: SaveResourceArgs) => {
   const { where, ...rest } = data;
   const query = new URLSearchParams(rest);
   const whereQuery = new URLSearchParams(where);
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/resources/${resource}?${query}&${whereQuery}`;
+  const url = `${baseUrl}/api/resources/${resource}?${query}&${whereQuery}`;
 
   const response = await axios.get(url, data);
   return response.data;
 };
 
 export default function Resource() {
+  const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   const { name: resourceName } = params;
-  const page = searchParams.get("page");
-  const pageCount = searchParams.get("pageCount");
-  const sortBy = searchParams.get("sortBy") || "id";
-  const sortDir = searchParams.get("sortDir") || "asc";
-  const where: any = {};
+  const { page, pageCount, sortBy = 'id', sortDir = 'asc' } = Object.fromEntries(searchParams.entries());
+  const where: Record<string, string> = {};
 
   const resource = resources.find((r) => r.resource === resourceName);
 
@@ -70,6 +68,7 @@ export default function Resource() {
     take: take,
     sortBy,
     sortDir,
+    include: resource.relations || [],
   };
 
   const { data: resourceData = { data: [], numPages: 0 }, isFetching } =

@@ -8,12 +8,20 @@ import {
 } from "@/types/data-table";
 import axios from "axios";
 import { QueryClient } from "@tanstack/react-query";
+import { SelectFilterType } from "@/resources/resources.types";
+import { baseUrl } from "@/constants";
 
-const getOptions = async (resource: string) => {
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/resources/${resource}/options`;
+const getOptions = async (resource: string, fields: string[]) => {
+  const select = `select=${fields.join(",")}`;
+  const url = `${baseUrl}/api/resources/${resource}/options?${select}`;
   const response = await axios.get(url);
 
-  return response.data;  
+  return response.data;
+};
+
+const getOption = (field: SelectFilterType, row: Record<string, any>) => {
+  const titleField = field.fields.find((f) => f !== "id");
+  return field.renderOption ? field.renderOption(row) : row[titleField!];
 };
 
 export async function getFilters(
@@ -34,11 +42,14 @@ export async function getFilters(
     };
     if (filter.type === "select-filter") {
       const optionsData = await queryClient.fetchQuery({
-        queryKey: ["getOptions", filter.name],
-        queryFn: () => getOptions(filter.name),
+        queryKey: ["getOptions", filter.resource],
+        queryFn: () => getOptions(filter.resource!, filter.fields!),
       });
 
-      const options = optionsData.map((o: any) => ({ label: o[filter.textField!], value: o.id }));
+      const options = optionsData.map((o: any) => ({
+        label: getOption(filter!, o),
+        value: o.id,
+      }));
       filterField.options = options;
     }
     filterFields.push(filterField);
