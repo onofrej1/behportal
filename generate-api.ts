@@ -25,6 +25,8 @@ const generateApi = (resource: string, model: string) => {
   console.log("Done.");
 };
 
-for (const model of models) {
+const defaultModels = [ { model: 'user', resource: 'users', relations: [] }];
+
+for (const model of models.concat(defaultModels)) {
   generateApi(model.resource, model.model);
 }

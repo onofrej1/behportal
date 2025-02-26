@@ -6,15 +6,12 @@ import {
   DataTableAdvancedFilterField,
   DataTableFilterField,
 } from "@/types/data-table";
-import { SelectFilterType } from "@/resources/resources.types";
 import axios from "axios";
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
-import { getCategories, getUsers } from "@/actions/users";
+import { QueryClient } from "@tanstack/react-query";
 
 const getOptions = async (resource: string) => {
   const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/resources/${resource}/options`;
   const response = await axios.get(url);
-  console.log("options", response.data);
 
   return response.data;  
 };
@@ -40,9 +37,9 @@ export async function getFilters(
         queryKey: ["getOptions", filter.name],
         queryFn: () => getOptions(filter.name),
       });
-      //const optionsData = await getCategories();
+
       const options = optionsData.map((o: any) => ({ label: o[filter.textField!], value: o.id }));
-      filterField.options = options; // (filter as SelectFilterType).options;
+      filterField.options = options;
     }
     filterFields.push(filterField);
   }

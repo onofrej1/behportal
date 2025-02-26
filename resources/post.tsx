@@ -11,7 +11,7 @@ const post: Resource = {
   menuIcon: '',
   filter: [
     { name: 'title', type: 'text', label: 'Title' },    
-    { name: 'categories', search: 'categories_some_id', type: 'select-filter', textField: 'id', label: 'Category' },
+    { name: 'categories', search: 'categories_some_id', type: 'select-filter', textField: 'title', label: 'Category' },
     /*{ name: 'authorId', type: 'select-filter', textField: 'lastName', className: 'w-60', label: 'Author'},*/
   ],
   form: [
@@ -24,21 +24,21 @@ const post: Resource = {
       type: 'fk',
       relation: 'author',
       label: 'Author',
-      resource: 'user',
+      resource: 'users',
       renderLabel: (row: any) => `${row.lastName} ${row.firstName}`,
     },
     {
       name: 'categories', 
       type: 'm2m',
       label: 'Categories',
-      resource: 'category',
+      resource: 'categories',
       textField: 'title'
     },
     {
       name: 'tags', 
       type: 'm2m',
       label: 'Tags',
-      resource: 'tag',
+      resource: 'tags',
       textField: 'title'
     }
   ],
