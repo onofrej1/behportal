@@ -50,12 +50,37 @@ export interface SelectType extends BaseFormType {
   options?: SelectOption[] | MultiSelectOption[];
 }
 
-export interface SelectFilterType extends BaseFormType {
-  type: "select-filter";
-  fields: string[],
+export interface MultiSelectFilterType extends BaseFormType {
+  type: "multi-select";
+  fields: string[];
   search: string;
-  resource: string;  
-  renderOption?: any,
+  resource: string;
+  renderOption?: any;
+  options?: { label: string; value: string }[];
+}
+
+export interface TextFilterType extends BaseFormType {
+  type: "text";
+}
+
+export interface NumberFilterType extends BaseFormType {
+  type: "number";
+}
+
+export interface DateFilterType extends BaseFormType {
+  type: "date";
+}
+
+export interface BooleanFilterType extends BaseFormType {
+  type: "boolean";
+}
+
+export interface SelectFilterType extends BaseFormType {
+  type: "select";
+  fields: string[];
+  search: string;
+  resource: string;
+  renderOption?: any;
   options?: { label: string; value: string }[];
 }
 
@@ -121,6 +146,14 @@ type FormField =
   | MediaUploaderType
   | RepeaterType;
 
+type FilterField =
+  | BooleanFilterType
+  | SelectFilterType
+  | MultiSelectFilterType
+  | DateFilterType
+  | TextFilterType
+  | NumberFilterType;
+
 type Resource = {
   group?: string;
   name: string;
@@ -133,7 +166,7 @@ type Resource = {
   form: FormField[];
   renderForm?: FormRender;
   list: TableHeader[];
-  filter: FormField[];
+  filter: FilterField[]; // FormField[];
   canAddItem?: boolean;
   canEditItem?: boolean;
 };
@@ -156,6 +189,6 @@ type Resource = {
   | "registration"
   | "project";*/
 
-  type PrismaModel = any;
+type PrismaModel = any;
 
 export type { Resource, FormField, PrismaModel };

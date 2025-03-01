@@ -28,6 +28,136 @@ export function slugify(title: string) {
     .replace(/[^a-z0-9-]/g, "");
 }
 
+export function getWhereFilters(filters: any[]) {
+  const where: Record<string, any> = {};
+  filters.forEach((filter) => {
+    //console.log(filter);
+
+    let value = filter.value;
+    const operator = filter.operator;
+
+    //if (value === null || value === undefined || value === "") {
+      //return;
+    //}
+
+    if (["text"].includes(filter.type)) {
+      if (["isEmpty", "isNotEmpty"].includes(operator)) {
+        where[filter.id] = operator === "isEmpty" ? "" : { "not": "" };
+      } else {
+        const op: any = {
+          eq: "equals",
+          ne: "not",
+          iLike: "contains",
+        };
+        where[filter.id] = { [op[filter.operator]]: value };
+      }
+    }
+
+    if (["number"].includes(filter.type)) {
+      if (["isEmpty", "isNotEmpty"].includes(operator)) {
+        where[filter.id] = operator === "isEmpty" ? "" : { "not": "" };
+      } else {
+        if (value === null || value === undefined || value === '') return;
+        const op: any = {
+          eq: "equals",
+          ne: "not",
+          lt: "lt",
+          lte: "lte",
+          gt: "gt",
+          gte: "gte",
+        };
+        where[filter.id] = { [op[filter.operator]]: Number(value) };
+      }
+    }
+
+    if (["boolean"].includes(filter.type)) {
+      const op: any = {
+        eq: "equals",
+        ne: "not",
+      };
+      where[filter.id] = { [op[filter.operator]]: value === 'false' ? false : !!value };
+    }
+
+    if (filter.type === "multi-select") {
+      const [key, op] = filter.search.split("_");
+      const isManyRelation = op !== undefined;
+
+      if (["isEmpty", "isNotEmpty"].includes(operator)) {
+        if (isManyRelation) {
+          where[key] = {
+            [filter.operator === "isEmpty" ? "none" : "some"]: {},
+          };
+        } else {
+          where[key] = {
+            [filter.operator === "isEmpty" ? "isNot" : "is"]: {},
+          };
+        }
+      }
+
+      if (["eq", "ne"].includes(operator)) {
+        value = value.filter(Boolean).map((v: any) => parseFloat(v) || v);
+        if (!value.length) return;
+
+        if (isManyRelation) {
+          where[key] = {
+            [filter.operator === "eq" ? "some" : "none"]: {
+              id: {
+                ["in"]: value,
+              },
+            },
+          };
+        } else {
+          where[key] = {
+            id: {
+              [filter.operator === "eq" ? "in" : "notIn"]: value,
+            },
+          };
+        }
+      }
+    }
+
+    if (filter.type === "select") {
+      const [key, op] = filter.search.split("_");
+      const isManyRelation = op !== undefined;
+
+      if (["isEmpty", "isNotEmpty"].includes(operator)) {
+        if (isManyRelation) {
+          where[key] = {
+            [filter.operator === "isEmpty" ? "none" : "some"]: {},
+          };
+        } else {
+          where[key] = {
+            [filter.operator === "isEmpty" ? "isNot" : "is"]: {},
+          };
+        }
+      }
+
+      if (["eq", "ne"].includes(operator)) {
+        value = Array.isArray(value) ? value.filter(Boolean).map((v: any) => parseFloat(value) || value) : value ? [parseFloat(value) || value] : [];
+        if (!value.length) return;
+
+        if (isManyRelation) {
+          where[key] = {
+            [filter.operator === "eq" ? "some" : "none"]: {
+              id: {
+                ["in"]: value,
+              },
+            },
+          };
+        } else {
+          where[key] = {
+            id: {
+              [filter.operator === "eq" ? "in" : "notIn"]: value,
+            },
+          };
+        }
+      }
+    }
+  });
+  console.log(where);
+  return where;
+}
+
 export function getWhere(where: any) {
   return Object.keys(where).reduce((acc, key) => {
     let value = where[key];

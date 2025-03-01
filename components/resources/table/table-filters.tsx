@@ -8,7 +8,7 @@ import {
 } from "@/types/data-table";
 import axios from "axios";
 import { QueryClient } from "@tanstack/react-query";
-import { SelectFilterType } from "@/resources/resources.types";
+import { MultiSelectFilterType, SelectFilterType } from "@/resources/resources.types";
 import { baseUrl } from "@/constants";
 
 const getOptions = async (resource: string, fields: string[]) => {
@@ -19,7 +19,7 @@ const getOptions = async (resource: string, fields: string[]) => {
   return response.data;
 };
 
-const getOption = (field: SelectFilterType, row: Record<string, any>) => {
+const getOption = (field: SelectFilterType | MultiSelectFilterType, row: Record<string, any>) => {
   const titleField = field.fields.find((f) => f !== "id");
   return field.renderOption ? field.renderOption(row) : row[titleField!];
 };
@@ -40,7 +40,7 @@ export async function getFilters(
       label: filter.label || filter.name,
       placeholder: `${filter.name}...`,
     };
-    if (filter.type === "select-filter") {
+    if (filter.type === "multi-select") {
       const optionsData = await queryClient.fetchQuery({
         queryKey: ["getOptions", filter.resource],
         queryFn: () => getOptions(filter.resource!, filter.fields!),
@@ -57,12 +57,38 @@ export async function getFilters(
   return filterFields;
 }
 
-export function getAdvancedFilters(
-  resourceName: string
-): DataTableAdvancedFilterField<TableData>[] {
+export async function getAdvancedFilters(
+  resourceName: string,
+  queryClient: QueryClient
+): Promise<DataTableAdvancedFilterField<TableData>[]> {
   const resource = resources.find((r) => r.resource === resourceName);
   if (!resource) {
     throw new Error("Resource not found");
   }
-  return [];
+
+  const filterFields: DataTableAdvancedFilterField<TableData>[] = [];
+  for (const filter of resource.filter) {
+    const filterField: DataTableAdvancedFilterField<TableData> = {
+      type: filter.type,
+      id: filter.name,
+      label: filter.label || filter.name,
+      placeholder: `${filter.name}...`,
+    };
+    if (filter.type === 'multi-select' || filter.type === 'select') {
+      const optionsData = await queryClient.fetchQuery({
+        queryKey: ["getOptions", filter.resource],
+        queryFn: () => getOptions(filter.resource!, filter.fields!),
+      });
+
+      const options = optionsData.map((o: any) => ({
+        label: getOption(filter!, o),
+        value: o.id.toString(),
+      }));
+      filterField.search = filter.search;
+      filterField.options = options;
+    }
+    console.log('test', filterField);
+    filterFields.push(filterField);
+  }
+  return filterFields;
 }

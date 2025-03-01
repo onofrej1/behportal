@@ -35,7 +35,18 @@ const event: Resource = {
       </div>
     );
   },
-  filter: [    
+  relations: ['venue', 'organizer'],
+  filter: [
+    { name: "name", type: "text", label: "Title" },
+    { name: "maxAttendees", type: "number", label: "Max attendees" },
+    {
+      type: "multi-select",
+      name: "venues",
+      label: "Venue",
+      resource: "venues",
+      fields: ["id", "location"],
+      search: "venue",
+    },
   ],
   form: [
     { name: 'name', type: 'text', label: 'Name' },
@@ -52,25 +63,27 @@ const event: Resource = {
       type: 'fk',
       relation: 'venue',
       label: 'Venue',
-      resource: 'venue',
-      textField: 'location'
+      resource: 'venues',
+      fields: ['id', 'location'],
     },
     {
       name: 'organizerId', 
       type: 'fk',
       relation: 'organizer',
       label: 'Organizer',
-      resource: 'organizer',
-      textField: 'name'
+      resource: 'organizers',
+      fields: ['id', 'location'],
     },    
   ],
   list: [
     { name: 'id', header: 'Id'},
     { name: 'name', header: 'Name' },
-    { name: 'description', header: 'Description' },
+    { name: 'maxAttendees', header: 'Max attendees' },
+    //{ name: 'description', header: 'Description' },
     { name: 'startDate', header: 'Start date', render: (row: TableData) => <span>{new Date(row.startDate).toLocaleDateString()}</span> },
     { name: 'endDate', header: 'End date', render: (row: TableData) => <span>{new Date(row.endDate).toLocaleDateString()}</span> },
     { name: 'status', header: 'Status', render: (row: TableData) => <span>{row.status}</span> },
+    { name: 'venue', header: 'Venue', render: (row: TableData) => <span>{row.venue?.location}</span> },
   ],
 };
 export { event };

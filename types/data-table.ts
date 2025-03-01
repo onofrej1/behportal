@@ -43,6 +43,7 @@ export interface DataTableFilterField<TData> {
 export interface DataTableAdvancedFilterField<TData>
   extends DataTableFilterField<TData> {
   type: ColumnType;
+  search?: string;
 }
 
 export type Filter<TData> = Prettify<

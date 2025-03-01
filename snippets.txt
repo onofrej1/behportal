@@ -24,3 +24,45 @@ for (const r of resources) {
   relations: include[r.model] || [],
   //files: files[r.model] || [],
 }));*/
+
+if (filter.search) {
+      const arr = filter.search.split("_");
+      const field = arr.shift();
+      const query = arr.reverse().reduce((res: any, key: string) => ({ [key]: res }), value);
+      
+      where[field] = query;
+      return;
+    }  
+
+    if (key.includes("_")) {
+      const arr = key.split("_");
+      const field = arr.shift();
+      const query = arr.reverse().reduce((res, key) => ({ [key]: res }), value);
+      acc[field!] = query;
+    } else {
+      acc[key] = value;
+    }
+
+    resource?.filter.forEach((field) => {
+    const value = searchParams.get('filters');
+    console.log(value);
+    console.log(JSON.parse(value as string));
+    if (value) {
+      /*if (field.type === "text") {
+        where[field.name] = `contains__${value}`;
+      } else if (field.type === "select-filter") {
+        where[field.search!] = `in__${value}`;
+      }*/
+    }
+  });
+
+  /*resource?.filter.forEach((field) => {
+    const value = searchParams.get(field.name);
+    if (value) {
+      if (field.type === "text") {
+        where[field.name] = `contains__${value}`;
+      } else if (field.type === "select-filter") {
+        where[field.search!] = `in__${value}`;
+      }
+    }
+  });*/

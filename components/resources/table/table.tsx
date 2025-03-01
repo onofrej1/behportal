@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  DataTableAdvancedFilterField,
   DataTableFilterField,
 } from "@/types/data-table";
 import * as React from "react";
@@ -27,18 +28,19 @@ export function Table(props: TableProps) {
   const params = useParams();
   const { name: resource } = params;
   const [filterFields, setFilterFields] = React.useState<DataTableFilterField<TableData>[]>([]);
+  const [advancedFilterFields, setAdvancedFilterFields] = React.useState<DataTableAdvancedFilterField<TableData>[]>([]);
 
   //const advancedFilterFields = getAdvancedFilters(resource);
   /*const [rowAction, setRowAction] =
     React.useState<DataTableRowAction<TableData> | null>(null);*/
 
   const columns = React.useMemo(() => getColumns({ resource: resource as string }), [resource]);
-  const enableAdvancedTable = false; // featureFlags.includes("advancedTable");
+  const enableAdvancedTable = true; // featureFlags.includes("advancedTable");
 
   React.useEffect(() => {
     async function fetchFilters() {
-      const filters = await getFilters(resource as string, queryClient);
-      setFilterFields(filters);
+      const filters = await getAdvancedFilters(resource as string, queryClient);
+      setAdvancedFilterFields(filters);
     }
     if (filterFields.length === 0) {      
       fetchFilters();
@@ -66,7 +68,7 @@ export function Table(props: TableProps) {
         {enableAdvancedTable ? (
           <DataTableAdvancedToolbar
             table={table}
-            filterFields={/*advancedFilterFields*/[]}
+            filterFields={advancedFilterFields}
             shallow={false}
           >
             {/*<TasksTableToolbarActions table={table} />*/}

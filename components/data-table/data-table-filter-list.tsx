@@ -104,7 +104,7 @@ export function DataTableFilterList<TData>({
   function addFilter() {
     const filterField = filterFields[0];
 
-    if (!filterField) return;
+    if (!filterField) return;    
 
     void setFilters([
       ...filters,
@@ -112,6 +112,7 @@ export function DataTableFilterList<TData>({
         id: filterField.id,
         value: "",
         type: filterField.type,
+        search: filterField.search,
         operator: getDefaultFilterOperator(filterField.type),
         rowId: customAlphabet(
           "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
@@ -134,10 +135,11 @@ export function DataTableFilterList<TData>({
     updateFunction((prevFilters) => {
       const updatedFilters = prevFilters.map((filter) => {
         if (filter.rowId === rowId) {
-          return { ...filter, ...field };
+          return { ...filter, ...field, search: field.search || filter.search };
         }
         return filter;
       });
+      console.log('upd', updatedFilters);
       return updatedFilters;
     });
   }
@@ -652,6 +654,7 @@ export function DataTableFilterList<TData>({
                                         field: {
                                           id: value as StringKeyOf<TData>,
                                           type: filterField.type,
+                                          search: filterField.search,
                                           operator: getDefaultFilterOperator(
                                             filterField.type,
                                           ),
