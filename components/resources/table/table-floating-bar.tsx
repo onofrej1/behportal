@@ -1,7 +1,6 @@
 import { SelectTrigger } from "@radix-ui/react-select";
 import type { Table } from "@tanstack/react-table";
 import {
-  ArrowUp,
   CheckCircle2,
   Download,
   Loader,

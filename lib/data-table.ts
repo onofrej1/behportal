@@ -1,4 +1,4 @@
-import type { ColumnType, Filter, FilterOperator } from "@/types";
+import type { ColumnType, Filter, FilterOperator } from "@/types/data-table";
 import type { Column } from "@tanstack/react-table";
 
 import { dataTableConfig } from "@/config/data-table";

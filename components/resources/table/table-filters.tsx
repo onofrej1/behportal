@@ -87,7 +87,6 @@ export async function getAdvancedFilters(
       filterField.search = filter.search;
       filterField.options = options;
     }
-    console.log('test', filterField);
     filterFields.push(filterField);
   }
   return filterFields;

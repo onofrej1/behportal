@@ -6,11 +6,19 @@ import { useFormFields } from "@/hooks/useFormFields";
 import { deleteFile, uploadFiles } from "@/actions/files";
 import axios from "axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useParams, useRouter } from "next/navigation";
 import { baseUrl } from "@/constants";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface ResourceFormProps {
   resource: string;
+  id?: string;
+  open: boolean;
+  onOpenChange?(open: boolean): void;
 }
 
 interface SaveResourceArgs {
@@ -22,42 +30,49 @@ interface SaveResourceArgs {
 const saveResource = async (args: SaveResourceArgs) => {
   const { method, resource, data } = args;
   let url = `${baseUrl}/api/resources/${resource}`;
-  if (method === 'patch') {
+  if (method === "patch") {
     url += `/${data.id}`;
     delete data.id;
   }
   return await axios[method](url, data);
 };
 
-const fetchResource = async (args: { resource: string, id: string, include?: string[] }) => {
+const getResource = async (args: {
+  resource: string;
+  id?: string;
+  include?: string[];
+}) => {
   const { resource, id, include = [] } = args;
   if (!id) return {};
 
-  const includeQuery = include.length > 0 ? `include=${include.join(',')}` : '';
+  const includeQuery = include.length > 0 ? `include=${include.join(",")}` : "";
   const url = `${baseUrl}/api/resources/${resource}/${id}?${includeQuery}`;
   const response = await axios.get(url);
   return response.data.data;
 };
 
 export default function ResourceForm(props: ResourceFormProps) {
-  const { id } = useParams();
-  const { resource: resourceName } = props;
-  const router = useRouter();
+  const { resource: resourceName, id, open, onOpenChange } = props;
   const resource = resources.find((r) => r.resource === resourceName);
   if (!resource) {
     return;
   }
 
   const { data } = useQuery({
-    queryKey: ["fetchResource", resource.resource],
-    queryFn: () => fetchResource({ resource: resource.resource, id: id as string, include: resource.relations }),
+    queryKey: ["fetchResource", resource.resource, id],
+    queryFn: () =>
+      getResource({
+        resource: resource.resource,
+        id,
+        include: resource.relations,
+      }),
   });
 
   const { mutate } = useMutation({
     mutationFn: saveResource,
     onSuccess: (data) => {
       if (data.status === 200) {
-        return router.push("/resource/" + resource?.resource);
+        onOpenChange?.(false);
       }
     },
   });
@@ -104,14 +119,19 @@ export default function ResourceForm(props: ResourceFormProps) {
   };
 
   return (
-    <div className="mx-auto">
-      <Form
-        fields={fields}
-        validation={resource.rules}
-        data={data}
-        render={resource.renderForm}
-        action={submit}
-      />
-    </div>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{id ? "Add new" : "Update"} item</DialogTitle>
+        </DialogHeader>
+        <Form
+          fields={fields}
+          validation={resource.rules}
+          data={data}
+          render={resource.renderForm}
+          action={submit}
+        />
+      </DialogContent>
+    </Dialog>
   );
 }

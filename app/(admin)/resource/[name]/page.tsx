@@ -6,10 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useRouter } from "next/navigation";
-import React from "react";
-import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
+import React, { useState } from "react";
 import { baseUrl } from "@/constants";
+import {
+  createSearchParamsCache,
+  parseAsInteger,
+  parseAsStringEnum,
+} from "nuqs/server";
+import { getFiltersStateParser, getSortingStateParser } from "@/lib/parsers";
+import { TableData } from "@/components/table/table";
+import ResourceForm from "@/components/resources/form";
 
 interface SaveResourceArgs {
   resource?: string;
@@ -23,27 +29,58 @@ interface ResourceResponse {
 
 const getData = async (args: SaveResourceArgs) => {
   const { resource, data } = args;
-  const { where, ...rest } = data;
+  const { where, filters, ...rest } = data;
   const query = new URLSearchParams(rest);
   const whereQuery = new URLSearchParams(where);
-  const url = `${baseUrl}/api/resources/${resource}?${query}&${whereQuery}`;
+  const url = `${baseUrl}/api/resources/${resource}?${query}&${whereQuery}&filters=${filters}`;
 
   const response = await axios.get(url, data);
   return response.data;
 };
 
+export const searchParamsCachex = createSearchParamsCache({
+  page: parseAsInteger.withDefault(1),
+  perPage: parseAsInteger.withDefault(10),
+  sort: getSortingStateParser<TableData>().withDefault([
+    { id: "createdAt", desc: true },
+  ]),
+  // advanced filter
+  filters: getFiltersStateParser().withDefault([]),
+  joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
+});
+
+export interface SearchParams {
+  [key: string]: string | string[] | undefined;
+}
+
 export default function Resource() {
-  const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
+  const [openAddItem, setOpenAddItem] = useState(false);
 
   const { name: resourceName } = params;
-  const { page, pageCount, sortBy = 'id', sortDir = 'asc' } = Object.fromEntries(searchParams.entries());
+  const {
+    page,
+    pageCount,
+    sortBy = "id",
+    sortDir = "asc",
+  } = Object.fromEntries(searchParams.entries());
   const where: Record<string, string> = {};
 
   const resource = resources.find((r) => r.resource === resourceName);
 
   resource?.filter.forEach((field) => {
+    const value = searchParams.get("filters");
+    if (value) {
+      /*if (field.type === "text") {
+        where[field.name] = `contains__${value}`;
+      } else if (field.type === "select-filter") {
+        where[field.search!] = `in__${value}`;
+      }*/
+    }
+  });
+
+  /*resource?.filter.forEach((field) => {
     const value = searchParams.get(field.name);
     if (value) {
       if (field.type === "text") {
@@ -52,9 +89,8 @@ export default function Resource() {
         where[field.search!] = `in__${value}`;
       }
     }
-  });
+  });*/
 
-  const resourcePath = `/resource/${resourceName}`;
   if (!resource) {
     throw new Error(`Resource ${resourceName} not found !`);
   }
@@ -64,6 +100,7 @@ export default function Resource() {
 
   const args: any = {
     where,
+    filters: searchParams.get("filters"),
     skip: skip * take,
     take: take,
     sortBy,
@@ -80,6 +117,7 @@ export default function Resource() {
         args.sortBy,
         args.sortDir,
         args.where,
+        args.filters,
       ],
       queryFn: () => getData({ resource: resource?.resource, data: args }),
     });
@@ -87,7 +125,7 @@ export default function Resource() {
   const { data, numPages } = resourceData;
 
   const createResource = async () => {
-    router.push(`${resourcePath}/add`);
+    setOpenAddItem(true);
   };
 
   return (
@@ -113,6 +151,12 @@ export default function Resource() {
       >*/}
         <Table resource={resource.resource} data={data} pageCount={numPages} />
         {/*</React.Suspense>*/}
+
+        <ResourceForm
+          resource={resourceName as string}
+          open={openAddItem}
+          onOpenChange={() => setOpenAddItem(false)}
+        />
       </div>
     </div>
   );

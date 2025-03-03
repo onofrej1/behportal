@@ -13,6 +13,7 @@ const tag: Resource = {
         { name: 'title', type: 'text', label: 'Title' },
     ],
     list: [
+        { name: 'id', header: 'Id' },
         { name: 'title', header: 'Title' },
     ],
 };

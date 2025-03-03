@@ -3,6 +3,7 @@
 import {
   DataTableAdvancedFilterField,
   DataTableFilterField,
+  DataTableRowAction,
 } from "@/types/data-table";
 import * as React from "react";
 
@@ -17,6 +18,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { TableFloatingBar } from "./table-floating-bar";
 import { TableToolbarActions } from "./table-toolbar-actions";
+import ResourceForm from "../form";
 
 interface TableProps {
   resource: string;
@@ -36,11 +38,11 @@ export function Table(props: TableProps) {
     DataTableAdvancedFilterField<TableData>[]
   >([]);
 
-  /*const [rowAction, setRowAction] =
-    React.useState<DataTableRowAction<TableData> | null>(null);*/
+  const [rowAction, setRowAction] =
+    React.useState<DataTableRowAction<TableData> | null>(null);
 
   const columns = React.useMemo(
-    () => getColumns({ resource: resource as string }),
+    () => getColumns({ resource: resource as string, setRowAction }),
     [resource]
   );
   const enableAdvancedTable = true; // featureFlags.includes("advancedTable");
@@ -104,6 +106,13 @@ export function Table(props: TableProps) {
           </DataTableToolbar>
         )}
       </DataTable>
+
+      <ResourceForm
+        resource={resource as string}
+        open={rowAction?.type === "update"}
+        onOpenChange={() => setRowAction(null)}
+        id={rowAction?.row.original.id}
+      />
     </>
   );
 }
