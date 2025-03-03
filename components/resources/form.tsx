@@ -53,7 +53,7 @@ export default function ResourceForm(props: ResourceFormProps) {
     queryFn: () => fetchResource({ resource: resource.resource, id: id as string, include: resource.relations }),
   });
 
-  const { isPending, mutate } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: saveResource,
     onSuccess: (data) => {
       if (data.status === 200) {
@@ -82,7 +82,7 @@ export default function ResourceForm(props: ResourceFormProps) {
           continue;
         }
         if (previousFile) {
-          //await deleteFile(previousFile.name);
+          await deleteFile(previousFile.name);
         }
         if (file) {
           uploadData.append(field.name, file, file.name);

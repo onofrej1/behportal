@@ -31,14 +31,8 @@ export function slugify(title: string) {
 export function getWhereFilters(filters: any[]) {
   const where: Record<string, any> = {};
   filters.forEach((filter) => {
-    //console.log(filter);
-
     let value = filter.value;
-    const operator = filter.operator;
-
-    //if (value === null || value === undefined || value === "") {
-      //return;
-    //}
+    const operator = filter.operator;    
 
     if (["text"].includes(filter.type)) {
       if (["isEmpty", "isNotEmpty"].includes(operator)) {
@@ -53,9 +47,27 @@ export function getWhereFilters(filters: any[]) {
       }
     }
 
+    if (["date"].includes(filter.type)) {
+      if (["isEmpty", "isNotEmpty"].includes(operator)) {
+        where[filter.id] = operator === "isEmpty" ? null : { not: null };
+      } else {
+        console.log('date value', value);
+        if (value === null || value === undefined || value === '') return;
+        const op: any = {
+          eq: "equals",
+          ne: "not",
+          lt: "lt",
+          lte: "lte",
+          gt: "gt",
+          gte: "gte",
+        };
+        where[filter.id] = { [op[filter.operator]]: new Date(value).toISOString() };
+      }
+    }
+
     if (["number"].includes(filter.type)) {
       if (["isEmpty", "isNotEmpty"].includes(operator)) {
-        where[filter.id] = operator === "isEmpty" ? "" : { "not": "" };
+        where[filter.id] = operator === "isEmpty" ? "" : { not: "" };
       } else {
         if (value === null || value === undefined || value === '') return;
         const op: any = {

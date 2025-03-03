@@ -37,6 +37,7 @@ const event: Resource = {
   },
   relations: ['venue', 'organizer'],
   filter: [
+    { name: "startDate", type: "date", label: "Start date" },
     { name: "name", type: "text", label: "Title" },
     { name: "maxAttendees", type: "number", label: "Max attendees" },
     {

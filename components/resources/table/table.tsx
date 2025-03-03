@@ -15,6 +15,8 @@ import { TableData } from "@/components/table/table";
 import { getAdvancedFilters, getFilters } from "./table-filters";
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
+import { TableFloatingBar } from "./table-floating-bar";
+import { TableToolbarActions } from "./table-toolbar-actions";
 
 interface TableProps {
   resource: string;
@@ -27,22 +29,36 @@ export function Table(props: TableProps) {
   const { data, pageCount } = props;
   const params = useParams();
   const { name: resource } = params;
-  const [filterFields, setFilterFields] = React.useState<DataTableFilterField<TableData>[]>([]);
-  const [advancedFilterFields, setAdvancedFilterFields] = React.useState<DataTableAdvancedFilterField<TableData>[]>([]);
+  const [filterFields, setFilterFields] = React.useState<
+    DataTableFilterField<TableData>[]
+  >([]);
+  const [advancedFilterFields, setAdvancedFilterFields] = React.useState<
+    DataTableAdvancedFilterField<TableData>[]
+  >([]);
 
-  //const advancedFilterFields = getAdvancedFilters(resource);
   /*const [rowAction, setRowAction] =
     React.useState<DataTableRowAction<TableData> | null>(null);*/
 
-  const columns = React.useMemo(() => getColumns({ resource: resource as string }), [resource]);
+  const columns = React.useMemo(
+    () => getColumns({ resource: resource as string }),
+    [resource]
+  );
   const enableAdvancedTable = true; // featureFlags.includes("advancedTable");
 
   React.useEffect(() => {
     async function fetchFilters() {
-      const filters = await getAdvancedFilters(resource as string, queryClient);
-      setAdvancedFilterFields(filters);
+      if (enableAdvancedTable) {
+        const filters = await getAdvancedFilters(
+          resource as string,
+          queryClient
+        );
+        setAdvancedFilterFields(filters);
+      } else {
+        const filters = await getFilters(resource as string, queryClient);
+        setFilterFields(filters);
+      }
     }
-    if (filterFields.length === 0) {      
+    if (filterFields.length === 0) {
       fetchFilters();
     }
   }, [resource]);
@@ -62,20 +78,29 @@ export function Table(props: TableProps) {
     clearOnDefault: true,
   });
 
+  const enableFloatingBar = true;
+
   return (
     <>
-      <DataTable table={table}>
+      <DataTable
+        table={table}
+        floatingBar={
+          enableFloatingBar ? (
+            <TableFloatingBar table={table} resource={resource as string} />
+          ) : null
+        }
+      >
         {enableAdvancedTable ? (
           <DataTableAdvancedToolbar
             table={table}
             filterFields={advancedFilterFields}
             shallow={false}
           >
-            {/*<TasksTableToolbarActions table={table} />*/}
+            <TableToolbarActions table={table} resource={resource as string} />
           </DataTableAdvancedToolbar>
         ) : (
           <DataTableToolbar table={table} filterFields={filterFields}>
-            {/*<TasksTableToolbarActions table={table} /> */}
+            <TableToolbarActions table={table} resource={resource as string} />
           </DataTableToolbar>
         )}
       </DataTable>

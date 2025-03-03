@@ -66,3 +66,31 @@ if (filter.search) {
       }
     }
   });*/
+
+  export function getWhere(where: any) {
+  return Object.keys(where).reduce((acc, key) => {
+    let value = where[key];
+    if (value === null || value === undefined || value === "") {
+      return acc;
+    }
+
+    if (value.includes("__")) {
+      let [operator, val] = value.split("__");
+      if (operator === "in") {
+        val = val.split(",").map((v: any) => parseFloat(v) || v);
+      }
+      console.log(val);
+      value = { [operator]: val };
+    }
+
+    if (key.includes("_")) {
+      const arr = key.split("_");
+      const field = arr.shift();
+      const query = arr.reverse().reduce((res, key) => ({ [key]: res }), value);
+      acc[field!] = query;
+    } else {
+      acc[key] = value;
+    }
+    return acc;
+  }, {} as Record<string, unknown>);
+}

@@ -6,6 +6,7 @@ import * as React from "react";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { resources } from "@/resources";
 import { TableData } from "@/components/table/table";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface GetColumnsProps {
   resource: string;
@@ -19,7 +20,32 @@ export function getColumns({
     throw new Error("Resource not found");
   }
 
-  return resource.list.map((field) => {
+  const checkboxCol: ColumnDef<TableData> = {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+        className="translate-y-0.5"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+        className="translate-y-0.5"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  };
+
+  const cols = resource.list.map((field) => {
     const column = {
       accessorKey: field.name,
       header: ({ column }) => (
@@ -35,4 +61,5 @@ export function getColumns({
     }
     return column;
   });
+  return [checkboxCol, ...cols];
 }
