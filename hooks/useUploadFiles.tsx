@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { baseUrl } from "@/constants";
 
-const defaultUploadUrl = baseUrl + "/api/upload-files";
+const defaultUploadUrl = baseUrl + "/api/upload";
 
 interface UploadFile {
   fileName: string;

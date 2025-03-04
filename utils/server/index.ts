@@ -31,6 +31,7 @@ export function slugify(title: string) {
 export function getWhereFilters(filters: any[]) {
   const where: Record<string, any> = {};
   filters.forEach((filter) => {
+    console.log(filter);
     let value = filter.value;
     const operator = filter.operator;    
 
@@ -51,7 +52,6 @@ export function getWhereFilters(filters: any[]) {
       if (["isEmpty", "isNotEmpty"].includes(operator)) {
         where[filter.id] = operator === "isEmpty" ? null : { not: null };
       } else {
-        console.log('date value', value);
         if (value === null || value === undefined || value === '') return;
         const op: any = {
           eq: "equals",
@@ -145,7 +145,7 @@ export function getWhereFilters(filters: any[]) {
       }
 
       if (["eq", "ne"].includes(operator)) {
-        value = Array.isArray(value) ? value.filter(Boolean).map((v: any) => parseFloat(value) || value) : value ? [parseFloat(value) || value] : [];
+        value = Array.isArray(value) ? value.filter(Boolean).map((v: any) => parseFloat(v) || v) : value ? [parseFloat(value) || value] : [];
         if (!value.length) return;
 
         if (isManyRelation) {
@@ -182,7 +182,6 @@ export function getWhere(where: any) {
       if (operator === "in") {
         val = val.split(",").map((v: any) => parseFloat(v) || v);
       }
-      console.log(val);
       value = { [operator]: val };
     }
 

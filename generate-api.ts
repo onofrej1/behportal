@@ -1,4 +1,4 @@
-import { models } from "./resources";
+import { resources } from "@/resources";
 import { replaceInFileSync } from "replace-in-file";
 const fs = require("fs-extra");
 const path = require("path");
@@ -21,12 +21,10 @@ const generateApi = (resource: string, model: string) => {
     from: /\[MODEL\]/g,
     to: model,
   });
-
-  console.log("Done.");
 };
 
-const defaultModels = [ { model: 'user', resource: 'users', relations: [] }];
+const defaultModels = [{ model: "user", resource: "users", relations: [] }];
 
-for (const model of models.concat(defaultModels)) {
+for (const model of [...resources, ...defaultModels]) {
   generateApi(model.resource, model.model);
 }

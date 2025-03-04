@@ -1,15 +1,11 @@
 "use client";
+import { getSession } from "@/api";
 import { useQuery } from "@tanstack/react-query";
-
-const fechSession = async () => {
-  const res = await fetch("/api/session");
-  return res.json();
-};
 
 export function useSession() {
   const { data: session, isFetching } = useQuery({
     queryKey: ["getSession"],
-    queryFn: fechSession,
+    queryFn: getSession,
   });
   return {
     isFetching,

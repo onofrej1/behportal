@@ -5,53 +5,9 @@ import { useParams, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import React, { useState } from "react";
-import { baseUrl } from "@/constants";
-import {
-  createSearchParamsCache,
-  parseAsInteger,
-  parseAsStringEnum,
-} from "nuqs/server";
-import { getFiltersStateParser, getSortingStateParser } from "@/lib/parsers";
-import { TableData } from "@/components/table/table";
 import ResourceForm from "@/components/resources/form";
-
-interface SaveResourceArgs {
-  resource?: string;
-  data: any;
-}
-
-interface ResourceResponse {
-  numPages: number;
-  data: any[];
-}
-
-const getData = async (args: SaveResourceArgs) => {
-  const { resource, data } = args;
-  const { where, filters, ...rest } = data;
-  const query = new URLSearchParams(rest);
-  const whereQuery = new URLSearchParams(where);
-  const url = `${baseUrl}/api/resources/${resource}?${query}&${whereQuery}&filters=${filters}`;
-
-  const response = await axios.get(url, data);
-  return response.data;
-};
-
-export const searchParamsCachex = createSearchParamsCache({
-  page: parseAsInteger.withDefault(1),
-  perPage: parseAsInteger.withDefault(10),
-  sort: getSortingStateParser<TableData>().withDefault([
-    { id: "createdAt", desc: true },
-  ]),
-  // advanced filter
-  filters: getFiltersStateParser().withDefault([]),
-  joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
-});
-
-export interface SearchParams {
-  [key: string]: string | string[] | undefined;
-}
+import { getResourceData } from "@/api";
 
 export default function Resource() {
   const params = useParams();
@@ -67,29 +23,18 @@ export default function Resource() {
   } = Object.fromEntries(searchParams.entries());
   const where: Record<string, string> = {};
 
-  const resource = resources.find((r) => r.resource === resourceName);
+  const resource = resources.find((r) => r.resource === resourceName);  
 
   resource?.filter.forEach((field) => {
-    const value = searchParams.get("filters");
-    if (value) {
-      /*if (field.type === "text") {
-        where[field.name] = `contains__${value}`;
-      } else if (field.type === "select-filter") {
-        where[field.search!] = `in__${value}`;
-      }*/
-    }
-  });
-
-  /*resource?.filter.forEach((field) => {
     const value = searchParams.get(field.name);
     if (value) {
       if (field.type === "text") {
         where[field.name] = `contains__${value}`;
-      } else if (field.type === "select-filter") {
+      } else if (field.type === "multi-select") {
         where[field.search!] = `in__${value}`;
       }
     }
-  });*/
+  });
 
   if (!resource) {
     throw new Error(`Resource ${resourceName} not found !`);
@@ -97,10 +42,11 @@ export default function Resource() {
 
   const skip = (Number(page) || 1) - 1;
   const take = Number(pageCount) || 10;
+  const filters = searchParams.get("filters");
 
   const args: any = {
     where,
-    filters: searchParams.get("filters"),
+    filters,
     skip: skip * take,
     take: take,
     sortBy,
@@ -108,8 +54,8 @@ export default function Resource() {
     include: resource.relations || [],
   };
 
-  const { data: resourceData = { data: [], numPages: 0 }, isFetching } =
-    useQuery<ResourceResponse>({
+  const { data: resourceData = { data: [], numPages: 0 } } =
+    useQuery({
       queryKey: [
         "getResourceData",
         args.skip,
@@ -119,7 +65,8 @@ export default function Resource() {
         args.where,
         args.filters,
       ],
-      queryFn: () => getData({ resource: resource?.resource, data: args }),
+      queryFn: () =>
+        getResourceData({ resource: resource?.resource, data: args }),
     });
 
   const { data, numPages } = resourceData;

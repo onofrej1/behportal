@@ -1,12 +1,6 @@
 import { SelectTrigger } from "@radix-ui/react-select";
 import type { Table } from "@tanstack/react-table";
-import {
-  CheckCircle2,
-  Download,
-  Loader,
-  Trash2,
-  X,
-} from "lucide-react";
+import { CheckCircle2, Download, Loader, Trash2, X } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 
@@ -27,20 +21,8 @@ import {
 } from "@/components/ui/tooltip";
 import { TableData } from "@/components/table/table";
 import { exportTableToCSV } from "@/lib/export";
-import { baseUrl } from "@/constants";
-import axios from "axios";
+import { deleteResources } from "@/api";
 import { useMutation } from "@tanstack/react-query";
-
-interface DeleteRowsProps {
-  resource?: string;
-  rows: number[];
-}
-
-const deleteRows = async (props: DeleteRowsProps) => {
-  const { resource, rows } = props;
-  const url = `${baseUrl}/api/resources/${resource}/delete`;
-  return await axios.post(url, rows);
-};
 
 interface TableFloatingBarProps {
   resource: string;
@@ -52,18 +34,15 @@ export function TableFloatingBar({ table, resource }: TableFloatingBarProps) {
 
   const [isPending, startTransition] = React.useTransition();
   const [action, setAction] = React.useState<
-    "update-status" | "update-priority" | "export" | "delete"
+    "update-status" | "export" | "delete"
   >();
 
-  const { mutate: deleteRowsMutate } = useMutation({
-    mutationFn: deleteRows,
+  const { mutate: deleteRows } = useMutation({ 
+    mutationFn: deleteResources,
     onSuccess: () => {
-      toast.success("Rows deleted");
-      table.toggleAllRowsSelected(false);      
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
+      toast.success('Rows successfully deleted.');
+      table.toggleAllRowsSelected(false);
+    }
   });
 
   // Clear selection on Escape key press
@@ -113,9 +92,7 @@ export function TableFloatingBar({ table, resource }: TableFloatingBarProps) {
                 onValueChange={(value: any) => {
                   setAction("update-status");
 
-                  startTransition(async () => {
-                    
-                  });
+                  startTransition(async () => {});
                 }}
               >
                 <Tooltip>
@@ -147,19 +124,17 @@ export function TableFloatingBar({ table, resource }: TableFloatingBarProps) {
                 </Tooltip>
                 <SelectContent align="center">
                   <SelectGroup>
-                    
-                      <SelectItem
-                        key={'test'}
-                        value={'test'}
-                        className="capitalize"
-                      >
-                        Test
-                      </SelectItem>
-                    
+                    <SelectItem
+                      key={"test"}
+                      value={"test"}
+                      className="capitalize"
+                    >
+                      Test
+                    </SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              
+
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -202,8 +177,8 @@ export function TableFloatingBar({ table, resource }: TableFloatingBarProps) {
                       setAction("delete");
 
                       startTransition(async () => {
-                        const rowIds = rows.map(row => Number(row.id));
-                        deleteRowsMutate({ resource, rows: rowIds })
+                        const rowIds = rows.map((row) => Number(row.id));
+                        deleteRows({ resource, rows: rowIds });
                       });
                     }}
                     disabled={isPending}

@@ -29,10 +29,9 @@ import {
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { TableData } from "@/components/table/table";
 import { useMutation } from "@tanstack/react-query";
-import { baseUrl } from "@/constants";
-import axios from "axios";
+import { deleteResources } from "@/api";
 
-interface DeleteTasksDialogProps
+interface DeleteDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
   resource: string;
   data: Row<TableData>["original"][];
@@ -40,36 +39,22 @@ interface DeleteTasksDialogProps
   onSuccess?: () => void;
 }
 
-interface DeleteRowsProps {
-  resource?: string;
-  rows: number[];
-}
-
-const deleteRows = async (props: DeleteRowsProps) => {
-  const { resource, rows } = props;
-  const url = `${baseUrl}/api/resources/${resource}/delete`;
-  return await axios.post(url, rows);
-};
-
 export function DeleteDialog({
   resource,
   data,
   showTrigger = true,
   onSuccess,
   ...props
-}: DeleteTasksDialogProps) {
+}: DeleteDialogProps) {
   const [isDeletePending, startDeleteTransition] = React.useTransition();
   const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const { mutate } = useMutation({
-    mutationFn: deleteRows,
+    mutationFn: deleteResources,
     onSuccess: () => {
       toast.success("Rows deleted");
       props.onOpenChange?.(false);
       onSuccess?.();
-    },
-    onError: (error) => {
-      toast.error(error.message);
     },
   });
 

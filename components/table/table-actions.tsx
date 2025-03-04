@@ -8,9 +8,8 @@ import { LucideIcon, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { resources } from "@/resources";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { revalidatePath } from "next/cache";
-import { baseUrl } from "@/constants";
+import { deleteResource } from "@/api";
 
 type IconNames = "edit" | "delete";
 
@@ -19,15 +18,10 @@ export const Icons: Record<IconNames, LucideIcon> = {
   delete: Trash2,
 };
 
-const deleteResource = async (args: { resource: string; id: number }) => {
-  const { resource, id } = args;
-  return await axios.delete(`${baseUrl}/api/resources/${resource}/${id}`);
-};
-
 export default function TableActions({ row }: { row?: any }) {
   const { open: openDialog, setTitle, setAction } = useAlert();
   const { push } = useRouter();
-  const { isPending, mutate } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: deleteResource,
     onSuccess: (data) => {
       if (data.status === 200) {
