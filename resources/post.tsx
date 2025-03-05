@@ -68,6 +68,7 @@ const post: Resource = {
     { name: "id", header: "Id" },
     { name: "title", header: "Title" },
     { name: "cover", header: "Cover" },
+    { name: "enableComments", header: "Enable comments" },
     { name: "status", header: "Status" },
     {
       name: "authorId",

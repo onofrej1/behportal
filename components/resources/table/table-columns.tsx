@@ -88,14 +88,14 @@ export function getColumns({
             >
               Edit
             </DropdownMenuItem>
-            <DropdownMenuSub>
+            {/*<DropdownMenuSub>
               <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
               <DropdownMenuSubContent>
                 <DropdownMenuRadioGroup
                   value={row.original.label}
                   onValueChange={(value) => {
                     startUpdateTransition(() => {
-                      /*toast.promise(
+                      toast.promise(
                         updateTask({
                           id: row.original.id,
                           label: value as Task["label"],
@@ -105,7 +105,7 @@ export function getColumns({
                           success: "Label updated",
                           error: (err) => getErrorMessage(err),
                         },
-                      );*/
+                      );
                     });
                   }}
                 >
@@ -119,7 +119,7 @@ export function getColumns({
                   </DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
               </DropdownMenuSubContent>
-            </DropdownMenuSub>
+            </DropdownMenuSub>*/}
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onSelect={() => setRowAction({ row, type: "delete" })}

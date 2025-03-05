@@ -8,7 +8,7 @@ import AdminPanelLayout from "@/components/admin-panel/admin-panel-layout";
 import DialogModal from "@/components/common/dialog";
 import { Navbar } from "@/components/admin-panel/navbar";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,20 +19,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <ReactQueryProvider>
       <NuqsAdapter>
-      <TooltipProvider>
-        <html lang="en">
-          <body>
-            <AdminPanelLayout>
-              <Navbar title={"test"} />
-              <div className="p-6">{children}</div>
-              {/*<ContentLayout title="test">{children}</ContentLayout>*/}
-            </AdminPanelLayout>
-            <Toaster />
-            <Alert />
-            <DialogModal />
-          </body>
-        </html>
-      </TooltipProvider>
+        <TooltipProvider>
+          <html lang="en">
+            <body>
+              <AdminPanelLayout>
+                <Navbar title={"test"} />
+                <div className="p-6">{children}</div>
+                {/*<ContentLayout title="test">{children}</ContentLayout>*/}
+              </AdminPanelLayout>
+              <Toaster />
+              <Alert />
+              <DialogModal />
+            </body>
+          </html>
+        </TooltipProvider>
       </NuqsAdapter>
     </ReactQueryProvider>
   );

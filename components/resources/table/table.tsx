@@ -19,6 +19,7 @@ import { useParams } from "next/navigation";
 import { TableFloatingBar } from "./table-floating-bar";
 import { TableToolbarActions } from "./table-toolbar-actions";
 import ResourceForm from "../form";
+import { useFeatureFlags } from "@/app/(admin)/resource/[name]/_components/feature-flags-provider";
 
 interface TableProps {
   resource: string;
@@ -27,6 +28,7 @@ interface TableProps {
 }
 
 export function Table(props: TableProps) {
+  const { featureFlags } = useFeatureFlags();
   const queryClient = useQueryClient();
   const { data, pageCount } = props;
   const params = useParams();
@@ -45,7 +47,7 @@ export function Table(props: TableProps) {
     () => getColumns({ resource: resource as string, setRowAction }),
     [resource]
   );
-  const enableAdvancedTable = true; // featureFlags.includes("advancedTable");
+  const enableAdvancedTable = featureFlags.includes("advancedTable");
 
   React.useEffect(() => {
     async function fetchFilters() {
@@ -80,10 +82,10 @@ export function Table(props: TableProps) {
     clearOnDefault: true,
   });
 
-  const enableFloatingBar = true;
+  const enableFloatingBar = featureFlags.includes("floatingBar");
 
   return (
-    <>
+    <div className="mt-2">
       <DataTable
         table={table}
         floatingBar={
@@ -113,6 +115,6 @@ export function Table(props: TableProps) {
         onOpenChange={() => setRowAction(null)}
         id={rowAction?.row.original.id}
       />
-    </>
+    </div>
   );
 }

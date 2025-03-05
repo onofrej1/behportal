@@ -5,14 +5,18 @@ import { useParams, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import ResourceForm from "@/components/resources/form";
 import { getResourceData } from "@/api";
+import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
+import { FeatureFlagsProvider } from "./_components/feature-flags-provider";
+import { ResourceContext, useContext } from "../resource-context";
 
 export default function Resource() {
   const params = useParams();
   const searchParams = useSearchParams();
   const [openAddItem, setOpenAddItem] = useState(false);
+  const { resource: resourceModel, setResource } = useContext(ResourceContext);
 
   const { name: resourceName } = params;
   const {
@@ -23,7 +27,15 @@ export default function Resource() {
   } = Object.fromEntries(searchParams.entries());
   const where: Record<string, string> = {};
 
-  const resource = resources.find((r) => r.resource === resourceName);  
+  const resource = resources.find((r) => r.resource === resourceName);
+  if (!resource) {
+    throw new Error(`Resource ${resourceName} not found !`);
+  }
+  if (!resourceModel || resourceModel.resource !== resourceName) {
+    console.log(resourceModel);
+    console.log('set resource');
+    setResource(resource);
+  }  
 
   resource?.filter.forEach((field) => {
     const value = searchParams.get(field.name);
@@ -35,10 +47,6 @@ export default function Resource() {
       }
     }
   });
-
-  if (!resource) {
-    throw new Error(`Resource ${resourceName} not found !`);
-  }
 
   const skip = (Number(page) || 1) - 1;
   const take = Number(pageCount) || 10;
@@ -54,22 +62,19 @@ export default function Resource() {
     include: resource.relations || [],
   };
 
-  const { data: resourceData = { data: [], numPages: 0 } } =
-    useQuery({
-      queryKey: [
-        "getResourceData",
-        args.skip,
-        args.take,
-        args.sortBy,
-        args.sortDir,
-        args.where,
-        args.filters,
-      ],
-      queryFn: () =>
-        getResourceData({ resource: resource?.resource, data: args }),
-    });
-
-  const { data, numPages } = resourceData;
+  const { isLoading, data } = useQuery({
+    queryKey: [
+      "getResourceData",
+      args.skip,
+      args.take,
+      args.sortBy,
+      args.sortDir,
+      args.where,
+      args.filters,
+    ],
+    queryFn: () =>
+      getResourceData({ resource: resource?.resource, data: args }),
+  });
 
   const createResource = async () => {
     setOpenAddItem(true);
@@ -77,7 +82,7 @@ export default function Resource() {
 
   return (
     <div className="w-full">
-      <div className="flex flex-row items-end justify-between">
+      <div className="flex flex-row justify-end">
         <form action={createResource}>
           <Button variant="outline" type="submit">
             <Plus className="h-5 w-5" /> Add item
@@ -85,8 +90,7 @@ export default function Resource() {
         </form>
       </div>
       <div>
-        {/*<React.Suspense
-        fallback={
+        {isLoading ? (
           <DataTableSkeleton
             columnCount={6}
             searchableColumnCount={1}
@@ -94,10 +98,15 @@ export default function Resource() {
             cellWidths={["10rem", "40rem", "12rem", "12rem", "8rem", "8rem"]}
             shrinkZero
           />
-        }
-      >*/}
-        <Table resource={resource.resource} data={data} pageCount={numPages} />
-        {/*</React.Suspense>*/}
+        ) : (
+          <FeatureFlagsProvider>
+            <Table
+              resource={resource.resource}
+              data={data.data}
+              pageCount={data.numPages}
+            />
+          </FeatureFlagsProvider>
+        )}
 
         <ResourceForm
           resource={resourceName as string}

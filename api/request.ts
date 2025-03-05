@@ -6,21 +6,8 @@ const client = axios.create({
 });
 
 export const request = async (options: AxiosRequestConfig<any>) => {
-  /*let token;
-  const state = store.getState();
-  const userState = state?.user?.currentUser;
-  if (userState === null) {
-    token = "";
-  } else {
-    const { accessToken } = userState;
-    token = accessToken;
-  }
-
-  token !== "" &&
-    (client.defaults.headers.common.Authorization = `Bearer ${token}`);*/
-
   const onSuccess = (response: AxiosResponse<any, any>) => {
-    return response?.data?.data;
+    return response.data;
   };
 
   const onError = (error: any) => {

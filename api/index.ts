@@ -78,7 +78,7 @@ type GetResourceDataProps = {
   data: any;
 };
 
-export const getResourceData = async (props: GetResourceDataProps) => {
+export const getResourceData = (props: GetResourceDataProps) => {
   const { resource, data } = props;
   const { where, filters, ...rest } = data;
 
@@ -87,7 +87,7 @@ export const getResourceData = async (props: GetResourceDataProps) => {
     ? `filters=${filters}`
     : new URLSearchParams(whereQuery);
 
-  return await request({
+  return request({
     url: `/resources/${resource}?${query}`,
     method: "GET",
     data,
@@ -99,10 +99,10 @@ type GetOptionsProps = {
   fields: string[];
 };
 
-export const getOptions = async (props: GetOptionsProps) => {
+export const getOptions = (props: GetOptionsProps) => {
   const query = `?select=${props.fields.join(",")}`;
 
-  return await request({
+  return request({
     url: `/resources/${props.resource}/options${query}`,
     method: "GET",
   });

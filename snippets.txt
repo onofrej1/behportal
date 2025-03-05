@@ -94,3 +94,16 @@ if (filter.search) {
     return acc;
   }, {} as Record<string, unknown>);
 }
+
+/*let token;
+  const state = store.getState();
+  const userState = state?.user?.currentUser;
+  if (userState === null) {
+    token = "";
+  } else {
+    const { accessToken } = userState;
+    token = accessToken;
+  }
+
+  token !== "" &&
+    (client.defaults.headers.common.Authorization = `Bearer ${token}`);*/
