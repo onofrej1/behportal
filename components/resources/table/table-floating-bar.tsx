@@ -23,14 +23,15 @@ import { TableData } from "@/components/table/table";
 import { exportTableToCSV } from "@/lib/export";
 import { deleteResources } from "@/api";
 import { useMutation } from "@tanstack/react-query";
+import { useResource } from "@/state";
 
 interface TableFloatingBarProps {
-  resource: string;
   table: Table<TableData>;
 }
 
-export function TableFloatingBar({ table, resource }: TableFloatingBarProps) {
+export function TableFloatingBar({ table }: TableFloatingBarProps) {
   const rows = table.getFilteredSelectedRowModel().rows;
+  const { resource: { resource }} = useResource();
 
   const [isPending, startTransition] = React.useTransition();
   const [action, setAction] = React.useState<

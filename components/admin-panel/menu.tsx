@@ -13,16 +13,32 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-  TooltipProvider
+  TooltipProvider,
 } from "@/components/ui/tooltip";
+import { useResource } from "@/state";
+import { resources } from "@/resources";
+import { useRouter } from "next/navigation";
 
 interface MenuProps {
   isOpen: boolean | undefined;
 }
 
 export function Menu({ isOpen }: MenuProps) {
+  const router = useRouter();
   const pathname = usePathname();
   const menuList = getMenuList(pathname);
+  const { setResource } = useResource();
+
+  const openResourcePage = (link: string) => {
+    const lastIndex = link.lastIndexOf("/");
+    const resourceName = link.slice(lastIndex + 1);
+    const resource = resources.find((r) => r.resource === resourceName);
+    if (resource) {
+      setResource(resource);
+    }
+    console.log(link);
+    return router.push(link);
+  };
 
   return (
     <ScrollArea className="[&>div>div[style]]:!block">
@@ -68,7 +84,7 @@ export function Menu({ isOpen }: MenuProps) {
                               className="w-full justify-start h-10 mb-1"
                               asChild
                             >
-                              <Link href={href}>
+                              <Button variant="link" onClick={() => openResourcePage(href)}>
                                 <span
                                   className={cn(isOpen === false ? "" : "mr-4")}
                                 >
@@ -84,7 +100,7 @@ export function Menu({ isOpen }: MenuProps) {
                                 >
                                   {label}
                                 </p>
-                              </Link>
+                              </Button>
                             </Button>
                           </TooltipTrigger>
                           {isOpen === false && (

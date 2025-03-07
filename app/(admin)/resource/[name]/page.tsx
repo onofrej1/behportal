@@ -1,24 +1,21 @@
 "use client";
 import { Table } from "@/components/resources/table/table";
-import { resources } from "@/resources";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import ResourceForm from "@/components/resources/form";
 import { getResourceData } from "@/api";
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { FeatureFlagsProvider } from "./_components/feature-flags-provider";
-import { ResourceContext, useContext } from "../resource-context";
+import { useResource } from "@/state";
 
 export default function Resource() {
-  const params = useParams();
   const searchParams = useSearchParams();
   const [openAddItem, setOpenAddItem] = useState(false);
-  const { resource: resourceModel, setResource } = useContext(ResourceContext);
+  const { resource } = useResource();
 
-  const { name: resourceName } = params;
   const {
     page,
     pageCount,
@@ -26,16 +23,6 @@ export default function Resource() {
     sortDir = "asc",
   } = Object.fromEntries(searchParams.entries());
   const where: Record<string, string> = {};
-
-  const resource = resources.find((r) => r.resource === resourceName);
-  if (!resource) {
-    throw new Error(`Resource ${resourceName} not found !`);
-  }
-  if (!resourceModel || resourceModel.resource !== resourceName) {
-    console.log(resourceModel);
-    console.log('set resource');
-    setResource(resource);
-  }  
 
   resource?.filter.forEach((field) => {
     const value = searchParams.get(field.name);
@@ -101,7 +88,6 @@ export default function Resource() {
         ) : (
           <FeatureFlagsProvider>
             <Table
-              resource={resource.resource}
               data={data.data}
               pageCount={data.numPages}
             />
@@ -109,7 +95,6 @@ export default function Resource() {
         )}
 
         <ResourceForm
-          resource={resourceName as string}
           open={openAddItem}
           onOpenChange={() => setOpenAddItem(false)}
         />

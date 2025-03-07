@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import Form from "@/components/form/form";
-import { resources } from "@/resources";
 import { useFormFields } from "@/hooks/useFormFields";
 import { deleteFile, uploadFiles } from "@/actions/files";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -12,28 +11,27 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { createResource, getResource, updateResource } from "@/api";
+import { useResource } from "@/state";
 
 interface ResourceFormProps {
-  resource: string;
   id?: string;
   open: boolean;
   onOpenChange?(open: boolean): void;
 }
 
 export default function ResourceForm(props: ResourceFormProps) {
-  const { resource: resourceName, id, open, onOpenChange } = props;
-  const resource = resources.find((r) => r.resource === resourceName);
-  if (!resource) {
-    return;
-  }
+  const { id, open, onOpenChange } = props;
+  const {
+    resource: { resource, relations, form, rules, renderForm },
+  } = useResource();
 
   const { isFetching, data = {} } = useQuery({
-    queryKey: ["getResource", resource.resource, id],
+    queryKey: ["getResource", resource, id],
     queryFn: () =>
       getResource({
         id,
-        resource: resource.resource,
-        include: resource.relations,
+        resource,
+        include: relations,
       }),
     enabled: !!id,
   });
@@ -47,7 +45,7 @@ export default function ResourceForm(props: ResourceFormProps) {
     throw new Error("Resource not found");
   }
 
-  const fields = useFormFields(resource.form, !!id);
+  const fields = useFormFields(form, !!id);
 
   const submit = async (data: Record<string, any>) => {
     const uploadData = new FormData();
@@ -74,7 +72,7 @@ export default function ResourceForm(props: ResourceFormProps) {
       await uploadFiles(uploadData);
     }
 
-    return mutate({ resource: resource.resource, data });
+    return mutate({ resource: resource, data });
   };
 
   return (
@@ -88,9 +86,9 @@ export default function ResourceForm(props: ResourceFormProps) {
         ) : (
           <Form
             fields={fields}
-            validation={resource.rules}
+            validation={rules}
             data={data}
-            render={resource.renderForm}
+            render={renderForm}
             action={submit}
           />
         )}

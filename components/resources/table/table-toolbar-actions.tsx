@@ -8,16 +8,17 @@ import { exportTableToCSV } from "@/lib/export";
 
 import { DeleteDialog } from "./delete-dialog";
 import { TableData } from "@/components/table/table";
+import { useResource } from "@/state";
 
 interface TasksTableToolbarActionsProps {
-  resource: string;
   table: Table<TableData>;
 }
 
-export function TableToolbarActions({
-  resource,
-  table,
-}: TasksTableToolbarActionsProps) {
+export function TableToolbarActions({ table }: TasksTableToolbarActionsProps) {
+  const {
+    resource: { resource },
+  } = useResource();
+
   return (
     <div className="flex items-center gap-2">
       {table.getFilteredSelectedRowModel().rows.length > 0 ? (
@@ -32,7 +33,7 @@ export function TableToolbarActions({
       <Button
         variant="outline"
         size="sm"
-        onClick={() => 
+        onClick={() =>
           exportTableToCSV(table, {
             filename: "data-export",
             excludeColumns: ["select", "actions"],

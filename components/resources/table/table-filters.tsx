@@ -43,7 +43,6 @@ export async function getFilters(
         queryFn: () =>
           getOptions({ resource: filter.resource!, fields: filter.fields! }),
       });
-      console.log('d', optionsData);
       const options = optionsData.map((o: any) => ({
         label: getOption(filter!, o),
         value: o.id,
