@@ -17,7 +17,9 @@ export default function Contact() {
     { type: "email", name: "email", label: "Email" },
     { type: "checkbox", name: "confirm", label: "Confirm" },
     { type: "textarea", name: "message", rows: 5, label: "Message" },
-    { type: "datepicker", name: "startDate", label: "Start date" },
+    { type: "phone-input", name: "phone_test", label: "Phone" },
+    { type: "date-picker", name: "startDate", label: "Start date" },
+    { type: "datetime-picker", name: "endDate", label: "End date" },
     {
       type: "repeater",
       name: "tags",
@@ -44,8 +46,10 @@ export default function Contact() {
               {fields.email}
               {fields.confirm}
               {fields.startDate}
+              {fields.endDate}
               {fields.message}
               {fields.venueId}
+              {fields.phone_test}
               {fields.tags}
               {/*fields.myfiles*/}
               <Button type="submit">Contact</Button>

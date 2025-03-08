@@ -1,0 +1,18 @@
+- country-dropdown
+https://github.com/uixmat/shadcn-country-dropdown
+https://shadcn-country-dropdown.vercel.app/
+
+- image-upload
+https://github.com/ManishBisht777/file-vault/tree/master
+
+- shadcn-dropzone
+https://github.com/janglad/shadcn-dropzone
+
+-react-confirm-dialog
+https://github.com/Aslam97/react-confirm-dialog
+
+- credenza
+https://github.com/redpangilinan/credenza
+
+- stepperize
+https://stepperize.vercel.app/

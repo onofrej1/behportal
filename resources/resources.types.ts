@@ -1,7 +1,7 @@
 import { FormRender } from "@/components/form/form";
 import { RepeaterRenderFunc } from "@/components/form/repeater";
-import { TableHeader } from "@/components/table/table";
 import { FormSchema } from "@/validation";
+import { JSX } from "react";
 
 export interface SelectOption {
   label: string;
@@ -20,6 +20,18 @@ interface BaseFormType {
   placeholder?: string;
   className?: string;
   onChange?: any;
+}
+
+export interface TableData {
+  [key: string]: any;
+}
+
+export interface TableHeader {
+  name: string;
+  header: string;
+  enableSort?: boolean;
+  enableHide?: boolean;
+  render?: (data: TableData) => JSX.Element;
 }
 
 export interface InputType extends BaseFormType {
@@ -102,23 +114,31 @@ export interface MultiSelectType extends BaseFormType {
 }
 
 export interface DatePickerType extends BaseFormType {
-  type: "datepicker";
+  type: "date-picker";
 }
 
 export interface CheckboxType extends BaseFormType {
   type: "checkbox";
 }
 
-export interface FileUploadType extends BaseFormType {
-  type: "fileUpload";
+export interface PhoneInputType extends BaseFormType {
+  type: "phone-input";
+}
+
+export interface DateTimePickerType extends BaseFormType {
+  type: "datetime-picker";
+}
+
+export interface UploadType extends BaseFormType {
+  type: "upload";
   allowedTypes?: string[];
   maxSize?: number;
   uploadText?: string;
   onFileSelect?: (data: { file: File; thumbNail?: string }) => void;
 }
 
-export interface MediaUploaderType extends BaseFormType {
-  type: "mediaUploader";
+export interface MediaUploadType extends BaseFormType {
+  type: "media-upload";
   allowedTypes?: string[];
   maxSize?: number;
   maxFiles?: number;
@@ -142,9 +162,11 @@ type FormField =
   | DatePickerType
   | MultiSelectType
   | RichtextType
-  | FileUploadType
-  | MediaUploaderType
-  | RepeaterType;
+  | UploadType
+  | MediaUploadType
+  | RepeaterType
+  | PhoneInputType
+  | DateTimePickerType;
 
 type FilterField =
   | BooleanFilterType

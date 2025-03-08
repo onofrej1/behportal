@@ -11,16 +11,52 @@ import {
   DropzoneTrigger,
   useDropzone,
 } from "@/components/dropzone";
+import { LocationPicker } from "@/components/location-picker";
 import { PasswordInput } from "@/components/password-input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { useConfirm } from "@omit/react-confirm-dialog";
 import { CloudUploadIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
+
+import {
+  Credenza,
+  CredenzaBody,
+  CredenzaClose,
+  CredenzaContent,
+  CredenzaDescription,
+  CredenzaFooter,
+  CredenzaHeader,
+  CredenzaTitle,
+  CredenzaTrigger,
+} from "@/components/credenza";
+import { Blockquote, BlockquoteAuthor } from "@/components/blockquote";
 
 export default function MultiImages() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
+
+  const [apiKey, setApiKey] = useState<string>(
+    process.env.NEXT_PUBLIC_GOOGLE_MAP_KEY as string
+  );
+
+  const confirm = useConfirm();
+
+  const handleClick = async () => {
+    const isConfirmed = await confirm({
+      title: "Delete Item",
+      description: "Are you sure you want to delete this item?",
+      confirmText: "Delete",
+      cancelText: "Cancel",
+    });
+
+    if (isConfirmed) {
+      // Perform delete action
+    }
+  };
+
+  const [location, setLocation] = useState<google.maps.LatLngLiteral>();
 
   const dropzone = useDropzone({
     onDropFile: async (file: File) => {
@@ -75,7 +111,7 @@ export default function MultiImages() {
       <CountryDropdown
         placeholder="Select countries"
         //defaultValue={[]}
-        onChange={() => {}}
+        onChange={(e: any) => console.log(e)}
       />
       <Dropzone {...dropzone}>
         <div>
@@ -134,6 +170,46 @@ export default function MultiImages() {
           ))}
         </DropzoneFileList>
       </Dropzone>
+
+      <LocationPicker
+        apiKey={apiKey}
+        value={location}
+        onValueChange={setLocation}
+        defaultCenter={{ lat: 22.54992, lng: 0 }}
+        className="aspect-3/2"
+        disableDefaultUI
+        fullscreenControl
+      />
+
+      <button onClick={handleClick}>Delete</button>
+
+      <Credenza>
+        <CredenzaTrigger asChild>
+          <Button>Open modal</Button>
+        </CredenzaTrigger>
+        <CredenzaContent>
+          <CredenzaHeader>
+            <CredenzaTitle>Credenza</CredenzaTitle>
+            <CredenzaDescription>
+              A responsive modal component for shadcn/ui.
+            </CredenzaDescription>
+          </CredenzaHeader>
+          <CredenzaBody>
+            This component is built using shadcn/ui&apos;s dialog and drawer
+            component, which is built on top of Vaul.
+          </CredenzaBody>
+          <CredenzaFooter>
+            <CredenzaClose asChild>
+              <Button>Close</Button>
+            </CredenzaClose>
+          </CredenzaFooter>
+        </CredenzaContent>
+      </Credenza>
+
+      <Blockquote>
+      If you want to run, run a mile. If you want to experience a different life, run a marathon.      
+        <BlockquoteAuthor>Emil Zatopek</BlockquoteAuthor>
+      </Blockquote>
     </div>
   );
 }

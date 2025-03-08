@@ -1,6 +1,6 @@
 "use client";
 import { getRunById } from "@/actions/runs";
-import FileUploader from "@/components/form/fileUploader";
+import FileUploader from "@/components/form/file-uploader";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";

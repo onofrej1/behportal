@@ -24,15 +24,17 @@ import { MultiSelect } from "@/components/form/multi-select";
 import FormCheckbox from "@/components/form/checkbox";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { DatePicker } from "./datepicker";
+import { DatePicker } from "./date-picker";
 import { Button } from "../ui/button";
 import Textarea from "./textarea";
 import RichEditor from "./richeditor";
 import { z } from "zod";
-import FileUploader from "./fileUploader";
+import FileUploader from "./file-uploader";
 import RepeaterInput from "./repeater";
 import { urlToFile } from "@/lib/utils";
 import { Form, FormField } from "@/components/ui/form";
+import PhoneInput from "@/components/form/phone-input";
+import { DateTimePicker } from "./datetime-picker";
 
 export interface DefaultFormData {
   [key: string]: any;
@@ -192,7 +194,7 @@ export default function Form_({
           </>
         )}
 
-        {type === "datepicker" && (
+        {type === "date-picker" && (
           <>
             <FormField
               control={form.control}
@@ -259,6 +261,30 @@ export default function Form_({
               <FileUploader
                 field={field}
                 allowedTypes={["image/png", "image/jpeg", "video/mp4"]}
+              />
+            )}
+          />
+        )}
+
+        {type === "phone-input" && (
+          <FormField
+            control={form.control}
+            name={formField.name}
+            render={({ field }) => (
+              <PhoneInput label={label} field={field} className={className} />
+            )}
+          />
+        )}
+
+        {type === "datetime-picker" && (
+          <FormField
+            control={form.control}
+            name={formField.name}
+            render={({ field }) => (
+              <DateTimePicker
+                label={label}
+                field={field}
+                className={className}
               />
             )}
           />
