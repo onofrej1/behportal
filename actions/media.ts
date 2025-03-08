@@ -4,9 +4,9 @@ import { prisma } from "@/db/prisma";
 
 export async function getMedia(galleryId: number) {
   const data = await prisma.media.findMany({
-    /*where: {
+    where: {
         galleryId,
-    },*/
+    },
     include: {
       user: {
         select: {

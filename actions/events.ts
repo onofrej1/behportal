@@ -9,14 +9,6 @@ export async function getEvents() {
   return prisma.event.findMany();
 }
 
-export async function getOrganizers() {
-  return prisma.organizer.findMany();
-}
-
-export async function getVenues() {
-  return prisma.venue.findMany({ orderBy: { id: 'desc' }});
-}
-
 export async function createVenue(data: Venue) {
   const session = await getSession();
   if (!session) {

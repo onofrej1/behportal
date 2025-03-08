@@ -91,7 +91,6 @@ export const getResourceData = (props: GetResourceDataProps) => {
   const searchParams = new URLSearchParams(params);
 
   const filtersQuery = filters ? `&filters=${filters}` : "";
-  console.log("query", filtersQuery);
 
   return request({
     url: `/resources/${resource}?${searchParams.toString()}${filtersQuery}`,

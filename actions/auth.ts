@@ -65,7 +65,10 @@ export async function register(data: RegisterUserType) {
     return { error: { path: "email", message: "Email already exists" } };
   }
 
-  const hashedPassword = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT!));
+  const hashedPassword = await bcrypt.hash(
+    password,
+    Number(process.env.BCRYPT_SALT!)
+  );
 
   try {
     await prisma.user.create({
@@ -75,7 +78,7 @@ export async function register(data: RegisterUserType) {
         email: email,
         password: hashedPassword,
         role: "USER",
-        status: "ACTIVE"
+        status: "ACTIVE",
       },
     });
   } catch (e) {
@@ -138,7 +141,7 @@ export async function logout() {
     });
     //session.destroy();
   }
-  return { redirect: '/login' };
+  return { redirect: "/login" };
 }
 
 export async function resetPasswordRequest(email: string) {

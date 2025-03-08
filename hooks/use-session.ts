@@ -10,8 +10,7 @@ export function useSession() {
   return {
     isFetching,
     user: {
-      user: session?.user,
-      userId: session?.userId,
+      ...session?.user,
       role: session?.role,
     },
   };

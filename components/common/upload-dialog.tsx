@@ -12,8 +12,8 @@ import { DialogState } from "@/types";
 import { XIcon } from "lucide-react";
 import { useState } from "react";
 import { create } from "zustand";
-import { Progress } from "../ui/progress";
-import { useUploadFiles } from "@/hooks/useUploadFiles";
+import { Progress } from "@/components/ui/progress";
+import { useUpload } from "@/hooks/use-upload";
 import { deleteFile } from "@/actions/files";
 
 export const useUploadDialogState = create<DialogState<File[]>>((set) => ({
@@ -47,7 +47,7 @@ export default function UploadDialog(
   } = props;
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const { uploadFiles, uploadingFiles, progress, resetUpload } = useUploadFiles();
+  const { uploadFiles, uploadingFiles, progress, resetUpload } = useUpload();
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>

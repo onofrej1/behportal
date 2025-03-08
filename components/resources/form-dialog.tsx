@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Form from "@/components/form/form";
-import { useFormFields } from "@/hooks/useFormFields";
+import { useFormFields } from "@/hooks/use-fields";
 import { deleteFile, uploadFiles } from "@/actions/files";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {

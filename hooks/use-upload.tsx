@@ -12,7 +12,7 @@ interface UploadFile {
   errorMessage?: string;
 }
 
-export const useUploadFiles = (/*url: string = defaultUploadUrl*/) => {
+export const useUpload = (/*url: string = defaultUploadUrl*/) => {
   const [progress, setProgress] = useState("notStarted");
   const [uploadingFiles, setUploadingFiles] = useState<UploadFile[]>([]);
 
