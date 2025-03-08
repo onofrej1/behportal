@@ -3,9 +3,9 @@ import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { getIronSession } from "iron-session";
-import { SessionData, sessionOptions } from "@/utils/session";
+import { SessionData, sessionOptions } from "@/lib/session";
 import { cookies } from "next/headers";
-import { githubOAuth } from "@/utils/oauth";
+import { githubOAuth } from "@/lib/oauth";
 const crypto = require("crypto");
 
 interface GithubProfile {

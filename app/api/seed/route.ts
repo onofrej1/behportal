@@ -23,7 +23,7 @@ import {
 } from "@prisma/client";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { slugify } from "@/utils";
+import { slugify } from "@/lib/utils";
 
 function random(list: any[]) {
   return list[Math.floor(Math.random() * list.length)];

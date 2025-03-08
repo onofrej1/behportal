@@ -14,7 +14,7 @@ const post: Resource = {
     //{ name: "title", type: "text", label: "Title" },
     { name: "enableComments", type: "boolean", label: "enable comments" },
     {
-      type: "select",
+      type: "multi-select",
       name: "categories",
       label: "Category",
       resource: "categories",
@@ -25,7 +25,7 @@ const post: Resource = {
       name: "authorId",
       resource: "users",
       search: "author",
-      type: "select",
+      type: "multi-select",
       fields: ["id", "firstName", "lastName"],
       label: "Author",
       renderOption: (row: any) => `${row.lastName} ${row.firstName}`,

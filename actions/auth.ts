@@ -5,9 +5,9 @@ import { RegisterUserType } from "@/validation";
 import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
-import { SessionData, sessionOptions } from "@/utils/session";
+import { SessionData, sessionOptions } from "@/lib/session";
 import { v4 as uuidv4 } from "uuid";
-import { sendEmail } from "@/utils/email";
+import { sendEmail } from "@/lib/email";
 import { baseUrl } from "@/constants";
 const crypto = require("crypto");
 

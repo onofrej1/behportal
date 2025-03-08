@@ -30,9 +30,8 @@ import Textarea from "./textarea";
 import RichEditor from "./richeditor";
 import { z } from "zod";
 import FileUploader from "./fileUploader";
-import MediaUploader from "./mediaUploader";
 import RepeaterInput from "./repeater";
-import { urlToFile } from "@/utils";
+import { urlToFile } from "@/lib/utils";
 import { Form, FormField } from "@/components/ui/form";
 
 export interface DefaultFormData {

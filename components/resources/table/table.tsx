@@ -17,13 +17,14 @@ import { getAdvancedFilters, getFilters } from "./table-filters";
 import { useQueryClient } from "@tanstack/react-query";
 import { TableFloatingBar } from "./table-floating-bar";
 import { TableToolbarActions } from "./table-toolbar-actions";
-import ResourceForm from "../form";
+import ResourceFormDialog from "../form-dialog";
 import { useFeatureFlags } from "@/app/(admin)/resource/[name]/_components/feature-flags-provider";
 import { useResource } from "@/state";
 
 interface TableProps {
-  data: TableData[];
-  pageCount: number;
+  dataPromise: Promise<{ data: any; numPages: number }>;
+  //data: TableData[];
+  //pageCount: number;
 }
 
 export function Table(props: TableProps) {
@@ -32,7 +33,9 @@ export function Table(props: TableProps) {
   } = useResource();
   const { featureFlags } = useFeatureFlags();
   const queryClient = useQueryClient();
-  const { data, pageCount } = props;
+
+  const { data, numPages: pageCount } = React.use(props.dataPromise);
+
   const [filterFields, setFilterFields] = React.useState<
     DataTableFilterField<TableData>[]
   >([]);
@@ -47,22 +50,26 @@ export function Table(props: TableProps) {
     () => getColumns({ resource, setRowAction }),
     [resource]
   );
-  const enableAdvancedTable = featureFlags.includes("advancedTable");
+  const enableAdvancedTable = React.useMemo(
+    () => featureFlags.includes("advancedTable"),
+    [featureFlags]
+  );
+  console.log("enable", enableAdvancedTable);
 
   React.useEffect(() => {
     async function fetchFilters() {
       if (enableAdvancedTable) {
-        const filters = await getAdvancedFilters(resource, queryClient);
+        const filters = await getAdvancedFilters(queryClient);
         setAdvancedFilterFields(filters);
       } else {
-        const filters = await getFilters(resource, queryClient);
+        const filters = await getFilters(queryClient);
         setFilterFields(filters);
       }
     }
-    if (filterFields.length === 0) {
-      fetchFilters();
-    }
-  }, [resource]);
+    //if (filterFields.length === 0) {
+    fetchFilters();
+    //}
+  }, [resource, enableAdvancedTable]);
 
   const { table } = useDataTable({
     data,
@@ -104,7 +111,8 @@ export function Table(props: TableProps) {
         )}
       </DataTable>
 
-      <ResourceForm
+      <ResourceFormDialog
+        key="updateResource"
         open={rowAction?.type === "update"}
         onOpenChange={() => setRowAction(null)}
         id={rowAction?.row.original.id}

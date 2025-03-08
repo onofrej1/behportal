@@ -1,5 +1,5 @@
 "use server";
-import { sendTextEmail } from "@/utils/email";
+import { sendTextEmail } from "@/lib/email";
 
 export async function contactEmail(
   name: string,

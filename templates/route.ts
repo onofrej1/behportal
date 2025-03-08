@@ -1,26 +1,21 @@
 import { prisma } from "@/db/prisma";
 import { resources } from "@/resources";
-import { arrayToObj, getWhere, getWhereFilters, setRelations } from "@/utils/server";
+import { arrayToObj, getWhere, getOrderBy, setRelations } from "@/utils/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
-  const { take, skip, sortBy, sortDir, include, filters, ...whereQuery } = Object.fromEntries(
+  const { take, skip, sort, include, filters } = Object.fromEntries(
     searchParams.entries()
   );  
 
-  let where;
-  const filtersParsed = JSON.parse(filters);
-  if (filtersParsed && filtersParsed.length > 0) {
-    where = getWhereFilters(filtersParsed);
-  } else {
-    where = getWhere(whereQuery);
-  }
+  const orderBy = getOrderBy(sort);
+  const where = getWhere(filters);
 
   const data = await prisma.[MODEL].findMany({
     take: Number(take),
     skip: Number(skip),
-    orderBy: [{ [sortBy]: sortDir }],    
+    orderBy,
     where,
     include: arrayToObj(include),
   });

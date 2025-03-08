@@ -1,4 +1,3 @@
-import { resources } from "@/resources";
 import { Resource } from "@/resources/resources.types";
 import { JSX } from "react";
 import { create } from "zustand";

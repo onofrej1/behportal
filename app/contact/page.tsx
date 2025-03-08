@@ -19,12 +19,6 @@ export default function Contact() {
     { type: "textarea", name: "message", rows: 5, label: "Message" },
     { type: "datepicker", name: "startDate", label: "Start date" },
     {
-      type: "mediaUploader",
-      name: "myfiles",
-      label: "Files",
-      //onChange: setFiles,
-    },
-    {
       type: "repeater",
       name: "tags",
       fields: [

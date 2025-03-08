@@ -41,13 +41,13 @@ export const createResource = (props: SaveResourceProps) => {
 export const updateResource = (props: SaveResourceProps) => {
   const {
     resource,
-    data: { id, ...saveData },
+    data: { id, ...data },
   } = props;
 
   return request({
     url: `/resources/${resource}/${id}`,
     method: "PATCH",
-    data: saveData,
+    data,
   });
 };
 
@@ -80,15 +80,21 @@ type GetResourceDataProps = {
 
 export const getResourceData = (props: GetResourceDataProps) => {
   const { resource, data } = props;
-  const { where, filters, ...rest } = data;
+  const { filters, take, skip, sort, include } = data;
 
-  const whereQuery = new URLSearchParams(rest);
-  const query = filters
-    ? `filters=${filters}`
-    : new URLSearchParams(whereQuery);
+  const params = {
+    take,
+    skip,
+    sort,
+    include,
+  };
+  const searchParams = new URLSearchParams(params);
+
+  const filtersQuery = filters ? `&filters=${filters}` : "";
+  console.log("query", filtersQuery);
 
   return request({
-    url: `/resources/${resource}?${query}`,
+    url: `/resources/${resource}?${searchParams.toString()}${filtersQuery}`,
     method: "GET",
     data,
   });

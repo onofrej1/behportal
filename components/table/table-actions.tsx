@@ -23,12 +23,9 @@ export default function TableActions({ row }: { row?: any }) {
   const { push } = useRouter();
   const { mutate } = useMutation({
     mutationFn: deleteResource,
-    onSuccess: (data) => {
-      if (data.status === 200) {
-        console.log("revalidate");
-        const resourcePath = `/resource/${resource?.resource}`;
-        revalidatePath(resourcePath);
-      }
+    onSuccess: () => {
+      const resourcePath = `/resource/${resource?.resource}`;
+      revalidatePath(resourcePath);
     },
   });
   const params = useParams();

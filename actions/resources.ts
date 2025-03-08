@@ -61,7 +61,7 @@ export async function updateResource(resource: Resource, parsedData: any) {
     data,
     where: { id: Number(id) },
   };
-  console.log('args', args);
+
   await prismaQuery(resource.model, "update", args);
 
   return { redirect: `/resource/${resource.resource}` };

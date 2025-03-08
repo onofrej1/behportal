@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Trash2, Upload } from "lucide-react";
-import { generateVideoThumbnail } from "@/utils";
+import { generateVideoThumbnail } from "@/lib/utils";
 import { ControllerRenderProps } from "react-hook-form";
 
 interface FileUploaderProps {

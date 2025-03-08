@@ -139,7 +139,6 @@ export function DataTableFilterList<TData>({
         }
         return filter;
       });
-      console.log('upd', updatedFilters);
       return updatedFilters;
     });
   }

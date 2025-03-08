@@ -1,4 +1,6 @@
+import { TableData } from "@/components/table/table";
 import { FormField } from "@/resources/resources.types";
+import { Filter } from "@/types/data-table";
 
 const sizeOf = require("image-size");
 
@@ -20,24 +22,29 @@ export function getImageOrientation(imagePath: string) {
   }
 }
 
-export function slugify(title: string) {
-  return title
-    .trim()
-    .replace(/ +/g, "-")
-    .toLowerCase()
-    .replace(/[^a-z0-9-]/g, "");
+export function getOrderBy(input: string) {
+  if (!input) {
+    return [{ id: "asc" }];
+  }
+
+  const sort: { id: string; desc: boolean }[] = JSON.parse(input);
+  return sort.map((value) => ({ [value.id]: value.desc ? "desc" : "asc" }));
 }
 
-export function getWhereFilters(filters: any[]) {
+export function getWhere(input: string) {
+  if (!input) {
+    return {};
+  }
+  const filters: Filter<TableData>[] = JSON.parse(input);
+
   const where: Record<string, any> = {};
   filters.forEach((filter) => {
-    console.log(filter);
     let value = filter.value;
-    const operator = filter.operator;    
+    const operator = filter.operator;
 
     if (["text"].includes(filter.type)) {
       if (["isEmpty", "isNotEmpty"].includes(operator)) {
-        where[filter.id] = operator === "isEmpty" ? "" : { "not": "" };
+        where[filter.id] = operator === "isEmpty" ? "" : { not: "" };
       } else {
         const op: any = {
           eq: "equals",
@@ -52,7 +59,7 @@ export function getWhereFilters(filters: any[]) {
       if (["isEmpty", "isNotEmpty"].includes(operator)) {
         where[filter.id] = operator === "isEmpty" ? null : { not: null };
       } else {
-        if (value === null || value === undefined || value === '') return;
+        if (value === null || value === undefined || value === "") return;
         const op: any = {
           eq: "equals",
           ne: "not",
@@ -61,7 +68,9 @@ export function getWhereFilters(filters: any[]) {
           gt: "gt",
           gte: "gte",
         };
-        where[filter.id] = { [op[filter.operator]]: new Date(value).toISOString() };
+        where[filter.id] = {
+          [op[filter.operator]]: new Date(value as string).toISOString(),
+        };
       }
     }
 
@@ -69,7 +78,7 @@ export function getWhereFilters(filters: any[]) {
       if (["isEmpty", "isNotEmpty"].includes(operator)) {
         where[filter.id] = operator === "isEmpty" ? "" : { not: "" };
       } else {
-        if (value === null || value === undefined || value === '') return;
+        if (value === null || value === undefined || value === "") return;
         const op: any = {
           eq: "equals",
           ne: "not",
@@ -87,7 +96,9 @@ export function getWhereFilters(filters: any[]) {
         eq: "equals",
         ne: "not",
       };
-      where[filter.id] = { [op[filter.operator]]: value === 'false' ? false : !!value };
+      where[filter.id] = {
+        [op[filter.operator]]: value === "false" ? false : !!value,
+      };
     }
 
     if (filter.type === "multi-select") {
@@ -107,7 +118,11 @@ export function getWhereFilters(filters: any[]) {
       }
 
       if (["eq", "ne"].includes(operator)) {
-        value = value.filter(Boolean).map((v: any) => parseFloat(v) || v);
+        value = Array.isArray(value)
+          ? value.filter(Boolean).map((v: any) => parseFloat(v) || v)
+          : value
+          ? [parseFloat(value) || value]
+          : [];
         if (!value.length) return;
 
         if (isManyRelation) {
@@ -145,7 +160,11 @@ export function getWhereFilters(filters: any[]) {
       }
 
       if (["eq", "ne"].includes(operator)) {
-        value = Array.isArray(value) ? value.filter(Boolean).map((v: any) => parseFloat(v) || v) : value ? [parseFloat(value) || value] : [];
+        value = Array.isArray(value)
+          ? value.filter(Boolean).map((v: any) => parseFloat(v) || v)
+          : value
+          ? [parseFloat(value) || value]
+          : [];
         if (!value.length) return;
 
         if (isManyRelation) {
@@ -166,35 +185,7 @@ export function getWhereFilters(filters: any[]) {
       }
     }
   });
-  console.log(where);
   return where;
-}
-
-export function getWhere(where: any) {
-  return Object.keys(where).reduce((acc, key) => {
-    let value = where[key];
-    if (value === null || value === undefined || value === "") {
-      return acc;
-    }
-
-    if (value.includes("__")) {
-      let [operator, val] = value.split("__");
-      if (operator === "in") {
-        val = val.split(",").map((v: any) => parseFloat(v) || v);
-      }
-      value = { [operator]: val };
-    }
-
-    if (key.includes("_")) {
-      const arr = key.split("_");
-      const field = arr.shift();
-      const query = arr.reverse().reduce((res, key) => ({ [key]: res }), value);
-      acc[field!] = query;
-    } else {
-      acc[key] = value;
-    }
-    return acc;
-  }, {} as Record<string, unknown>);
 }
 
 export function arrayToObj(arr: string) {

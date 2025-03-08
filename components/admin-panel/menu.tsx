@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Ellipsis, LogOut } from "lucide-react";
 import { usePathname } from "next/navigation";
 
@@ -36,7 +35,6 @@ export function Menu({ isOpen }: MenuProps) {
     if (resource) {
       setResource(resource);
     }
-    console.log(link);
     return router.push(link);
   };
 
@@ -84,7 +82,10 @@ export function Menu({ isOpen }: MenuProps) {
                               className="w-full justify-start h-10 mb-1"
                               asChild
                             >
-                              <Button variant="link" onClick={() => openResourcePage(href)}>
+                              <Button
+                                variant="link"
+                                onClick={() => openResourcePage(href)}
+                              >
                                 <span
                                   className={cn(isOpen === false ? "" : "mr-4")}
                                 >

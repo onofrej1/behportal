@@ -12,6 +12,7 @@ import {
   SelectFilterType,
 } from "@/resources/resources.types";
 import { getOptions } from "@/api";
+import { useResource } from "@/state";
 
 const getOption = (
   field: SelectFilterType | MultiSelectFilterType,
@@ -22,13 +23,9 @@ const getOption = (
 };
 
 export async function getFilters(
-  resourceName: string,
   queryClient: QueryClient
 ): Promise<DataTableFilterField<TableData>[]> {
-  const resource = resources.find((r) => r.resource === resourceName);
-  if (!resource) {
-    throw new Error("Resource not found");
-  }
+  const { resource } = useResource.getState();
 
   const filterFields: DataTableFilterField<TableData>[] = [];
   for (const filter of resource.filter) {
@@ -55,13 +52,9 @@ export async function getFilters(
 }
 
 export async function getAdvancedFilters(
-  resourceName: string,
   queryClient: QueryClient
 ): Promise<DataTableAdvancedFilterField<TableData>[]> {
-  const resource = resources.find((r) => r.resource === resourceName);
-  if (!resource) {
-    throw new Error("Resource not found");
-  }
+  const { resource } = useResource.getState();
 
   const filterFields: DataTableAdvancedFilterField<TableData>[] = [];
   for (const filter of resource.filter) {

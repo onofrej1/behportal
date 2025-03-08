@@ -1,4 +1,4 @@
-import { googleOAuth } from "@/utils/oauth";
+import { googleOAuth } from "@/lib/oauth";
 import { redirect } from "next/navigation";
 const crypto = require("crypto");
 

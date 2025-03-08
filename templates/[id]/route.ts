@@ -17,7 +17,7 @@ export async function GET(
     include: arrayToObj(include),
   });
 
-  return NextResponse.json({ status: "success", data });
+  return NextResponse.json(data);
 }
 
 export async function PATCH(

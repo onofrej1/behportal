@@ -107,3 +107,92 @@ if (filter.search) {
 
   token !== "" &&
     (client.defaults.headers.common.Authorization = `Bearer ${token}`);*/
+
+    export function getWhere(where: any) {
+  return Object.keys(where).reduce((acc, key) => {
+    let value = where[key];
+    if (value === null || value === undefined || value === "") {
+      return acc;
+    }
+
+    if (value.includes("__")) {
+      let [operator, val] = value.split("__");
+      if (operator === "in") {
+        val = val.split(",").map((v: any) => parseFloat(v) || v);
+      }
+      value = { [operator]: val };
+    }
+
+    if (key.includes("_")) {
+      const arr = key.split("_");
+      const field = arr.shift();
+      const query = arr.reverse().reduce((res, key) => ({ [key]: res }), value);
+      acc[field!] = query;
+    } else {
+      acc[key] = value;
+    }
+    return acc;
+  }, {} as Record<string, unknown>);
+}
+
+export function htmlToJson(div: Element) {
+  var tag: Record<string, any> = {};
+  tag["tagName"] = div.tagName;
+  tag["children"] = [];
+  for (var i = 0; i < div.children.length; i++) {
+    tag["children"].push(htmlToJson(div.children[i]));
+  }
+  for (var i = 0; i < div.attributes.length; i++) {
+    var attr = div.attributes[i];
+    tag["@" + attr.name] = attr.value;
+  }
+  return tag;
+}
+
+export function renderSelectOptions(data: any[], render: any) {
+  return data.map((value: any) => ({
+    value: value.id,
+    label: render(value),
+  }));
+}
+
+export function getSelectOptions(data: any[], labelKey: any) {
+  return data.map((value: any) => ({
+    value: value.id,
+    label: value[labelKey],
+  }));
+}
+
+export function toPlainObject(args: any) {
+  return JSON.parse(JSON.stringify(args));
+}
+
+import { TableData } from "@/components/table/table";
+import { getFiltersStateParser, getSortingStateParser } from "@/lib/parsers";
+import { FormField } from "@/resources/resources.types";
+import {
+  parseAsFloat,
+  createSearchParamsCache,
+  parseAsInteger,
+  parseAsStringEnum
+} from 'nuqs/server'
+ 
+export const searchParamsCache = createSearchParamsCache({
+  page: parseAsInteger.withDefault(1),
+  perPage: parseAsInteger.withDefault(10),
+  sort: getSortingStateParser<TableData>().withDefault([
+    { id: "createdAt", desc: true },
+  ]),
+  //from: parseAsString.withDefault(""),
+  //to: parseAsString.withDefault(""),
+  // advanced filter
+  filters: getFiltersStateParser().withDefault([]),
+  joinOperator: parseAsStringEnum(["and", "or"]).withDefault("and"),
+});
+
+export const groupArrayByKey = function (xs: any[], key: any) {
+  return xs.reduce(function (rv, x) {
+    (rv[x[key]] = rv[x[key]] || []).push(x);
+    return rv;
+  }, {});
+};

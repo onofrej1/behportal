@@ -52,7 +52,6 @@ export function DatePicker(props: DatePickerProps) {
           mode="single"
           selected={value}
           onSelect={(e) => {
-            console.log(e);
             field.onChange(e);
           }}
           //initialFocus
