@@ -4,7 +4,7 @@ import FileUploader from "@/components/form/file-uploader";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import Table from "@/components/table/table";
+//import Table from "@/components/table/table";
 import { hmsToSeconds, parseCsv } from "@/lib/utils";
 import { createResults } from "@/actions/results";
 import { Button } from "@/components/ui/button";
@@ -67,12 +67,12 @@ export default function Run() {
       Run {run.title} {run.distance} km Upload results
       {/*<FileUploader onChange={fileUpload} />*/}
 
-      {uploadData && uploadData.length > 0 && <Table
+      {/*uploadData && uploadData.length > 0 && <Table
         headers={headers}
         data={uploadData}
         totalRows={uploadData.length}
         onSort={sortData}
-      />}
+      />*/}
       <Button onClick={saveResults}>Save results</Button>
     </div>
   );

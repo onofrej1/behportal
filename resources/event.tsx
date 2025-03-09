@@ -1,4 +1,4 @@
-import { TableData } from '@/components/table/table';
+import { TableData } from "@/resources/resources.types";
 import { Button } from '@/components/ui/button';
 import { Resource } from '@/resources/resources.types';
 
@@ -57,8 +57,8 @@ const event: Resource = {
     { name: 'contact', type: 'text', label: 'Contact' },
     { name: 'location', type: 'text', label: 'Location' },
     { name: 'maxAttendees', type: 'number', label: 'Max attendees' },
-    { name: 'startDate', type: 'datepicker', label: 'Start date' },
-    { name: 'endDate', type: 'datepicker', label: 'End date' },    
+    { name: 'startDate', type: 'date-picker', label: 'Start date' },
+    { name: 'endDate', type: 'date-picker', label: 'End date' },    
     {
       name: 'venueId', 
       type: 'fk',

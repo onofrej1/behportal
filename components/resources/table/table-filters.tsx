@@ -1,7 +1,6 @@
 "use client";
 
-import { resources } from "@/resources";
-import { TableData } from "@/components/table/table";
+import { TableData } from "@/resources/resources.types";
 import {
   DataTableAdvancedFilterField,
   DataTableFilterField,

@@ -5,7 +5,7 @@ import * as React from "react";
 
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { resources } from "@/resources";
-import { TableData } from "@/components/table/table";
+import { TableData } from "@/resources/resources.types";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,

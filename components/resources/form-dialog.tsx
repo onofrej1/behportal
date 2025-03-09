@@ -52,7 +52,7 @@ export default function ResourceFormDialog(props: ResourceFormDialogProps) {
 
   const submit = async (data: Record<string, any>) => {
     const uploadData = new FormData();
-    for (const field of fields.filter((f) => f.type === "fileUpload")) {
+    for (const field of fields.filter((f) => f.type === "upload")) {
       const { file, previousFile, isDirty } = data[field.name];
       if (!isDirty) {
         delete data[field.name];

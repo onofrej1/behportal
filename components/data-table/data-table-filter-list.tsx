@@ -112,7 +112,7 @@ export function DataTableFilterList<TData>({
         id: filterField.id,
         value: "",
         type: filterField.type,
-        search: filterField.search,
+        search: filterField.search as string,
         operator: getDefaultFilterOperator(filterField.type),
         rowId: customAlphabet(
           "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",

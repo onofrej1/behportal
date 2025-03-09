@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { exportTableToCSV } from "@/lib/export";
 
 import { DeleteDialog } from "./delete-dialog";
-import { TableData } from "@/components/table/table";
+import { TableData } from "@/resources/resources.types";
 import { useResource } from "@/state";
 
 interface TasksTableToolbarActionsProps {

@@ -1,5 +1,5 @@
 import { getResults, getResultsByRunId } from "@/actions/results";
-import Table from "@/components/table/table";
+//import Table from "@/components/table/table";
 import React from "react";
 
 interface ResultsProps {
@@ -25,7 +25,7 @@ export default async function Results({ params }: ResultsProps) {
   return (
     <div>
       results
-      <Table data={results} headers={headers} totalRows={results.length} />
+      {/*<Table data={results} headers={headers} totalRows={results.length} />*/}
     </div>
   );
 }

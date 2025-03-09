@@ -1,4 +1,4 @@
-import { TableData } from "@/components/table/table";
+import { TableData } from "@/resources/resources.types";
 import { Resource } from "@/resources/resources.types";
 
 const post: Resource = {
@@ -37,7 +37,7 @@ const post: Resource = {
     { name: "status", type: "text", label: "Status" },
     {
       name: "cover",
-      type: "fileUpload",
+      type: "upload",
       label: "Cover" /*, uploadPath: 'posts'*/,
     },
     {

@@ -35,6 +35,8 @@ import { urlToFile } from "@/lib/utils";
 import { Form, FormField } from "@/components/ui/form";
 import PhoneInput from "@/components/form/phone-input";
 import { DateTimePicker } from "./datetime-picker";
+import Switch from "./switch";
+import FancySwitch from "./fancy-switch";
 
 export interface DefaultFormData {
   [key: string]: any;
@@ -103,7 +105,7 @@ export default function Form_({
         }
       }
     }
-    const uploadFields = fields.filter((f) => f.type === "fileUpload");
+    const uploadFields = fields.filter((f) => f.type === "upload");
     if (data && uploadFields) {
       setUploads(uploadFields);
     }
@@ -194,6 +196,35 @@ export default function Form_({
           </>
         )}
 
+        {type === "switch" && (
+          <>
+            <FormField
+              control={form.control}
+              name={formField.name}
+              render={({ field }) => (
+                <Switch field={field} label={label} className={className} />
+              )}
+            />
+          </>
+        )}
+
+        {type === "fancy-switch" && (
+          <>
+            <FormField
+              control={form.control}
+              name={formField.name}
+              render={({ field }) => (
+                <FancySwitch
+                  field={field}
+                  label={label}
+                  options={formField.options}
+                  className={className}
+                />
+              )}
+            />
+          </>
+        )}
+
         {type === "date-picker" && (
           <>
             <FormField
@@ -253,7 +284,7 @@ export default function Form_({
           />
         )}
 
-        {["fileUpload"].includes(type) && (
+        {["upload"].includes(type) && (
           <FormField
             control={form.control}
             name={formField.name}

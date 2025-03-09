@@ -1,5 +1,4 @@
-import { TableData } from "@/components/table/table";
-import { FormField } from "@/resources/resources.types";
+import { FormField, TableData } from "@/resources/resources.types";
 import { Filter } from "@/types/data-table";
 
 const sizeOf = require("image-size");

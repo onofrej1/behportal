@@ -1,4 +1,4 @@
-import { TableData } from '@/components/table/table';
+import { TableData } from "@/resources/resources.types";
 import { Resource } from '@/resources/resources.types';
 import { Event } from '@prisma/client';
 
@@ -24,14 +24,14 @@ const run: Resource = {
       relation: 'event',
       label: 'Event',
       resource: 'event',
-      textField: 'name'
+      fields: ['id', 'name']
     },
     {
       name: 'runCategories', 
       type: 'm2m',
       label: 'Categories',
       resource: 'runCategory',
-      textField: 'category'
+      fields: ['id', 'category']
     }  
   ],
   list: [

@@ -1,3 +1,4 @@
+import { OptionType } from "@/components/fancy-switch/types";
 import { FormRender } from "@/components/form/form";
 import { RepeaterRenderFunc } from "@/components/form/repeater";
 import { FormSchema } from "@/validation";
@@ -121,6 +122,15 @@ export interface CheckboxType extends BaseFormType {
   type: "checkbox";
 }
 
+export interface SwitchType extends BaseFormType {
+  type: "switch";
+}
+
+export interface FancySwitchType extends BaseFormType {
+  type: "fancy-switch";
+  options: OptionType[];
+}
+
 export interface PhoneInputType extends BaseFormType {
   type: "phone-input";
 }
@@ -166,7 +176,9 @@ type FormField =
   | MediaUploadType
   | RepeaterType
   | PhoneInputType
-  | DateTimePickerType;
+  | DateTimePickerType
+  | SwitchType
+  | FancySwitchType;
 
 type FilterField =
   | BooleanFilterType
@@ -193,24 +205,6 @@ type Resource = {
   canEditItem?: boolean;
 };
 
-/*type PrismaModel =
-  | "user"
-  | "post"
-  | "category"
-  | "task"
-  | "event"
-  | "attendee"
-  | "eventSchedule"
-  | "tag"
-  | "run"
-  | "runCategory"
-  | "venue"
-  | "organizer"
-  | "activity"
-  | "runResult"
-  | "registration"
-  | "project";*/
-
 type PrismaModel = any;
 
-export type { Resource, FormField, PrismaModel };
+export type { Resource, FormField };

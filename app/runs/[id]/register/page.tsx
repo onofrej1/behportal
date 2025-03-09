@@ -23,7 +23,7 @@ export default function Register() {
         { label: "Woman", value: "FEMALE" },
       ],
     },
-    { name: "dateOfBirth", type: "datepicker", label: "Date of birth" },
+    { name: "dateOfBirth", type: "date-picker", label: "Date of birth" },
     { name: "email", type: "text", label: 'Email' },
 
     { name: "nation", type: "text", label: 'Nation' },

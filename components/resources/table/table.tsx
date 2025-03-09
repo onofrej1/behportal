@@ -12,7 +12,6 @@ import { DataTableAdvancedToolbar } from "@/components/data-table/data-table-adv
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { useDataTable } from "@/hooks/use-data-table";
 import { getColumns } from "./table-columns";
-import { TableData } from "@/components/table/table";
 import { getAdvancedFilters, getFilters } from "./table-filters";
 import { useQueryClient } from "@tanstack/react-query";
 import { TableFloatingBar } from "./table-floating-bar";
@@ -20,6 +19,7 @@ import { TableToolbarActions } from "./table-toolbar-actions";
 import ResourceFormDialog from "../form-dialog";
 import { useFeatureFlags } from "@/app/(admin)/resource/[name]/_components/feature-flags-provider";
 import { useResource } from "@/state";
+import { TableData } from "@/resources/resources.types";
 
 interface TableProps {
   dataPromise: Promise<{ data: any; numPages: number }>;

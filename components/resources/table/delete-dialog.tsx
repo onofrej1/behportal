@@ -27,7 +27,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { TableData } from "@/components/table/table";
+import { TableData } from "@/resources/resources.types";
 import { useMutation } from "@tanstack/react-query";
 import { deleteResources } from "@/api";
 
