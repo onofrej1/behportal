@@ -62,7 +62,7 @@ const CreateOrEditEvent = z.object({
   color: z.string().min(1),
   location: z.string().optional(),
   venueId: z.coerce.number().nullable(),
-  organizerId: z.string().nullable(),
+  organizerId: z.coerce.number().nullable(),
   maxAttendees: z.coerce.number().nullable(),
   startDate: z.date(),
   endDate: z.date(),

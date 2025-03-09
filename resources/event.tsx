@@ -42,7 +42,7 @@ const event: Resource = {
     { name: "maxAttendees", type: "number", label: "Max attendees" },
     {
       type: "multi-select",
-      name: "venues",
+      name: "venue",
       label: "Venue",
       resource: "venues",
       fields: ["id", "location"],
@@ -73,7 +73,7 @@ const event: Resource = {
       relation: 'organizer',
       label: 'Organizer',
       resource: 'organizers',
-      fields: ['id', 'location'],
+      fields: ['id', 'name'],
     },    
   ],
   list: [

@@ -64,7 +64,7 @@ export default function ResourceFormDialog(props: ResourceFormDialogProps) {
       if (file) {
         uploadData.append(field.name, file, file.name);
         data[field.name] = file.name;
-      } else {
+      } else if(data[field.name]) {
         data[field.name] = null;
       }
     }
@@ -77,7 +77,7 @@ export default function ResourceFormDialog(props: ResourceFormDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-w-fit overflow-y-scroll max-h-screen">
         <DialogHeader>
           <DialogTitle>{id ? "Add new" : "Update"} item</DialogTitle>
         </DialogHeader>

@@ -231,7 +231,15 @@ export default function Form_({
               control={form.control}
               name={formField.name}
               render={({ field }) => (
-                <DatePicker label={label} field={field} className={className} />
+                <>
+                  <DateTimePicker
+                    granularity="day"
+                    label={label}
+                    field={field}
+                    className={className}
+                  />
+                  {/*<DatePicker label={label} field={field} className={className} />*/}
+                </>
               )}
             />
           </>
