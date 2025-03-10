@@ -7,7 +7,7 @@ import {
   UseFormUnregister,
 } from "react-hook-form";
 import { JSX, ReactElement } from "react";
-import { FormField } from "@/resources/resources.types";
+import { FormField } from "@/types/resources";
 import { Button } from "../ui/button";
 import { DefaultFormData } from "./form";
 import { FormItem, FormLabel } from "../ui/form";

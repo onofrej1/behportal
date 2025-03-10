@@ -1,6 +1,6 @@
 import { prisma } from "@/db/prisma";
 import { resources } from "@/resources";
-import { arrayToObj, getWhere, getOrderBy, setRelations } from "@/utils/server";
+import { getRelations, getWhereQuery, getOrderBy, setRelations } from "@/utils/resources";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -10,14 +10,14 @@ export async function GET(req: NextRequest) {
   );  
 
   const orderBy = getOrderBy(sort);
-  const where = getWhere(filters);
+  const where = getWhereQuery(filters);
 
   const data = await prisma.[MODEL].findMany({
     take: Number(take),
     skip: Number(skip),
     orderBy,
     where,
-    include: arrayToObj(include),
+    include: getRelations(include),
   });
 
   const count = await prisma.[MODEL].count({

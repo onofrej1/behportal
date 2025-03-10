@@ -1,25 +1,5 @@
-import { FormField, TableData } from "@/resources/resources.types";
+import { FormField, TableData } from "@/types/resources";
 import { Filter } from "@/types/data-table";
-
-const sizeOf = require("image-size");
-
-export function getImageOrientation(imagePath: string) {
-  const dir = process.cwd() + "/public";
-  try {
-    const dimensions = sizeOf(dir + imagePath);
-    const { width, height } = dimensions;
-    if (width > height) {
-      return "HORIZONTAL";
-    } else if (height > width) {
-      return "VERTICAL";
-    } else {
-      return "SQUARE";
-    }
-  } catch (err) {
-    console.error("Error reading image dimensions:", err);
-    return "SQUARE";
-  }
-}
 
 export function getOrderBy(input: string) {
   if (!input) {
@@ -30,13 +10,13 @@ export function getOrderBy(input: string) {
   return sort.map((value) => ({ [value.id]: value.desc ? "desc" : "asc" }));
 }
 
-export function getWhere(input: string) {
+export function getWhereQuery(input: string) {
   if (!input) {
     return {};
   }
   const filters: Filter<TableData>[] = JSON.parse(input);
-
   const where: Record<string, any> = {};
+
   filters.forEach((filter) => {
     let value = filter.value;
     const operator = filter.operator;
@@ -187,23 +167,61 @@ export function getWhere(input: string) {
   return where;
 }
 
-export function arrayToObj(arr: string) {
-  if (!arr) {
+export function getRelations(query?: string | string[]) {
+  if (!query) {
     return {};
   }
-  return arr.split(",").reduce((acc, model) => {
-    acc[model] = true;
-    return acc;
-  }, {} as Record<string, true>);
+  if (typeof query === "string") {
+    return reduceQuery(query.split(","));
+  }
+  return reduceQuery(query);
+}
+
+export function reduceQuery(query: string[]) {
+  return query.reduce((result, model) => {
+    result[model] = true;
+    return result;
+  }, {} as Record<string, boolean>);
+}
+
+function getConnectValues(
+  oldValues: { id: string }[] = [],
+  newValues: { id: string }[]
+) {
+  if (newValues.length === 0) {
+    return { set: [] };
+  }
+
+  const oldIds = new Set(oldValues.map((item) => item.id));
+  const newIds = new Set(newValues.map((item) => item.id));
+
+  const connect = Array.from(newIds)
+    .filter((id) => !oldIds.has(id))
+    .map((id) => ({ id }));
+
+  const disconnect = Array.from(oldIds)
+    .filter((id) => !newIds.has(id))
+    .map((id) => ({ id }));
+
+  if (oldValues.length === 0) {
+    return {
+      connect,
+    };
+  }
+
+  return {
+    connect,
+    disconnect,
+  };
 }
 
 export function setRelations(
   data: Record<string, any>,
   fields: FormField[],
-  isUpdate: boolean = false
+  entity?: Record<string, any>
 ) {
   for (const field of fields) {
-    if (field.type === "fk") {
+    if (field.type === "foreignKey") {
       if (data[field.name]) {
         data[field.relation!] = { connect: { id: data[field.name] } };
       } else {
@@ -212,14 +230,15 @@ export function setRelations(
       delete data[field.name!];
     }
 
-    if (field.type === "m2m") {
+    if (field.type === "manyToMany") {
       const values = data[field.name]
         .filter(Boolean)
         .map((value: number) => ({ id: value }));
+
       if (values && values.length > 0) {
-        data[field.name] = { connect: values };
+        data[field.name] = getConnectValues(entity?.[field.name], values);
       } else {
-        isUpdate ? (data[field.name] = { set: [] }) : delete data[field.name];
+        entity?.id ? (data[field.name] = { set: [] }) : delete data[field.name];
       }
     }
   }

@@ -2,7 +2,7 @@
 import { ResetPassword } from "@/actions/auth";
 import Form from "@/components/form/form";
 import { Button } from "@/components/ui/button";
-import { FormField } from "@/resources/resources.types";
+import { FormField } from "@/types/resources";
 import { useSearchParams } from "next/navigation";
 import React from "react";
 

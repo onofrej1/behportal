@@ -3,6 +3,15 @@ import { FormRender } from "@/components/form/form";
 import { RepeaterRenderFunc } from "@/components/form/repeater";
 import { FormSchema } from "@/validation";
 import { JSX } from "react";
+import { Option } from "@/components/multiple-selector";
+
+interface BaseFormType {
+  name: string;
+  label?: string;
+  placeholder?: string;
+  className?: string;
+  onChange?: any;
+}
 
 export interface SelectOption {
   label: string;
@@ -15,19 +24,11 @@ export interface MultiSelectOption {
   icon?: any;
 }
 
-interface BaseFormType {
-  name: string;
-  label?: string;
-  placeholder?: string;
-  className?: string;
-  onChange?: any;
-}
-
 export interface TableData {
   [key: string]: any;
 }
 
-export interface TableHeader {
+interface TableHeader {
   name: string;
   header: string;
   enableSort?: boolean;
@@ -63,55 +64,26 @@ export interface SelectType extends BaseFormType {
   options?: SelectOption[] | MultiSelectOption[];
 }
 
-export interface MultiSelectFilterType extends BaseFormType {
-  type: "multi-select";
-  fields: string[];
-  search: string;
-  resource: string;
-  renderOption?: any;
-  options?: { label: string; value: string }[];
-}
-
-export interface TextFilterType extends BaseFormType {
-  type: "text";
-}
-
-export interface NumberFilterType extends BaseFormType {
-  type: "number";
-}
-
-export interface DateFilterType extends BaseFormType {
-  type: "date";
-}
-
-export interface BooleanFilterType extends BaseFormType {
-  type: "boolean";
-}
-
-export interface SelectFilterType extends BaseFormType {
-  type: "select";
-  fields: string[];
-  search: string;
-  resource: string;
-  renderOption?: any;
-  options?: { label: string; value: string }[];
-}
-
 export interface ForeignKeyType extends BaseFormType {
-  type: "fk";
+  type: "foreignKey";
   resource: PrismaModel;
   relation: string;
-  fields: string[];
-  renderLabel?: any;
+  renderLabel: (data: Record<string, any>) => string | JSX.Element;
   options?: SelectOption[] | MultiSelectOption[];
 }
 
 export interface MultiSelectType extends BaseFormType {
-  type: "m2m";
+  type: "m2m-notused";
   options?: SelectOption[] | MultiSelectOption[];
   resource: PrismaModel;
-  renderLabel?: any;
-  fields: string[];
+  renderLabel: (data: Record<string, any>) => string | JSX.Element;
+}
+
+export interface MultipleSelectorType extends BaseFormType {
+  type: "manyToMany";
+  options?: Option[];
+  resource: PrismaModel;
+  renderLabel: (data: Record<string, any>) => string | JSX.Element;
 }
 
 export interface DatePickerType extends BaseFormType {
@@ -147,14 +119,14 @@ export interface UploadType extends BaseFormType {
   onFileSelect?: (data: { file: File; thumbNail?: string }) => void;
 }
 
-export interface MediaUploadType extends BaseFormType {
+/*export interface MediaUploadType extends BaseFormType {
   type: "media-upload";
   allowedTypes?: string[];
   maxSize?: number;
   maxFiles?: number;
   uploadText?: string;
   onFileSelect?: (data: { file: File; thumbNail?: string }) => void;
-}
+}*/
 
 export interface RepeaterType extends BaseFormType {
   type: "repeater";
@@ -173,12 +145,46 @@ type FormField =
   | MultiSelectType
   | RichtextType
   | UploadType
-  | MediaUploadType
   | RepeaterType
   | PhoneInputType
   | DateTimePickerType
   | SwitchType
-  | FancySwitchType;
+  | FancySwitchType
+  | MultipleSelectorType;
+
+interface TextFilterType extends BaseFormType {
+  type: "text";
+}
+
+interface NumberFilterType extends BaseFormType {
+  type: "number";
+}
+
+interface DateFilterType extends BaseFormType {
+  type: "date";
+}
+
+interface BooleanFilterType extends BaseFormType {
+  type: "boolean";
+}
+
+export interface SelectFilterType extends BaseFormType {
+  type: "select";
+  fields: string[];
+  search: string;
+  resource: string;
+  renderOption?: any;
+  options?: { label: string; value: string }[];
+}
+
+export interface MultiSelectFilterType extends BaseFormType {
+  type: "multi-select";
+  fields: string[];
+  search: string;
+  resource: string;
+  renderOption?: any;
+  options?: { label: string; value: string }[];
+}
 
 type FilterField =
   | BooleanFilterType
@@ -200,11 +206,11 @@ type Resource = {
   form: FormField[];
   renderForm?: FormRender;
   list: TableHeader[];
-  filter: FilterField[]; // FormField[];
+  filter: FilterField[];
   canAddItem?: boolean;
   canEditItem?: boolean;
 };
 
-type PrismaModel = any;
+type PrismaModel = any; // TODO
 
 export type { Resource, FormField };

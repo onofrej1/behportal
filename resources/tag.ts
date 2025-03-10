@@ -1,4 +1,4 @@
-import { Resource } from '@/resources/resources.types';
+import { Resource } from '@/types/resources';
 
 const tag: Resource = {
     name: 'Tag',
@@ -8,7 +8,7 @@ const tag: Resource = {
     group: 'Blog',
     filter: [],
     menuIcon: '',
-    rules: 'CreateOrEditTag',    
+    rules: 'CreateTag',    
     form: [
         { name: 'title', type: 'text', label: 'Title' },
     ],

@@ -1,11 +1,29 @@
 import { prisma } from "@/db/prisma";
-import { getImageOrientation } from "@/utils/server";
 import { faker } from "@faker-js/faker";
 import { Media } from "@prisma/client";
 import { NextResponse } from "next/server";
+const sizeOf = require("image-size");
 
 function random(list: any[]) {
   return list[Math.floor(Math.random() * list.length)];
+}
+
+function getImageOrientation(imagePath: string) {
+  const dir = process.cwd() + "/public";
+  try {
+    const dimensions = sizeOf(dir + imagePath);
+    const { width, height } = dimensions;
+    if (width > height) {
+      return "HORIZONTAL";
+    } else if (height > width) {
+      return "VERTICAL";
+    } else {
+      return "SQUARE";
+    }
+  } catch (err) {
+    console.error("Error reading image dimensions:", err);
+    return "SQUARE";
+  }
 }
 
 export async function GET() {
@@ -15,7 +33,7 @@ export async function GET() {
 
   for (const [i] of Array.from({ length: 80 }).entries()) {
     const fileName = "photo-" + i + ".jpeg";
-    const path = "/photos_new/"+fileName;
+    const path = "/photos_new/" + fileName;
 
     media.push({
       name: faker.lorem.words({ min: 1, max: 2 }).replace(" ", "_"),

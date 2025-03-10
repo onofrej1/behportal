@@ -1,6 +1,5 @@
-import { TableData } from "@/resources/resources.types";
-import { Resource } from '@/resources/resources.types';
-import { Event } from '@prisma/client';
+import { TableData } from "@/types/resources";
+import { Resource } from '@/types/resources';
 
 const run: Resource = {
   name: 'Run',
@@ -8,7 +7,7 @@ const run: Resource = {
   model: 'run',
   resource: 'runs',
   relations: ['event'],
-  rules: 'CreateOrEditRun',
+  rules: 'CreateRun',
   menuIcon: '',
   group: 'Manage runs',
   filter: [],
@@ -20,18 +19,18 @@ const run: Resource = {
     { name: 'surface', type: 'text', label: 'Surface' },
     {
       name: 'eventId', 
-      type: 'fk',
+      type: 'foreignKey',
       relation: 'event',
       label: 'Event',
       resource: 'event',
-      fields: ['id', 'name']
+      renderLabel: (row) => row.name,
     },
     {
       name: 'runCategories', 
-      type: 'm2m',
+      type: 'manyToMany',
       label: 'Categories',
       resource: 'runCategory',
-      fields: ['id', 'category']
+      renderLabel: (row) => row.category,
     }  
   ],
   list: [

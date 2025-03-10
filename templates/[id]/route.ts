@@ -1,6 +1,6 @@
 import { prisma } from "@/db/prisma";
 import { resources } from "@/resources";
-import { arrayToObj, setRelations } from "@/utils/server";
+import { getRelations, setRelations } from "@/utils/resources";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -14,7 +14,7 @@ export async function GET(
 
   const data = await prisma.[MODEL].findFirst({
     where: { id: Number(id) },
-    include: arrayToObj(include),
+    include: getRelations(include),
   });
 
   return NextResponse.json(data);
@@ -29,7 +29,12 @@ export async function PATCH(
 
   const resource = resources.find((r) => r.model === "[MODEL]");
 
-  setRelations(data, resource!.form, true);
+  const model = await prisma.[MODEL].findFirst({
+    where: { id: Number(id) },
+    include: getRelations(resource!.relations),
+  });
+
+  setRelations(data, resource!.form, model as Record<string, any>);
   
   await prisma.[MODEL].update({ data, where: { id: Number(id) } });
 

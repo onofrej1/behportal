@@ -19,7 +19,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ControllerRenderProps } from "react-hook-form";
-import { MultiSelectOption } from "@/resources/resources.types";
+import { MultiSelectOption } from "@/types/resources";
 import { FormControl, FormItem, FormLabel, FormMessage } from "../ui/form";
 
 interface MultiSelectProps {

@@ -1,15 +1,12 @@
 "use client";
 
-import { TableData } from "@/resources/resources.types";
+import { TableData } from "@/types/resources";
 import {
   DataTableAdvancedFilterField,
   DataTableFilterField,
 } from "@/types/data-table";
 import { QueryClient } from "@tanstack/react-query";
-import {
-  MultiSelectFilterType,
-  SelectFilterType,
-} from "@/resources/resources.types";
+import { MultiSelectFilterType, SelectFilterType } from "@/types/resources";
 import { getOptions } from "@/api";
 import { useResource } from "@/state";
 
@@ -36,8 +33,7 @@ export async function getFilters(
     if (filter.type === "multi-select") {
       const optionsData = await queryClient.fetchQuery({
         queryKey: ["getOptions", filter.resource],
-        queryFn: () =>
-          getOptions({ resource: filter.resource!, fields: filter.fields! }),
+        queryFn: () => getOptions(filter.resource!),
       });
       const options = optionsData.map((o: any) => ({
         label: getOption(filter!, o),
@@ -66,8 +62,7 @@ export async function getAdvancedFilters(
     if (filter.type === "multi-select" || filter.type === "select") {
       const optionsData = await queryClient.fetchQuery({
         queryKey: ["getOptions", filter.resource],
-        queryFn: () =>
-          getOptions({ resource: filter.resource!, fields: filter.fields! }),
+        queryFn: () => getOptions(filter.resource!),
       });
 
       const options = optionsData.map((o: any) => ({

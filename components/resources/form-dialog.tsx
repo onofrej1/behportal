@@ -27,7 +27,7 @@ export default function ResourceFormDialog(props: ResourceFormDialogProps) {
     resource: { resource, relations, form, rules, renderForm },
   } = useResource();
 
-  const { isFetching, data } = useQuery({
+  const { data } = useQuery({
     queryKey: ["getResource", resource, id],
     queryFn: () =>
       getResource({
@@ -43,17 +43,18 @@ export default function ResourceFormDialog(props: ResourceFormDialogProps) {
     onSuccess: () => {
       onOpenChange?.(false);
       queryClient.invalidateQueries({
-        queryKey: ['getResourceData', resource]
-      })
+        queryKey: ["getResourceData", resource],
+      });
     },
   });
 
-  const fields = useFormFields(form, !!id);
+  const { fields } = useFormFields(form, !!id);
 
   const submit = async (data: Record<string, any>) => {
     const uploadData = new FormData();
     for (const field of fields.filter((f) => f.type === "upload")) {
       const { file, previousFile, isDirty } = data[field.name];
+      console.log('is dirty', isDirty);
       if (!isDirty) {
         delete data[field.name];
         continue;
@@ -64,7 +65,7 @@ export default function ResourceFormDialog(props: ResourceFormDialogProps) {
       if (file) {
         uploadData.append(field.name, file, file.name);
         data[field.name] = file.name;
-      } else if(data[field.name]) {
+      } else if (data[field.name]) {
         data[field.name] = null;
       }
     }
@@ -81,17 +82,13 @@ export default function ResourceFormDialog(props: ResourceFormDialogProps) {
         <DialogHeader>
           <DialogTitle>{id ? "Add new" : "Update"} item</DialogTitle>
         </DialogHeader>
-        {isFetching ? (
-          "Loading..."
-        ) : (
-          <Form
-            fields={fields}
-            validation={rules}
-            data={data}
-            render={renderForm}
-            action={submit}
-          />
-        )}
+        <Form
+          fields={fields}
+          validation={rules}
+          data={data}
+          render={renderForm}
+          action={submit}
+        />
       </DialogContent>
     </Dialog>
   );

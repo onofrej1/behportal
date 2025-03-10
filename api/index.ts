@@ -99,16 +99,8 @@ export const getResourceData = (props: GetResourceDataProps) => {
   });
 };
 
-type GetOptionsProps = {
-  resource: string;
-  fields: string[];
-};
-
-export const getOptions = (props: GetOptionsProps) => {
-  const query = `?select=${props.fields.join(",")}`;
-
-  return request({
-    url: `/resources/${props.resource}/options${query}`,
+export const getOptions = (resource: string) =>
+  request({
+    url: `/resources/${resource}/options`,
     method: "GET",
   });
-};

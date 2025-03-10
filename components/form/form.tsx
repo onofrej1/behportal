@@ -10,25 +10,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { JSX, useEffect } from "react";
 import {
   FormField as FormField_,
-  MultiSelectOption,
-  MultiSelectType,
+  MultipleSelectorType,
   RepeaterType,
   SelectType,
   TextAreaType,
-} from "@/resources/resources.types";
+} from "@/types/resources";
 import { FormSchema } from "@/validation";
 import rules from "@/validation";
 import FormInput from "@/components/form/input";
 import FormSelect from "@/components/form/select";
-import { MultiSelect } from "@/components/form/multi-select";
 import FormCheckbox from "@/components/form/checkbox";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { DatePicker } from "./date-picker";
 import { Button } from "../ui/button";
 import Textarea from "./textarea";
 import RichEditor from "./richeditor";
-import { z } from "zod";
 import FileUploader from "./file-uploader";
 import RepeaterInput from "./repeater";
 import { urlToFile } from "@/lib/utils";
@@ -37,6 +33,7 @@ import PhoneInput from "@/components/form/phone-input";
 import { DateTimePicker } from "./datetime-picker";
 import Switch from "./switch";
 import FancySwitch from "./fancy-switch";
+import { MultipleSelector } from "./multiple-selector";
 
 export interface DefaultFormData {
   [key: string]: any;
@@ -90,6 +87,20 @@ export default function Form_({
   });
 
   useEffect(() => {
+    if (data) {
+      const m2mFields = fields.filter((f) => f.type === "manyToMany");
+      for (const field of m2mFields) {
+        const selectValue = data[field.name].map((value: { id: string }) => {
+          const option = field.options?.find((o) => o.value === value.id);
+          return { label: option?.label, value: value.id };
+        });
+        data![field.name] = selectValue;
+      }
+      form.reset(data);
+    }
+  }, [data]);
+
+  useEffect(() => {
     async function setUploads(uploadFields: FormField_[]) {
       for (const field of uploadFields) {
         const value = data![field.name];
@@ -117,7 +128,7 @@ export default function Form_({
     console.log("errors", errors);
   }
 
-  const submitForm = async (data: any, e: any) => {
+  const submitForm = async (data: unknown) => {
     if (!action) return;
 
     try {
@@ -245,7 +256,7 @@ export default function Form_({
           </>
         )}
 
-        {["select", "fk"].includes(type) && (
+        {["select", "foreignKey"].includes(type) && (
           <FormField
             control={form.control}
             name={formField.name}
@@ -260,25 +271,20 @@ export default function Form_({
           />
         )}
 
-        {["m2m"].includes(type) && (
+        {["manyToMany"].includes(type) && (
           <FormField
             control={form.control}
             name={formField.name}
             render={({ field }) => {
-              const value = field.value;
-              field.value =
-                value && value.length > 0
-                  ? value.map((v: any) => (v.id ? v.id : v))
-                  : [];
               return (
-                <MultiSelect
-                  field={field}
-                  label={label}
-                  options={
-                    (formField as MultiSelectType)
-                      .options! as MultiSelectOption[]
-                  }
-                />
+                <>
+                  <MultipleSelector
+                    field={field}
+                    label={label}
+                    className={className}
+                    options={(formField as MultipleSelectorType).options!}
+                  />
+                </>
               );
             }}
           />
@@ -321,6 +327,7 @@ export default function Form_({
             name={formField.name}
             render={({ field }) => (
               <DateTimePicker
+                granularity="second"
                 label={label}
                 field={field}
                 className={className}

@@ -1,12 +1,13 @@
-import { TableData } from "@/resources/resources.types";
-import { Resource } from "@/resources/resources.types";
+import { TableData } from "@/types/resources";
+import { Resource } from "@/types/resources";
+import { User } from "@prisma/client";
 
 const post: Resource = {
   name: "Post",
   name_plural: "Posts",
   model: "post",
   resource: "posts",
-  rules: "CreateOrEditPost",
+  rules: "CreatePost",
   group: "Blog",
   menuIcon: "",
   relations: ["author", "categories", "tags"],
@@ -28,7 +29,7 @@ const post: Resource = {
       type: "multi-select",
       fields: ["id", "firstName", "lastName"],
       label: "Author",
-      renderOption: (row: any) => `${row.lastName} ${row.firstName}`,
+      renderOption: (row: User) => `${row.lastName} ${row.firstName}`,
     },
   ],
   form: [
@@ -38,30 +39,29 @@ const post: Resource = {
     {
       name: "cover",
       type: "upload",
-      label: "Cover" /*, uploadPath: 'posts'*/,
+      label: "Cover" /*, path: 'posts'*/,
     },
     {
       name: "authorId",
-      type: "fk",
+      type: "foreignKey",
       relation: "author",
       label: "Author",
       resource: "users",
-      fields: ["id", "firstName", "lastName"],
-      renderLabel: (row: any) => `${row.lastName} ${row.firstName}`,
+      renderLabel: (row) => `${row.lastName} ${row.firstName}`,
     },
     {
       name: "categories",
-      type: "m2m",
+      type: "manyToMany",
       label: "Categories",
       resource: "categories",
-      fields: ["id", "title"],
+      renderLabel: (row) => row.title,
     },
     {
       name: "tags",
-      type: "m2m",
+      type: "manyToMany",
       label: "Tags",
       resource: "tags",
-      fields: ["id", "title"],
+      renderLabel: (row) => row.title,
     },
   ],
   list: [
@@ -86,10 +86,6 @@ const post: Resource = {
         <span>{row.categories?.map((c: any) => c.id).join(",")}</span>
       ),
     },
-    /*{ 
-      name: 'content', 
-      header: 'Content', 
-    },*/
   ],
 };
 export { post };

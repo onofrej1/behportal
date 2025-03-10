@@ -1,4 +1,4 @@
-import { Resource } from '@/resources/resources.types';
+import { Resource } from '@/types/resources';
 
 const category: Resource = {
     name: 'Category',
@@ -8,7 +8,7 @@ const category: Resource = {
     group: 'Blog',
     filter: [],
     menuIcon: '',
-    rules: 'CreateOrEditCategory',    
+    rules: 'CreateCategory',    
     form: [
         { name: 'title', type: 'text', label: 'Title' },
     ],

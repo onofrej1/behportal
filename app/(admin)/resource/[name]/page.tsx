@@ -17,6 +17,9 @@ export default function Resource() {
   const {
     resource: { resource, relations, filter },
   } = useResource();
+  if (!resource) {
+    return;
+  }
 
   const { page, pageCount, sort = '', filters } = Object.fromEntries(
     searchParams.entries()
@@ -33,14 +36,9 @@ export default function Resource() {
         search: field.type === 'multi-select' ? field.search : field.name,
         operator: 'eq'
       });
-      /*if (field.type === "text") {
-        where[field.name] = `contains__${value}`;
-      } else if (field.type === "multi-select") {
-        where[field.search!] = `in__${value}`;
-      }*/
     }
   });
-  console.log('where', baseFilters);
+
   const skip = (Number(page) || 1) - 1;
   const take = Number(pageCount) || 10;
 

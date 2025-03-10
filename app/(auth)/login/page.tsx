@@ -3,7 +3,7 @@ import Form from "@/components/form/form";
 import { Button } from "@/components/ui/button";
 import { login } from "@/actions/auth";
 import { redirect } from "next/navigation";
-import { FormField } from "@/resources/resources.types";
+import { FormField } from "@/types/resources";
 
 export default function LoginPage() {
   //const { data: session, status } = useSession();

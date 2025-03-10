@@ -1,14 +1,8 @@
 import { z } from "zod";
 
-/*const UpdateUserProfile = z.object({
-  id: z.string().optional(),
-  name: z.string().trim().min(4),
-  email: z.string().min(1)
-});*/
-
 const RegisterUser = z.object({
-  firstName: z.string().trim().min(4),
-  lastName: z.string().trim().min(4),
+  firstName: z.string().trim().min(1),
+  lastName: z.string().trim().min(1),
   email: z.string().email(),
   password: z.string().min(1),
 });
@@ -18,31 +12,42 @@ const LoginUser = z.object({
   password: z.string().min(2),
 });
 
-const CreateOrEditCategory = z.object({
+const CreateCategory = z.object({
   id: z.number().optional(),
   title: z.string().trim().min(1),
 });
 
-const CreateOrEditTag = z.object({
+const CreateTag = z.object({
   id: z.number().optional(),
-  title: z.string().trim().min(4),
+  title: z.string().trim().min(1),
 });
 
-const CreateOrEditPost = z.object({
+const CreatePost = z.object({
   id: z.number().optional(),
-  title: z.string().trim().min(4),
+  title: z.string().trim().min(1),
   status: z.string().min(1),
   content: z.string().min(1),
-  authorId: z.string().min(1, "Author field is required"),
-  categories: z.array(z.coerce.number()).optional().default([]),
-  tags: z.array(z.coerce.number()).optional().default([]),
+  authorId: z.string().min(1),
+  categories: z
+    .array(z.object({ value: z.number(), label: z.string() }))
+    .transform((arr) => {
+      return arr.map((v) => v.value);
+    })
+    .optional()
+    .default([]),
+  tags: z
+    .array(z.object({ value: z.number(), label: z.string() }))
+    .transform((arr) => {
+      return arr.map((v) => v.value);
+    })
+    .optional()
+    .default([]),
   cover: z.any().optional().nullable(),
-  //.transform((val) => val ? val : []),
 });
 
-const CreateEvent = z.object({
+const CreateEvent_ = z.object({
   id: z.number().optional(),
-  name: z.string().trim().min(4),
+  name: z.string().trim().min(1),
   description: z.string().min(1),
   status: z.string().min(1),
   color: z.string().min(1).optional(),
@@ -54,9 +59,9 @@ const CreateEvent = z.object({
   endDate: z.date(),
 });
 
-const CreateOrEditEvent = z.object({
+const CreateEvent = z.object({
   id: z.number().optional(),
-  name: z.string().trim().min(4),
+  name: z.string().trim().min(1),
   description: z.string().min(1),
   status: z.string().min(1),
   color: z.string().min(1),
@@ -68,9 +73,9 @@ const CreateOrEditEvent = z.object({
   endDate: z.date(),
 });
 
-const CreateOrEditRun = z.object({
+const CreateRun = z.object({
   id: z.number().optional(),
-  title: z.string().trim().min(4),
+  title: z.string().trim().min(1),
   distance: z.coerce.number(),
   price: z.coerce.number(),
   elevation: z.coerce.number(),
@@ -108,26 +113,26 @@ const CreateRunResult = z.array(
   })
 );
 
-const CreateOrEditRunCategory = z.object({
+const CreateRunCategory = z.object({
   id: z.number().optional(),
   category: z.string().trim().min(1),
-  title: z.string().trim().min(4),
+  title: z.string().trim().min(1),
 });
 
-const CreateOrEditVenue = z.object({
+const CreateVenue = z.object({
   id: z.number().optional(),
   location: z.string().trim().min(1),
 });
 
-const CreateOrEditOrganizer = z.object({
+const CreateOrganizer = z.object({
   id: z.number().optional(),
-  name: z.string().trim().min(4),
+  name: z.string().trim().min(1),
 });
 
 const ContactForm = z.object({
   name: z.string().trim().min(1),
   email: z.string().email(),
-  message: z.string().trim().min(4),
+  message: z.string().trim().min(1),
   myfiles: z.array(z.any()),
 });
 
@@ -140,51 +145,41 @@ const ChangePassword = z.object({
   confirmPassword: z.string().min(3),
 });
 
-const CreatePost = z.object({
-  content: z.string().min(3),
-});
-
 export type FormSchema =
   | "LoginUser"
   | "RegisterUser"
-  | "CreateOrEditPost"
-  | "CreateOrEditCategory"
-  | "CreateOrEditTag"
-  | "CreateOrEditEvent"
-  | "CreateOrEditRun"
-  | "CreateOrEditRunCategory"
-  | "CreateOrEditVenue"
-  | "CreateOrEditOrganizer"
+  | "CreatePost"
+  | "CreateCategory"
+  | "CreateTag"
+  | "CreateEvent"
+  | "CreateRun"
+  | "CreateRunCategory"
+  | "CreateVenue"
+  | "CreateOrganizer"
   | "FilterResource"
   | "CreateRegistration"
   | "CreateRunResult"
   | "ContactForm"
   | "ResetPasswordRequest"
   | "ChangePassword"
-  | "ResetPassword"
-  | "CreateEvent"
-  | "CreatePost";
+  | "ResetPassword";
 
 const rules = {
   RegisterUser,
   LoginUser,
   ChangePassword,
-  CreateOrEditPost,
-  CreateOrEditCategory,
-  CreateOrEditEvent,
-  CreateOrEditTag,
+  CreatePost,
+  CreateCategory,
   CreateEvent,
-  CreateOrEditRun,
-  CreateOrEditRunCategory,
-  CreateOrEditVenue,
-  CreateOrEditOrganizer,
+  CreateTag,
+  CreateRun,
+  CreateRunCategory,
+  CreateVenue,
+  CreateOrganizer,
   CreateRegistration,
   CreateRunResult,
   ResetPasswordRequest,
   ContactForm,
-  //UpdateUserProfile,
-  FilterResource: z.any(),
-  CreatePost,
 };
 
 export default rules;

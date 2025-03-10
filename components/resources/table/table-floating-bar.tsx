@@ -19,7 +19,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { TableData } from "@/resources/resources.types";
+import { TableData } from "@/types/resources";
 import { exportTableToCSV } from "@/lib/export";
 import { deleteResources } from "@/api";
 import { useMutation } from "@tanstack/react-query";

@@ -1,16 +1,16 @@
-import { TableData } from "@/resources/resources.types";
+import { TableData } from "@/types/resources";
 import { Button } from '@/components/ui/button';
-import { Resource } from '@/resources/resources.types';
+import { Resource } from '@/types/resources';
 
 const event: Resource = {
   name: 'Event',
   name_plural: 'Events',
   model: 'event',
   resource: 'events',
-  rules: 'CreateOrEditEvent',
+  rules: 'CreateEvent',
   group: 'Events',
   menuIcon: '',
-  renderForm: ({ fields, formState }) => {
+  renderForm: ({ fields }) => {
     return (
       <div className='flex flex-col gap-4'>
         {fields.name}
@@ -61,26 +61,24 @@ const event: Resource = {
     { name: 'endDate', type: 'date-picker', label: 'End date' },    
     {
       name: 'venueId', 
-      type: 'fk',
+      type: 'foreignKey',
       relation: 'venue',
       label: 'Venue',
       resource: 'venues',
-      fields: ['id', 'location'],
+      renderLabel: (row) => row.location,
     },
     {
       name: 'organizerId', 
-      type: 'fk',
+      type: 'foreignKey',
       relation: 'organizer',
       label: 'Organizer',
       resource: 'organizers',
-      fields: ['id', 'name'],
+      renderLabel: (row) => row.name,
     },    
   ],
   list: [
     { name: 'id', header: 'Id'},
     { name: 'name', header: 'Name' },
-    { name: 'maxAttendees', header: 'Max attendees' },
-    //{ name: 'description', header: 'Description' },
     { name: 'startDate', header: 'Start date', render: (row: TableData) => <span>{new Date(row.startDate).toLocaleDateString()}</span> },
     { name: 'endDate', header: 'End date', render: (row: TableData) => <span>{new Date(row.endDate).toLocaleDateString()}</span> },
     { name: 'status', header: 'Status', render: (row: TableData) => <span>{row.status}</span> },

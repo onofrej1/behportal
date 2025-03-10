@@ -222,3 +222,28 @@ export async function navigate(path: string) {
   return redirect(path);
 }
 
+/*const value = field.value.map((v: any) => {
+                return options.find((o) => o.value === (v.id ? v.id : v.value));
+              });
+              field.value = value;*/
+              /*field.value =
+                value && value.length > 0
+                  ? value.map((v: any) => (v.value ? v.value : v))
+                  : [];*/
+                  
+                  {/*<MultiSelect
+                  field={field}
+                  label={label}
+                  options={
+                    (formField as MultiSelectType)
+                      .options! as MultiSelectOption[]
+                  }
+                />*/}
+
+export interface TableHeader {
+  name: string;
+  header: string;
+  enableSort?: boolean;
+  enableHide?: boolean;
+  render?: (data: TableData) => JSX.Element;
+}

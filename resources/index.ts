@@ -1,4 +1,4 @@
-import { Resource } from "@/resources/resources.types";
+import { Resource } from "@/types/resources";
 import { post } from "@/resources/post";
 import { category } from "@/resources/category";
 import { event } from "@/resources/event";

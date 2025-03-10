@@ -1,4 +1,4 @@
-import { Resource } from "@/resources/resources.types";
+import { Resource } from "@/types/resources";
 import { create } from "zustand";
 
 interface ResourceProps {
