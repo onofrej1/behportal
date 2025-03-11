@@ -1,32 +1,14 @@
-/*'use client'
+import { Suspense } from "react";
+//import CalendarDemo from "./_components/calendar";
+import { getEvents } from "@/actions/events";
+import BigCalendar from "./_components/big-calendar";
 
-import { useState } from 'react'
-import Calendar from './calendar/calendar'
-import { CalendarEvent, Mode } from './calendar/calendar-types'
-import { generateMockEvents } from '@/lib/mock-calendar-events'
-
-export default function CalendarDemo() {
-  const [events, setEvents] = useState<CalendarEvent[]>(generateMockEvents())
-  const [mode, setMode] = useState<Mode>('month')
-  const [date, setDate] = useState<Date>(new Date())
-
-  return (
-    <Calendar
-      events={events}
-      setEvents={setEvents}
-      mode={mode}
-      setMode={setMode}
-      date={date}
-      setDate={setDate}
-    />
-  )
-}*/
-
-
-export default function Home() {
+export default function Test() {
   return (
     <div>
-      Home
+      <Suspense fallback={<div>Loading...</div>}>
+        <BigCalendar promise={getEvents()} />
+      </Suspense>
     </div>
   );
 }
