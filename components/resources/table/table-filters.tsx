@@ -1,30 +1,19 @@
 "use client";
 
-import { TableData } from "@/types/resources";
+import { FilterField, TableData } from "@/types/resources";
 import {
   DataTableAdvancedFilterField,
   DataTableFilterField,
 } from "@/types/data-table";
 import { QueryClient } from "@tanstack/react-query";
-import { MultiSelectFilterType, SelectFilterType } from "@/types/resources";
 import { getOptions } from "@/api";
-import { useResource } from "@/state";
-
-const getOption = (
-  field: SelectFilterType | MultiSelectFilterType,
-  row: Record<string, any>
-) => {
-  const titleField = field.fields.find((f) => f !== "id");
-  return field.renderOption ? field.renderOption(row) : row[titleField!];
-};
 
 export async function getFilters(
-  queryClient: QueryClient
+  queryClient: QueryClient,
+  filters: FilterField[]
 ): Promise<DataTableFilterField<TableData>[]> {
-  const { resource } = useResource.getState();
-
   const filterFields: DataTableFilterField<TableData>[] = [];
-  for (const filter of resource.filter) {
+  for (const filter of filters) {
     const filterField: DataTableFilterField<TableData> = {
       id: filter.name,
       label: filter.label || filter.name,
@@ -36,7 +25,7 @@ export async function getFilters(
         queryFn: () => getOptions(filter.resource!),
       });
       const options = optionsData.map((o: any) => ({
-        label: getOption(filter!, o),
+        label: filter.renderOption(o),
         value: o.id,
       }));
       filterField.options = options;
@@ -47,12 +36,11 @@ export async function getFilters(
 }
 
 export async function getAdvancedFilters(
-  queryClient: QueryClient
+  queryClient: QueryClient,
+  filters: FilterField[]
 ): Promise<DataTableAdvancedFilterField<TableData>[]> {
-  const { resource } = useResource.getState();
-
   const filterFields: DataTableAdvancedFilterField<TableData>[] = [];
-  for (const filter of resource.filter) {
+  for (const filter of filters) {
     const filterField: DataTableAdvancedFilterField<TableData> = {
       type: filter.type,
       id: filter.name,
@@ -66,7 +54,7 @@ export async function getAdvancedFilters(
       });
 
       const options = optionsData.map((o: any) => ({
-        label: getOption(filter!, o),
+        label: filter.renderOption(o),
         value: o.id.toString(),
       }));
       filterField.search = filter.search;

@@ -186,7 +186,7 @@ export interface MultiSelectFilterType extends BaseFormType {
   options?: { label: string; value: string }[];
 }
 
-type FilterField =
+export type FilterField =
   | BooleanFilterType
   | SelectFilterType
   | MultiSelectFilterType

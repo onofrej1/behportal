@@ -23,7 +23,7 @@ import { TableData } from "@/types/resources";
 import { exportTableToCSV } from "@/lib/export";
 import { deleteResources } from "@/api";
 import { useMutation } from "@tanstack/react-query";
-import { useResource } from "@/state";
+import { ResourceContext, useContext } from "@/app/resource-context";
 
 interface TableFloatingBarProps {
   table: Table<TableData>;
@@ -31,7 +31,7 @@ interface TableFloatingBarProps {
 
 export function TableFloatingBar({ table }: TableFloatingBarProps) {
   const rows = table.getFilteredSelectedRowModel().rows;
-  const { resource: { resource }} = useResource();
+  const { resource: { resource } } = useContext(ResourceContext);
 
   const [isPending, startTransition] = React.useTransition();
   const [action, setAction] = React.useState<

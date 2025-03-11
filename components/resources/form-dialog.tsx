@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { createResource, getResource, updateResource } from "@/api";
-import { useResource } from "@/state";
+import { ResourceContext, useContext } from "@/app/resource-context";
 
 interface ResourceFormDialogProps {
   id?: string;
@@ -22,10 +22,8 @@ interface ResourceFormDialogProps {
 export default function ResourceFormDialog(props: ResourceFormDialogProps) {
   const { id, open, onOpenChange } = props;
   const queryClient = useQueryClient();
-
-  const {
-    resource: { resource, relations, form, rules, renderForm },
-  } = useResource();
+  
+  const { resource: { form, relations, resource, rules, renderForm } } = useContext(ResourceContext);
 
   const { data } = useQuery({
     queryKey: ["getResource", resource, id],

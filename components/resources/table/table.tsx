@@ -18,17 +18,16 @@ import { TableFloatingBar } from "./table-floating-bar";
 import { TableToolbarActions } from "./table-toolbar-actions";
 import ResourceFormDialog from "../form-dialog";
 import { useFeatureFlags } from "@/app/(admin)/resource/[name]/_components/feature-flags-provider";
-import { useResource } from "@/state";
 import { TableData } from "@/types/resources";
+import { ResourceContext, useContext } from "@/app/resource-context";
 
 interface TableProps {
   dataPromise: Promise<{ data: any; numPages: number }>;
 }
 
 export function Table(props: TableProps) {
-  const {
-    resource: { resource },
-  } = useResource();
+  const { resource: { resource, filter } } = useContext(ResourceContext);
+
   const { featureFlags } = useFeatureFlags();
   const queryClient = useQueryClient();
 
@@ -54,16 +53,16 @@ export function Table(props: TableProps) {
   );
 
   React.useEffect(() => {
-    async function fetchFilters() {
+    async function setupFilters() {
       if (enableAdvancedTable) {
-        const filters = await getAdvancedFilters(queryClient);
+        const filters = await getAdvancedFilters(queryClient, filter);
         setAdvancedFilterFields(filters);
       } else {
-        const filters = await getFilters(queryClient);
+        const filters = await getFilters(queryClient, filter);
         setFilterFields(filters);
       }
     }
-    fetchFilters();
+    setupFilters();
   }, [resource, enableAdvancedTable]);
 
   const { table } = useDataTable({

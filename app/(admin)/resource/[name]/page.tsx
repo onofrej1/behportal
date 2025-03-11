@@ -9,21 +9,20 @@ import ResourceForm from "@/components/resources/form-dialog";
 import { getResourceData } from "@/api";
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { FeatureFlagsProvider } from "./_components/feature-flags-provider";
-import { useResource } from "@/state";
+import { ResourceContext, useContext } from "@/app/resource-context";
 
 export default function Resource() {
   const searchParams = useSearchParams();
   const [openAddItem, setOpenAddItem] = useState(false);
-  const {
-    resource: { resource, relations, filter },
-  } = useResource();
-  if (!resource) {
-    return;
-  }
 
-  const { page, pageCount, sort = '', filters } = Object.fromEntries(
-    searchParams.entries()
-  );
+  const { resource: { filter, relations, resource } } = useContext(ResourceContext);
+
+  const {
+    page,
+    pageCount,
+    sort = "",
+    filters,
+  } = Object.fromEntries(searchParams.entries());
 
   const baseFilters: any[] = [];
   filter.forEach((field) => {
@@ -33,8 +32,8 @@ export default function Resource() {
         id: field.name,
         value,
         type: field.type,
-        search: field.type === 'multi-select' ? field.search : field.name,
-        operator: 'eq'
+        search: field.type === "multi-select" ? field.search : field.name,
+        operator: "eq",
       });
     }
   });

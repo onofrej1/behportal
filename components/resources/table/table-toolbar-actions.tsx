@@ -8,16 +8,14 @@ import { exportTableToCSV } from "@/lib/export";
 
 import { DeleteDialog } from "./delete-dialog";
 import { TableData } from "@/types/resources";
-import { useResource } from "@/state";
+import { ResourceContext, useContext } from "@/app/resource-context";
 
 interface TasksTableToolbarActionsProps {
   table: Table<TableData>;
 }
 
 export function TableToolbarActions({ table }: TasksTableToolbarActionsProps) {
-  const {
-    resource: { resource },
-  } = useResource();
+  const { resource: { resource } } = useContext(ResourceContext);
 
   return (
     <div className="flex items-center gap-2">

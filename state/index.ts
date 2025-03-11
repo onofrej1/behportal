@@ -6,7 +6,7 @@ interface ResourceProps {
   setResource: (resource: Resource) => void;
 }
 
-export const useResource = create<ResourceProps>((set) => ({
+/*export const useResource = create<ResourceProps>((set) => ({
   resource: {} as Resource,
   setResource: (resource: Resource) => set({ resource }),
-}));
+}));*/

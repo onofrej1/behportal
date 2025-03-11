@@ -42,10 +42,10 @@ const CreatePost = z.object({
     })
     .optional()
     .default([]),
-  cover: z.any().optional().nullable(),
+  cover: z.string().optional().nullable(),
 });
 
-const CreateEvent_ = z.object({
+/*const CreateEvent_ = z.object({
   id: z.number().optional(),
   name: z.string().trim().min(1),
   description: z.string().min(1),
@@ -57,7 +57,7 @@ const CreateEvent_ = z.object({
   maxAttendees: z.coerce.number().optional(),
   startDate: z.date(),
   endDate: z.date(),
-});
+});*/
 
 const CreateEvent = z.object({
   id: z.number().optional(),

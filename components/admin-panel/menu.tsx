@@ -14,8 +14,6 @@ import {
   TooltipContent,
   TooltipProvider,
 } from "@/components/ui/tooltip";
-import { useResource } from "@/state";
-import { resources } from "@/resources";
 import { useRouter } from "next/navigation";
 
 interface MenuProps {
@@ -26,15 +24,8 @@ export function Menu({ isOpen }: MenuProps) {
   const router = useRouter();
   const pathname = usePathname();
   const menuList = getMenuList(pathname);
-  const { setResource } = useResource();
 
-  const openResourcePage = (link: string) => {
-    const lastIndex = link.lastIndexOf("/");
-    const resourceName = link.slice(lastIndex + 1);
-    const resource = resources.find((r) => r.resource === resourceName);
-    if (resource) {
-      setResource(resource);
-    }
+  const navigateToPage = (link: string) => {
     return router.push(link);
   };
 
@@ -84,7 +75,7 @@ export function Menu({ isOpen }: MenuProps) {
                             >
                               <Button
                                 variant="link"
-                                onClick={() => openResourcePage(href)}
+                                onClick={() => navigateToPage(href)}
                               >
                                 <span
                                   className={cn(isOpen === false ? "" : "mr-4")}
