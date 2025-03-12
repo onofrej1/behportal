@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { FormField } from "@/types/resources";
 import { useSearchParams } from "next/navigation";
 import React from "react";
-
+import { ResetPassword as ResetPasswordRules } from '@/validation';
 export default function ResetPasswordPage() {
   const fields: FormField[] = [
     { name: "password", type: "text", label: "Password" },
@@ -22,7 +22,7 @@ export default function ResetPasswordPage() {
 
   return (
     <>
-      <Form fields={fields} validation={"ResetPassword"} action={sendForm}>
+      <Form fields={fields} validation={ResetPasswordRules} action={sendForm}>
         {({ fields }) => (
           <div>
             <div className="flex flex-col gap-3 pb-4">

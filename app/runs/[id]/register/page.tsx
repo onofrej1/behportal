@@ -3,6 +3,7 @@ import { createRegistration } from "@/actions/runs";
 import Form from "@/components/form/form";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/types/resources";
+import { CreateRegistration } from "@/validation";
 import { Registration } from "@prisma/client";
 import { useParams } from "next/navigation";
 import React from "react";
@@ -41,7 +42,7 @@ export default function Register() {
     <>
       <Form
         fields={fields}
-        validation={"CreateRegistration"}
+        validation={CreateRegistration}
         data={{ runId: params.id }}
         action={sendRegistration}
       >

@@ -1,5 +1,6 @@
 import { TableData } from "@/types/resources";
 import { Resource } from '@/types/resources';
+import { CreateRun } from "@/validation";
 
 const run: Resource = {
   name: 'Run',
@@ -7,7 +8,7 @@ const run: Resource = {
   model: 'run',
   resource: 'runs',
   relations: ['event'],
-  rules: 'CreateRun',
+  rules: CreateRun,
   menuIcon: '',
   group: 'Manage runs',
   filter: [],

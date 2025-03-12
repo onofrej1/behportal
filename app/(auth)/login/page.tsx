@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { login } from "@/actions/auth";
 import { redirect } from "next/navigation";
 import { FormField } from "@/types/resources";
+import { LoginUser } from "@/validation";
 
 export default function LoginPage() {
   //const { data: session, status } = useSession();
@@ -35,7 +36,7 @@ export default function LoginPage() {
     <div className="flex flex-col gap-3">
       <Form
         fields={fields}
-        validation={'LoginUser'}
+        validation={LoginUser}
         buttons={buttons}
         action={login}
       />

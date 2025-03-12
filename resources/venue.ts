@@ -1,4 +1,5 @@
 import { Resource } from "@/types/resources";
+import { CreateVenue } from "@/validation";
 
 const venue: Resource = {
   name: "Venue",
@@ -8,7 +9,7 @@ const venue: Resource = {
   filter: [],
   menuIcon: "",
   group: "Events",
-  rules: "CreateVenue",
+  rules: CreateVenue,
   form: [{ name: "location", type: "text", label: "Location" }],
   list: [{ name: "location", header: "Location" }],
 };

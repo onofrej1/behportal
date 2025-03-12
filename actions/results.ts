@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from "@/db/prisma";
-import rules from "@/validation";
+import { CreateRunResult } from "@/validation";
 import { RunResult } from "@prisma/client";
 
 export async function getResults() {
@@ -27,7 +27,7 @@ export async function getResultsByRunId(runId: number) {
 }
 
 export async function createResults(data: RunResult[]) {
-  const validateResult = rules.CreateRunResult.parse(data);
+  const validateResult = CreateRunResult.parse(data);
   
   const runResults = prisma.runResult.createMany({
     data: validateResult,

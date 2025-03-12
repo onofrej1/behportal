@@ -3,6 +3,7 @@ import { resetPasswordRequest } from "@/actions/auth";
 import Form from "@/components/form/form";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/types/resources";
+import { ResetPasswordRequest } from "@/validation";
 import React from "react";
 
 export default function ResetPassword() {
@@ -16,7 +17,7 @@ export default function ResetPassword() {
     <>
       <Form
         fields={fields}
-        validation={"ResetPasswordRequest"}
+        validation={ResetPasswordRequest}
         action={sendForm}
       >
         {({ fields }) => (

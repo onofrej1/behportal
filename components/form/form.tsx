@@ -15,8 +15,7 @@ import {
   SelectType,
   TextAreaType,
 } from "@/types/resources";
-import { FormSchema } from "@/validation";
-import rules from "@/validation";
+import { Rules } from "@/validation";
 import FormInput from "@/components/form/input";
 import FormSelect from "@/components/form/select";
 import FormCheckbox from "@/components/form/checkbox";
@@ -57,7 +56,7 @@ export type FormRender = (props: FormRenderProps) => JSX.Element;
 
 interface FormProps {
   fields: FormField_[];
-  validation?: FormSchema;
+  validation: Rules;
   data?: DefaultFormData;
   action?: (...args: any[]) => any;
   buttons?: ((props: Partial<FormState<DefaultFormData>>) => JSX.Element)[];
@@ -75,14 +74,12 @@ export default function Form_({
   children,
 }: FormProps) {
   const { replace } = useRouter();
-  //@ts-ignore
-  const validationRules = rules[validation] || z.any();
-
+  
   const defaultData = data;
 
   const form = useForm({
     mode: "onSubmit",
-    resolver: zodResolver(validationRules),
+    resolver: zodResolver(validation as any),
     defaultValues: defaultData,
   });
 
@@ -90,7 +87,7 @@ export default function Form_({
     if (data) {
       const m2mFields = fields.filter((f) => f.type === "manyToMany");
       for (const field of m2mFields) {
-        const selectValue = data[field.name].map((value: { id: string }) => {
+        const selectValue = data[field.name as keyof typeof data].map((value: { id: string }) => {
           const option = field.options?.find((o) => o.value === value.id);
           return { label: option?.label, value: value.id };
         });

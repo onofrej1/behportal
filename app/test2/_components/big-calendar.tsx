@@ -22,6 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { CreateEvent } from "@/validation";
 
 const locales = {
   "en-US": require("date-fns/locale/en-US"),
@@ -116,7 +117,7 @@ export default function BigCalendar({
     return (
       <Form
         fields={fields}
-        validation={"CreateEvent"}
+        validation={CreateEvent}
         action={sendForm}
         data={data}
       >

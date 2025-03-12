@@ -1,4 +1,5 @@
 import { Resource } from '@/types/resources';
+import { CreateCategory } from '@/validation';
 
 const category: Resource = {
     name: 'Category',
@@ -8,7 +9,7 @@ const category: Resource = {
     group: 'Blog',
     filter: [],
     menuIcon: '',
-    rules: 'CreateCategory',    
+    rules: CreateCategory,    
     form: [
         { name: 'title', type: 'text', label: 'Title' },
     ],

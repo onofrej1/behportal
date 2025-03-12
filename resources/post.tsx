@@ -1,5 +1,6 @@
 import { TableData } from "@/types/resources";
 import { Resource } from "@/types/resources";
+import { CreatePost } from "@/validation";
 import { User } from "@prisma/client";
 
 const post: Resource = {
@@ -7,7 +8,7 @@ const post: Resource = {
   name_plural: "Posts",
   model: "post",
   resource: "posts",
-  rules: "CreatePost",
+  rules: CreatePost,
   group: "Blog",
   menuIcon: "",
   relations: ["author", "categories", "tags"],

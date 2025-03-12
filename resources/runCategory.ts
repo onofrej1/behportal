@@ -1,4 +1,5 @@
 import { Resource } from '@/types/resources';
+import { CreateRunCategory } from '@/validation';
 
 const runCategory: Resource = {
     name: 'Category',
@@ -8,7 +9,7 @@ const runCategory: Resource = {
     filter: [],
     menuIcon: '',
     group: 'Manage runs',
-    rules: 'CreateRunCategory',    
+    rules: CreateRunCategory,    
     form: [
         { name: 'category', type: 'text', label: 'Category' },
         { name: 'title', type: 'text', label: 'Title' },

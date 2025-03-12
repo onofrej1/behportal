@@ -1,4 +1,5 @@
 import { Resource } from '@/types/resources';
+import { CreateOrganizer } from '@/validation';
 
 const organizer: Resource = {
     name: 'Organizer',
@@ -8,7 +9,7 @@ const organizer: Resource = {
     filter: [],
     menuIcon: '',
     group: 'Events',
-    rules: 'CreateOrganizer',    
+    rules: CreateOrganizer,    
     form: [
         { name: 'name', type: 'text', label: 'Name' },
     ],

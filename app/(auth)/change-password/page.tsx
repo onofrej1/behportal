@@ -4,7 +4,7 @@ import Form from "@/components/form/form";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/types/resources";
 import React from "react";
-
+import { ChangePassword as ChangePasswordRules } from "@/validation";
 export default function ChangePasswordPage() {
   const fields: FormField[] = [
     { name: "password", type: "password" },
@@ -17,7 +17,7 @@ export default function ChangePasswordPage() {
 
   return (
     <>
-      <Form fields={fields} validation={"ChangePassword"} action={sendForm}>
+      <Form fields={fields} validation={ChangePasswordRules} action={sendForm}>
         {({ fields }) => (
           <div>
             <div className="flex flex-col gap-3 pb-4">

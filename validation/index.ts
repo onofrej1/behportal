@@ -1,28 +1,28 @@
 import { z } from "zod";
 
-const RegisterUser = z.object({
+export const RegisterUser = z.object({
   firstName: z.string().trim().min(1),
   lastName: z.string().trim().min(1),
   email: z.string().email(),
   password: z.string().min(1),
 });
 
-const LoginUser = z.object({
+export const LoginUser = z.object({
   email: z.string().email(),
   password: z.string().min(2),
 });
 
-const CreateCategory = z.object({
+export const CreateCategory = z.object({
   id: z.number().optional(),
   title: z.string().trim().min(1),
 });
 
-const CreateTag = z.object({
+export const CreateTag = z.object({
   id: z.number().optional(),
   title: z.string().trim().min(1),
 });
 
-const CreatePost = z.object({
+export const CreatePost = z.object({
   id: z.number().optional(),
   title: z.string().trim().min(1),
   status: z.string().min(1),
@@ -59,7 +59,7 @@ const CreatePost = z.object({
   endDate: z.date(),
 });*/
 
-const CreateEvent = z.object({
+export const CreateEvent = z.object({
   id: z.number().optional(),
   name: z.string().trim().min(1),
   description: z.string().min(1),
@@ -73,7 +73,7 @@ const CreateEvent = z.object({
   endDate: z.date(),
 });
 
-const CreateRun = z.object({
+export const CreateRun = z.object({
   id: z.number().optional(),
   title: z.string().trim().min(1),
   distance: z.coerce.number(),
@@ -83,7 +83,7 @@ const CreateRun = z.object({
   runCategories: z.array(z.coerce.number()).optional().default([]),
 });
 
-const CreateRegistration = z.object({
+export const CreateRegistration = z.object({
   id: z.number().optional(),
   firstName: z.string().trim().min(1),
   lastName: z.string().trim().min(1),
@@ -98,7 +98,7 @@ const CreateRegistration = z.object({
   phone: z.string().trim().min(1),
 });
 
-const CreateRunResult = z.array(
+export const CreateRunResult = z.array(
   z.object({
     id: z.number().optional(),
     name: z.string().trim().min(1),
@@ -113,77 +113,92 @@ const CreateRunResult = z.array(
   })
 );
 
-const CreateRunCategory = z.object({
+export const CreateRunCategory = z.object({
   id: z.number().optional(),
   category: z.string().trim().min(1),
   title: z.string().trim().min(1),
 });
 
-const CreateVenue = z.object({
+export const CreateVenue = z.object({
   id: z.number().optional(),
   location: z.string().trim().min(1),
 });
 
-const CreateOrganizer = z.object({
+export const CreateOrganizer = z.object({
   id: z.number().optional(),
   name: z.string().trim().min(1),
 });
 
-const ContactForm = z.object({
+export const ContactForm = z.object({
   name: z.string().trim().min(1),
   email: z.string().email(),
   message: z.string().trim().min(1),
   myfiles: z.array(z.any()),
 });
 
-const ResetPasswordRequest = z.object({
+export const ResetPasswordRequest = z.object({
   email: z.string().email(),
 });
 
-const ChangePassword = z.object({
-  password: z.string().min(3),
-  confirmPassword: z.string().min(3),
+export const ResetPassword = z.object({
+  password: z.string().email(),
 });
 
-export type FormSchema =
-  | "LoginUser"
-  | "RegisterUser"
-  | "CreatePost"
-  | "CreateCategory"
-  | "CreateTag"
-  | "CreateEvent"
-  | "CreateRun"
-  | "CreateRunCategory"
-  | "CreateVenue"
-  | "CreateOrganizer"
-  | "FilterResource"
-  | "CreateRegistration"
-  | "CreateRunResult"
-  | "ContactForm"
-  | "ResetPasswordRequest"
-  | "ChangePassword"
-  | "ResetPassword";
+export const ChangePassword = z.object({
+  password: z.string().min(1),
+  confirmPassword: z.string().min(1),
+});
 
-const rules = {
-  RegisterUser,
-  LoginUser,
-  ChangePassword,
-  CreatePost,
-  CreateCategory,
-  CreateEvent,
-  CreateTag,
-  CreateRun,
-  CreateRunCategory,
-  CreateVenue,
-  CreateOrganizer,
-  CreateRegistration,
-  CreateRunResult,
-  ResetPasswordRequest,
-  ContactForm,
-};
-
-export default rules;
+export type Rules =
+  | typeof RegisterUser
+  | typeof LoginUser
+  | typeof ChangePassword
+  | typeof CreatePost
+  | typeof CreateCategory
+  | typeof CreateEvent
+  | typeof CreateTag
+  | typeof CreateRun
+  | typeof CreateRunCategory
+  | typeof CreateVenue
+  | typeof CreateOrganizer
+  | typeof CreateRegistration
+  | typeof CreateRunResult
+  | typeof ResetPasswordRequest
+  | typeof ContactForm
+  | typeof ResetPassword
+  | typeof z.any;
 
 export type RegisterUserType = z.infer<typeof RegisterUser>;
 export type LoginUserType = z.infer<typeof LoginUser>;
-export type ContactForm = z.infer<typeof ContactForm>;
+export type ChangePasswordType = z.infer<typeof ChangePassword>;
+export type CreatePostType = z.infer<typeof CreatePost>;
+export type CreateCategoryType = z.infer<typeof CreateCategory>;
+export type CreateEventType = z.infer<typeof CreateEvent>;
+export type CreateTagType = z.infer<typeof CreateTag>;
+export type CreateRunType = z.infer<typeof CreateRun>;
+export type CreateRunCategoryType = z.infer<typeof CreateRunCategory>;
+export type CreateVenueType = z.infer<typeof CreateVenue>;
+export type CreateOrganizerType = z.infer<typeof CreateOrganizer>;
+export type CreateRegistrationType = z.infer<typeof CreateRegistration>;
+export type CreateRunResultType = z.infer<typeof CreateRunResult>;
+export type ResetPasswordRequestType = z.infer<typeof ResetPasswordRequest>;
+export type ContactFormType = z.infer<typeof ContactForm>;
+export type ResetPasswordType = z.infer<typeof ResetPassword>;
+
+export type RulesType =
+  | RegisterUserType
+  | LoginUserType
+  | ChangePasswordType
+  | CreatePostType
+  | CreateCategoryType
+  | CreateEventType
+  | CreateTagType
+  | CreateRunType
+  | CreateRunCategoryType
+  | CreateVenueType
+  | CreateOrganizerType
+  | CreateRegistrationType
+  | CreateRunResultType
+  | ResetPasswordRequestType
+  | ContactFormType
+  | ResetPasswordType;

@@ -3,6 +3,7 @@ import { register } from "@/actions/auth";
 import Form, { DefaultFormData } from "@/components/form/form";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/types/resources";
+import { RegisterUser } from "@/validation";
 import { type FormState } from "react-hook-form";
 
 export default function RegisterPage() {
@@ -26,7 +27,7 @@ export default function RegisterPage() {
     <>
       <Form
         fields={fields}
-        validation={'RegisterUser'}
+        validation={RegisterUser}
         buttons={buttons}
         action={register}
       />

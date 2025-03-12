@@ -1,7 +1,7 @@
 import { OptionType } from "@/components/fancy-switch/types";
 import { FormRender } from "@/components/form/form";
 import { RepeaterRenderFunc } from "@/components/form/repeater";
-import { FormSchema } from "@/validation";
+import { Rules } from "@/validation";
 import { JSX } from "react";
 import { Option } from "@/components/multiple-selector";
 
@@ -201,7 +201,7 @@ type Resource = {
   model: PrismaModel;
   resource: string;
   relations?: string[];
-  rules: FormSchema;
+  rules: Rules;
   menuIcon: string;
   form: FormField[];
   renderForm?: FormRender;

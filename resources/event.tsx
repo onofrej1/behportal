@@ -1,13 +1,14 @@
 import { TableData } from "@/types/resources";
 import { Button } from '@/components/ui/button';
 import { Resource } from '@/types/resources';
+import { CreateEvent } from "@/validation";
 
 const event: Resource = {
   name: 'Event',
   name_plural: 'Events',
   model: 'event',
   resource: 'events',
-  rules: 'CreateEvent',
+  rules: CreateEvent,
   group: 'Events',
   menuIcon: '',
   renderForm: ({ fields }) => {
