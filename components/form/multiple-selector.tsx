@@ -2,8 +2,9 @@
 
 import * as React from "react";
 import { ControllerRenderProps } from "react-hook-form";
-import { FormControl, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { FormControl, FormItem, FormLabel, FormMessage, useFormField } from "../ui/form";
 import MultipleSelector_, { Option } from "../multiple-selector";
+import { cn } from "@/lib/utils";
 
 interface MultipleSelectorProps {
   label?: string;
@@ -14,12 +15,13 @@ interface MultipleSelectorProps {
 
 export function MultipleSelector(props: MultipleSelectorProps) {
   const { label, options, field, className } = props;
-  
+  const { error } = useFormField();
+
   const Element = (
     <MultipleSelector_
       value={field.value}
       onChange={field.onChange}
-      className={className}
+      className={cn(error && "text-destructive border-destructive", className)}
       defaultOptions={options}
       placeholder="Select frameworks you like..."
       emptyIndicator={

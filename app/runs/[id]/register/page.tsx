@@ -1,7 +1,7 @@
 "use client";
 import { createRegistration } from "@/actions/runs";
 import Form from "@/components/form/form";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/flowbite/button";
 import { FormField } from "@/types/resources";
 import { CreateRegistration } from "@/validation";
 import { Registration } from "@prisma/client";
@@ -27,15 +27,16 @@ export default function Register() {
     { name: "dateOfBirth", type: "date-picker", label: "Date of birth" },
     { name: "email", type: "text", label: 'Email' },
 
-    { name: "nation", type: "text", label: 'Nation' },
+    { name: "nation", type: "country-select", label: 'Nation' },
     { name: "club", type: "text", label: 'Club' },
     { name: "city", type: "text", label: 'City' },
-    { name: "phone", type: "text", label: 'Phone' },
+    { name: "phone", type: "phone-input", label: 'Phone', defaultCountry: 'SK' },
     { name: "confirm", type: "checkbox", label: "Confirm submit" },
   ];
 
   const sendRegistration = async (data: Registration) => {
-    await createRegistration(data);
+    console.log(data);
+    //await createRegistration(data);
   };
 
   return (
@@ -43,7 +44,7 @@ export default function Register() {
       <Form
         fields={fields}
         validation={CreateRegistration}
-        data={{ runId: params.id }}
+        data={{ runId: params.id, nation: 'SVK' }}
         action={sendRegistration}
       >
         {({ fields }) => (

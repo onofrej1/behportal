@@ -9,7 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FormControl, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { FormControl, FormItem, FormLabel, FormMessage, useFormField } from "../ui/form";
+import { cn } from "@/lib/utils";
 
 interface SelectOption {
   label: string;
@@ -29,6 +30,8 @@ export default function FormSelect({
   field,
   className,
 }: SelectProps) {
+  const { error } = useFormField();
+  
   const Element = (
     <Select
       name={field.name}
@@ -36,7 +39,7 @@ export default function FormSelect({
       defaultValue={field.value?.toString()}
       value={field.value?.toString()}
     >
-      <SelectTrigger className={className} value={field.value?.toString()}>
+      <SelectTrigger className={cn(error && "text-destructive border-destructive", className)} value={field.value?.toString()}>
         <SelectValue placeholder={label} />
       </SelectTrigger>
       <SelectContent>

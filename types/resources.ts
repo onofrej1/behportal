@@ -4,6 +4,7 @@ import { RepeaterRenderFunc } from "@/components/form/repeater";
 import { Rules } from "@/validation";
 import { JSX } from "react";
 import { Option } from "@/components/multiple-selector";
+import { CountryCode } from "libphonenumber-js";
 
 interface BaseFormType {
   name: string;
@@ -52,6 +53,10 @@ export interface InputType extends BaseFormType {
 
 export interface RichtextType extends BaseFormType {
   type: "richtext";
+}
+
+export interface CountrySelectType extends BaseFormType {
+  type: "country-select";  
 }
 
 export interface TextAreaType extends BaseFormType {
@@ -105,6 +110,7 @@ export interface FancySwitchType extends BaseFormType {
 
 export interface PhoneInputType extends BaseFormType {
   type: "phone-input";
+  defaultCountry?: CountryCode;
 }
 
 export interface DateTimePickerType extends BaseFormType {
@@ -150,7 +156,8 @@ type FormField =
   | DateTimePickerType
   | SwitchType
   | FancySwitchType
-  | MultipleSelectorType;
+  | MultipleSelectorType
+  | CountrySelectType;
 
 interface TextFilterType extends BaseFormType {
   type: "text";

@@ -2,10 +2,11 @@
 
 import * as React from "react";
 import { ControllerRenderProps } from "react-hook-form";
-import { FormControl, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { FormControl, FormItem, FormLabel, FormMessage, useFormField } from "../ui/form";
 import {
   DateTimePicker as DateTimePicker_,
 } from "../datetime-picker";
+import { cn } from "@/lib/utils";
 
 type Granularity = "day" | "hour" | "minute" | "second";
 
@@ -19,6 +20,7 @@ interface DateTimeProps {
 export function DateTimePicker(props: DateTimeProps) {
   const { label, field, className, granularity = "second" } = props;
   const value = field.value;
+  const { error } = useFormField();
 
   React.useEffect(() => {
     if (value && typeof value === "string") {
@@ -29,9 +31,9 @@ export function DateTimePicker(props: DateTimeProps) {
   const Element = (
     <DateTimePicker_
       granularity={granularity}
-      value={new Date(value)}
+      value={value ? new Date(value) : undefined}
       onChange={field.onChange}
-      className={className}
+      className={cn(error && "text-destructive border-destructive", className)}
     />
   );
 

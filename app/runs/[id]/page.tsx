@@ -32,7 +32,9 @@ export default function Run() {
   if (isFetching || !run) return;
 
   const fileUpload = (data: { file: File }) => {
+    console.log(data);
     const { file } = data;
+    console.log(file);
     const formData = new FormData();
     formData.append("file", file, file.name); 
     const formObject = Object.fromEntries(formData.entries());
@@ -44,7 +46,7 @@ export default function Run() {
       const csvData = parseCsv(content, requiredHeaders);
       setUploadData(csvData);   
     };
-    reader.readAsText(formObject['myFile'] as Blob);
+    reader.readAsText(formObject['file'] as Blob);
   };
 
   const headers = [
@@ -79,16 +81,22 @@ export default function Run() {
     { type: "upload", name: "results", label: "Results" },
   ];
 
+  const submit = (data: any) => {
+    console.log(data);
+    fileUpload(data.results);
+  }
+
   return (
     <div>
       Run {run.title} {run.distance} km Upload results
-      <Form fields={fields} validation={z.any}>
+      <Form fields={fields} action={submit}>
         {({ fields }) => (
           <div>
             <div className="flex flex-col gap-3 pb-4">
               {fields.results}
             </div>
-          </div>
+            <button type="submit">Show</button>
+          </div>          
         )}
       </Form>
       {/*uploadData && uploadData.length > 0 && <Table
@@ -102,10 +110,14 @@ export default function Run() {
       <TableCaption>A list of your recent invoices.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[100px]">Invoice</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Method</TableHead>
-          <TableHead className="text-right">Amount</TableHead>
+          <TableHead className="w-[100px]">Rank</TableHead>
+          <TableHead>Bib</TableHead>
+          <TableHead>Category</TableHead>
+          <TableHead>Name</TableHead>
+          <TableHead>Year of Birth</TableHead>
+          <TableHead>Club</TableHead>
+          <TableHead>Gender</TableHead>
+          <TableHead>Time</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -113,12 +125,12 @@ export default function Run() {
           <TableRow key={data.name}>
             <TableCell>{data.rank}</TableCell>
             <TableCell>{data.bib}</TableCell>
-            <TableCell>{data.yearOfBirth}</TableCell>
+            <TableCell>{data.category}</TableCell>           
             <TableCell>{data.name}</TableCell>
-            <TableCell>{data.category}</TableCell>
-            <TableCell>{data.time}</TableCell>
+            <TableCell>{data.yearOfBirth}</TableCell>
             <TableCell>{data.club}</TableCell>
             <TableCell>{data.gender}</TableCell>
+            <TableCell>{data.time}</TableCell>                        
           </TableRow>
         ))}
       </TableBody>

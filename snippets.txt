@@ -247,3 +247,90 @@ export interface TableHeader {
   enableHide?: boolean;
   render?: (data: TableData) => JSX.Element;
 }
+
+export type FormSchema =
+  | "LoginUser"
+  | "RegisterUser"
+  | "CreatePost"
+  | "CreateCategory"
+  | "CreateTag"
+  | "CreateEvent"
+  | "CreateRun"
+  | "CreateRunCategory"
+  | "CreateVenue"
+  | "CreateOrganizer"
+  | "CreateRegistration"
+  | "CreateRunResult"
+  | "ContactForm"
+  | "ResetPasswordRequest"
+  | "ChangePassword";
+
+  export type ValidationType =
+    | typeof RegisterUser
+    | typeof LoginUser
+    | typeof ChangePassword
+    | typeof CreatePost
+    | typeof CreateCategory
+    | typeof CreateEvent
+    | typeof CreateTag
+    | typeof CreateRun
+    | typeof CreateRunCategory
+    | typeof CreateVenue
+    | typeof CreateOrganizer
+    | typeof CreateRegistration
+    | typeof CreateRunResult
+    | typeof ResetPasswordRequest
+    | typeof ContactForm;
+
+const rules = {
+  RegisterUser,
+  LoginUser,
+  ChangePassword,
+  CreatePost,
+  CreateCategory,
+  CreateEvent,
+  CreateTag,
+  CreateRun,
+  CreateRunCategory,
+  CreateVenue,
+  CreateOrganizer,
+  CreateRegistration,
+  CreateRunResult,
+  ResetPasswordRequest,
+  ContactForm,
+};
+
+export default rules;
+
+export type RegisterUserType = z.infer<typeof RegisterUser>;
+export type LoginUserType = z.infer<typeof LoginUser>;
+export type ChangePasswordType = z.infer<typeof ChangePassword>;
+export type CreatePostType = z.infer<typeof CreatePost>;
+export type CreateCategoryType = z.infer<typeof CreateCategory>;
+export type CreateEventType = z.infer<typeof CreateEvent>;
+export type CreateTagType = z.infer<typeof CreateTag>;
+export type CreateRunType = z.infer<typeof CreateRun>;
+export type CreateRunCategoryType = z.infer<typeof CreateRunCategory>;
+export type CreateVenueType = z.infer<typeof CreateVenue>;
+export type CreateOrganizerType = z.infer<typeof CreateOrganizer>;
+export type CreateRegistrationType = z.infer<typeof CreateRegistration>;
+export type CreateRunResultType = z.infer<typeof CreateRunResult>;
+export type ResetPasswordRequestType = z.infer<typeof ResetPasswordRequest>;
+export type ContactForm = z.infer<typeof ContactForm>;
+
+export type ValidationRules = 
+| RegisterUserType
+| LoginUserType;
+/*| ChangePasswordType
+| CreatePostType
+| CreateCategoryType
+| CreateEventType
+| CreateTagType
+| CreateRunType
+| CreateRunCategoryType
+| CreateVenueType
+| CreateOrganizerType
+| CreateRegistrationType
+| CreateRunResultType
+| ResetPasswordRequestType
+| ContactForm;*/

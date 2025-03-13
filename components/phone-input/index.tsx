@@ -118,7 +118,7 @@ export function PhoneInput({
     setCountryCode(number?.country || defaultCountry);
     event.currentTarget.value = formattedValue;
     handlers.set(formattedValue);
-	console.log(formattedValue);
+    console.log(formattedValue);
   };
 
   const handleOnPaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
@@ -186,9 +186,7 @@ export function PhoneInput({
                         key={country.iso3}
                         value={`${country.name} (+${country.phone_code})`}
                         onSelect={() => {
-						  console.log(inputRef.current);
                           if (inputRef.current) {
-							console.log(country.phone_code);
                             inputRef.current.value = `+${country.phone_code}`;
                             handlers.set(`+${country.phone_code}`);
                             inputRef.current.focus();
@@ -225,7 +223,7 @@ export function PhoneInput({
           </Command>
         </PopoverContent>
       </Popover>
-      <Input        
+      <Input
         type="text"
         pattern="^(\+)?[0-9\s]*$"
         name="phone"
@@ -238,7 +236,7 @@ export function PhoneInput({
         required={required}
         aria-required={required}
         {...rest}
-		ref={inputRef}
+        ref={inputRef}
       />
     </div>
   );

@@ -88,11 +88,11 @@ export const CreateRegistration = z.object({
   firstName: z.string().trim().min(1),
   lastName: z.string().trim().min(1),
   dateOfBirth: z.coerce.date(),
-  gender: z.enum(["MAN", "WOMAN"]),
+  gender: z.enum(["MALE", "FEMALE"]),
   email: z.string().email(),
 
   runId: z.coerce.number(),
-  nation: z.string().trim().min(1),
+  nation: z.string().or(z.record(z.string(), z.any())),
   city: z.string().trim().min(1),
   club: z.string().trim().min(1),
   phone: z.string().trim().min(1),

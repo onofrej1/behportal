@@ -27,7 +27,7 @@ export default function Textarea(props: TextareaProps) {
       {...field}
       placeholder={placeholder}
       value={field.value || ""}
-      className={cn(error && "text-destructive", className)}
+      className={cn(error && "text-destructive border-destructive", className)}
       rows={rows || 3}
     />
   );

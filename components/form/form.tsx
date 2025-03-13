@@ -9,6 +9,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { JSX, useEffect } from "react";
 import {
+  PhoneInputType,
   FormField as FormField_,
   MultipleSelectorType,
   RepeaterType,
@@ -33,6 +34,8 @@ import { DateTimePicker } from "./datetime-picker";
 import Switch from "./switch";
 import FancySwitch from "./fancy-switch";
 import { MultipleSelector } from "./multiple-selector";
+import { z } from "zod";
+import CountrySelect from "./country-select";
 
 export interface DefaultFormData {
   [key: string]: any;
@@ -56,7 +59,7 @@ export type FormRender = (props: FormRenderProps) => JSX.Element;
 
 interface FormProps {
   fields: FormField_[];
-  validation: Rules;
+  validation?: Rules;
   data?: DefaultFormData;
   action?: (...args: any[]) => any;
   buttons?: ((props: Partial<FormState<DefaultFormData>>) => JSX.Element)[];
@@ -74,12 +77,12 @@ export default function Form_({
   children,
 }: FormProps) {
   const { replace } = useRouter();
-  
+
   const defaultData = data;
 
   const form = useForm({
     mode: "onSubmit",
-    resolver: zodResolver(validation as any),
+    resolver: zodResolver((validation as any) || z.any()),
     defaultValues: defaultData,
   });
 
@@ -87,10 +90,12 @@ export default function Form_({
     if (data) {
       const m2mFields = fields.filter((f) => f.type === "manyToMany");
       for (const field of m2mFields) {
-        const selectValue = data[field.name as keyof typeof data].map((value: { id: string }) => {
-          const option = field.options?.find((o) => o.value === value.id);
-          return { label: option?.label, value: value.id };
-        });
+        const selectValue = data[field.name as keyof typeof data].map(
+          (value: { id: string }) => {
+            const option = field.options?.find((o) => o.value === value.id);
+            return { label: option?.label, value: value.id };
+          }
+        );
         data![field.name] = selectValue;
       }
       form.reset(data);
@@ -253,6 +258,24 @@ export default function Form_({
           </>
         )}
 
+        {type === "country-select" && (
+          <>
+            <FormField
+              control={form.control}
+              name={formField.name}
+              render={({ field }) => (
+                <>
+                  <CountrySelect
+                    label={label}
+                    field={field}
+                    className={className}
+                  />
+                </>
+              )}
+            />
+          </>
+        )}
+
         {["select", "foreignKey"].includes(type) && (
           <FormField
             control={form.control}
@@ -313,7 +336,12 @@ export default function Form_({
             control={form.control}
             name={formField.name}
             render={({ field }) => (
-              <PhoneInput label={label} field={field} className={className} />
+              <PhoneInput
+                label={label}
+                field={field}
+                className={className}
+                defaultCountry={(formField as PhoneInputType).defaultCountry}
+              />
             )}
           />
         )}

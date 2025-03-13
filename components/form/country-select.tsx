@@ -1,6 +1,5 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
 import {
   FormControl,
   FormItem,
@@ -12,30 +11,30 @@ import {
   ControllerRenderProps,  
 } from "react-hook-form";
 import { cn } from "@/lib/utils";
+import { CountryDropdown } from "../country-dropdown";
 
-interface InputProps {
-  type: string;
+interface CountrySelectProps {
   placeholder?: string;
   label?: string;
   className?: string;
   field: ControllerRenderProps;
 }
 
-export default function FormInput(props: InputProps) {
-  const { type, placeholder, label, field, className } = props;
+export default function CountrySelect(props: CountrySelectProps) {
+  const { placeholder, label, field, className } = props;
   const { error } = useFormField();
 
   const Element = (
-    <Input
+    <CountryDropdown
       {...field}
       placeholder={placeholder}
-      value={field.value || ""}
+      onChange={field.onChange}
+      defaultValue={field.value}
       className={cn(error && "text-destructive border-destructive", className)}
-      type={type || "text"}
     />
   );
 
-  if (!label || type === 'hidden') {
+  if (!label) {
     return Element;
   }
 

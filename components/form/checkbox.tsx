@@ -2,7 +2,8 @@
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { ControllerRenderProps } from "react-hook-form";
-import { FormControl, FormLabel, FormMessage } from "../ui/form";
+import { FormControl, FormLabel, FormMessage, useFormField } from "../ui/form";
+import { cn } from "@/lib/utils";
 
 interface CheckboxProps {
   label?: string;
@@ -15,11 +16,13 @@ export default function FormCheckbox({
   className,
   field,
 }: CheckboxProps) {
+  const { error } = useFormField();
+
   const Element = (
     <Checkbox
       checked={!!field.value}
       onCheckedChange={field.onChange}
-      className={className}
+      className={cn(error && "text-destructive border-destructive", className)}
       {...field}
     />
   );

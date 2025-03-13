@@ -2,7 +2,8 @@
 
 import { Switch as Switch_ } from "@/components/ui/switch";
 import { ControllerRenderProps } from "react-hook-form";
-import { FormControl, FormLabel, FormMessage } from "../ui/form";
+import { FormControl, FormLabel, FormMessage, useFormField } from "../ui/form";
+import { cn } from "@/lib/utils";
 
 interface SwitchProps {
   label?: string;
@@ -11,11 +12,13 @@ interface SwitchProps {
 }
 
 export default function Switch({ label, className, field }: SwitchProps) {
+  const { error } = useFormField();
+  
   const Element = (
     <Switch_
       checked={field.value}
       onCheckedChange={field.onChange}
-      className={className}
+      className={cn(error && "text-destructive border-destructive", className)}
       {...field}
     />
   );
