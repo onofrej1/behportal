@@ -23,6 +23,17 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { CreateEvent } from "@/validation";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const locales = {
   "en-US": require("date-fns/locale/en-US"),
@@ -122,7 +133,14 @@ export default function BigCalendar({
         data={data}
       >
         {({ fields }) => (
-          <div>
+          <>
+            <SheetHeader>
+              <SheetTitle>
+                {selectedEvent?.id ? "Update" : "Add"} event
+              </SheetTitle>
+              <SheetDescription></SheetDescription>
+            </SheetHeader>
+
             <div className="flex flex-col gap-3 pb-4">
               {fields.name}
               {fields.description}
@@ -131,16 +149,19 @@ export default function BigCalendar({
                 <div className="flex-1">{fields.status}</div>
               </div>
               {fields.location}
-              <div className="flex gap-2">
-                <div className="flex-1">{fields.startDate}</div>
-                <div className="flex-1">{fields.endDate}</div>
-              </div>
+              {fields.startDate}
+              {fields.endDate}
               {fields.organizerId}
               {fields.venueId}
               {fields.maxAttendees}
-              <Button type="submit">Save</Button>
             </div>
-          </div>
+
+            <SheetFooter>
+              <SheetClose asChild>
+                <Button type="submit">Save changes</Button>
+              </SheetClose>
+            </SheetFooter>
+          </>
         )}
       </Form>
     );
@@ -148,6 +169,16 @@ export default function BigCalendar({
 
   return (
     <div>
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <SheetContent className="max-h-screen overflow-y-scroll">
+          
+            {eventForm(selectedEvent)}
+          
+        </SheetContent>
+      </Sheet>
+
+      <Button>Add new event</Button>
+
       <Calendar
         view={view}
         onView={setView}
@@ -163,13 +194,12 @@ export default function BigCalendar({
         style={{ height: 700 }}
       />
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <Dialog open={false} /*onOpenChange={setIsOpen}*/>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Upload files</DialogTitle>
             <DialogDescription></DialogDescription>
           </DialogHeader>
-          {eventForm(selectedEvent)}
         </DialogContent>
       </Dialog>
     </div>

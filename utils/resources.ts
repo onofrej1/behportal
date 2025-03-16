@@ -12,12 +12,13 @@ export function getOrderBy(input: string) {
 
 export function getWhereQuery(input: string) {
   if (!input) {
-    return {};
+    return [];
   }
   const filters: Filter<TableData>[] = JSON.parse(input);
-  const where: Record<string, any> = {};
+  const query: any[] = [];
 
   filters.forEach((filter) => {
+    const where: Record<string, any> = {};
     let value = filter.value;
     const operator = filter.operator;
 
@@ -163,8 +164,9 @@ export function getWhereQuery(input: string) {
         }
       }
     }
+    query.push(where);
   });
-  return where;
+  return query;
 }
 
 export function getRelations(query?: string | string[]) {

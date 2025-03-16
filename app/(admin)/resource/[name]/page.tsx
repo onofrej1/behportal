@@ -8,45 +8,54 @@ import React, { useState } from "react";
 import ResourceForm from "@/components/resources/form-dialog";
 import { getResourceData } from "@/api";
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
-import { FeatureFlagsProvider } from "./_components/feature-flags-provider";
 import { ResourceContext, useContext } from "@/app/resource-context";
 
 export default function Resource() {
   const searchParams = useSearchParams();
   const [openAddItem, setOpenAddItem] = useState(false);
 
-  const { resource: { filter, relations, resource } } = useContext(ResourceContext);
+  const {
+    resource: { filter, relations, resource, advancedFilter },
+  } = useContext(ResourceContext);
 
   const {
     page,
     pageCount,
     sort = "",
+    joinOperator = 'AND',
     filters,
   } = Object.fromEntries(searchParams.entries());
 
   const baseFilters: any[] = [];
-  filter.forEach((field) => {
-    const value = searchParams.get(field.name);
-    if (value) {
-      baseFilters.push({
-        id: field.name,
-        value,
-        type: field.type,
-        search: field.type === "multi-select" ? field.search : field.name,
-        operator: "eq",
-      });
-    }
-  });
+  if (!advancedFilter) {
+    filter.forEach((field) => {
+      const value = searchParams.get(field.name);
+      const isMultiSelect = field.type === "multi-select";
+      if (value) {
+        baseFilters.push({
+          id: field.name,
+          type: field.type,
+          operator: isMultiSelect ? "eq" : "iLike",
+          value: isMultiSelect ? value.split(',') : value,          
+          search: isMultiSelect ? field.search : field.name,          
+        });
+      }
+    });
+  }
 
   const skip = (Number(page) || 1) - 1;
   const take = Number(pageCount) || 10;
 
+  //console.log("filters", filters);
+  //console.log("base filters", baseFilters);
+
   const query = {
-    filters: JSON.stringify(baseFilters),
-    skip: skip * take,
     take: take,
-    sort,
+    skip: skip * take,    
+    filters: advancedFilter ? filters : JSON.stringify(baseFilters),
+    joinOperator,
     include: relations || [],
+    sort,
   };
 
   const { promise } = useQuery({
@@ -58,6 +67,7 @@ export default function Resource() {
       query.take,
       query.sort,
       query.filters,
+      query.joinOperator
     ],
     queryFn: () => getResourceData({ resource, data: query }),
   });
@@ -83,9 +93,7 @@ export default function Resource() {
             />
           }
         >
-          <FeatureFlagsProvider>
-            <Table dataPromise={promise} />
-          </FeatureFlagsProvider>
+          <Table dataPromise={promise} />
         </React.Suspense>
 
         <ResourceForm

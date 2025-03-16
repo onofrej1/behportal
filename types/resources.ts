@@ -1,10 +1,10 @@
-import { OptionType } from "@/components/fancy-switch/types";
 import { FormRender } from "@/components/form/form";
 import { RepeaterRenderFunc } from "@/components/form/repeater";
 import { Rules } from "@/validation";
 import { JSX } from "react";
 import { Option } from "@/components/multiple-selector";
 import { CountryCode } from "libphonenumber-js";
+import { QueryClient } from "@tanstack/react-query";
 
 interface BaseFormType {
   name: string;
@@ -34,21 +34,29 @@ interface TableHeader {
   header: string;
   enableSort?: boolean;
   enableHide?: boolean;
-  render?: (data: TableData) => JSX.Element;
+  render?: (renderProps: {
+    row: TableData;
+    queryClient: QueryClient;
+  }) => JSX.Element;
 }
 
 export interface InputType extends BaseFormType {
   type:
-    | "text"
-    | "textarea"
-    | "number"
+    | "text"    
     | "email"
-    | "color"
     | "hidden"
     | "password";
-  color?: string;
+}
+
+export interface NumberInputType extends BaseFormType {
+  type: 'number';
   min?: number;
   max?: number;
+}
+
+export interface ColorInputType extends BaseFormType {
+  type: "color";
+  color: string;  
 }
 
 export interface RichtextType extends BaseFormType {
@@ -56,7 +64,7 @@ export interface RichtextType extends BaseFormType {
 }
 
 export interface CountrySelectType extends BaseFormType {
-  type: "country-select";  
+  type: "country-select";
 }
 
 export interface TextAreaType extends BaseFormType {
@@ -77,12 +85,12 @@ export interface ForeignKeyType extends BaseFormType {
   options?: SelectOption[] | MultiSelectOption[];
 }
 
-export interface MultiSelectType extends BaseFormType {
+/*export interface MultiSelectType extends BaseFormType {
   type: "m2m-notused";
   options?: SelectOption[] | MultiSelectOption[];
   resource: PrismaModel;
   renderLabel: (data: Record<string, any>) => string | JSX.Element;
-}
+}*/
 
 export interface MultipleSelectorType extends BaseFormType {
   type: "manyToMany";
@@ -101,11 +109,6 @@ export interface CheckboxType extends BaseFormType {
 
 export interface SwitchType extends BaseFormType {
   type: "switch";
-}
-
-export interface FancySwitchType extends BaseFormType {
-  type: "fancy-switch";
-  options: OptionType[];
 }
 
 export interface PhoneInputType extends BaseFormType {
@@ -142,51 +145,53 @@ export interface RepeaterType extends BaseFormType {
 
 type FormField =
   | InputType
+  | NumberInputType
+  | ColorInputType
   | TextAreaType
   | SelectType
-  | SelectFilterType
   | ForeignKeyType
   | CheckboxType
   | DatePickerType
-  | MultiSelectType
   | RichtextType
   | UploadType
   | RepeaterType
   | PhoneInputType
   | DateTimePickerType
   | SwitchType
-  | FancySwitchType
   | MultipleSelectorType
   | CountrySelectType;
 
-interface TextFilterType extends BaseFormType {
+interface BaseFilterType {
+  name: string;
+  label?: string;
+}
+
+interface TextFilterType extends BaseFilterType {
   type: "text";
 }
 
-interface NumberFilterType extends BaseFormType {
+interface NumberFilterType extends BaseFilterType {
   type: "number";
 }
 
-interface DateFilterType extends BaseFormType {
+interface DateFilterType extends BaseFilterType {
   type: "date";
 }
 
-interface BooleanFilterType extends BaseFormType {
+interface BooleanFilterType extends BaseFilterType {
   type: "boolean";
 }
 
-export interface SelectFilterType extends BaseFormType {
+export interface SelectFilterType extends BaseFilterType {
   type: "select";
-  fields: string[];
   search: string;
   resource: string;
   renderOption?: any;
   options?: { label: string; value: string }[];
 }
 
-export interface MultiSelectFilterType extends BaseFormType {
+export interface MultiSelectFilterType extends BaseFilterType {
   type: "multi-select";
-  fields: string[];
   search: string;
   resource: string;
   renderOption?: any;
@@ -202,7 +207,6 @@ export type FilterField =
   | NumberFilterType;
 
 type Resource = {
-  group?: string;
   name: string;
   name_plural: string;
   model: PrismaModel;
@@ -214,8 +218,13 @@ type Resource = {
   renderForm?: FormRender;
   list: TableHeader[];
   filter: FilterField[];
+  // featureFlags
+  advancedFilter?: boolean;
+  floatingBar?: boolean;
+  // permissions
   canAddItem?: boolean;
   canEditItem?: boolean;
+  canRemoveItem?: boolean;
 };
 
 type PrismaModel = any; // TODO

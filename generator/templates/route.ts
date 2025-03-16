@@ -5,19 +5,20 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
-  const { take, skip, sort, include, filters } = Object.fromEntries(
+  const { take, skip, sort, include, joinOperator = 'AND', filters } = Object.fromEntries(
     searchParams.entries()
   );  
 
   const orderBy = getOrderBy(sort);
-  const where = getWhereQuery(filters);
+  const whereQuery = getWhereQuery(filters);
+  const where = whereQuery.length ? { [joinOperator.toUpperCase()]: whereQuery } : {};
 
   const data = await prisma.[MODEL].findMany({
     take: Number(take),
     skip: Number(skip),
-    orderBy,
-    where,
     include: getRelations(include),
+    orderBy,
+    where,    
   });
 
   const count = await prisma.[MODEL].count({

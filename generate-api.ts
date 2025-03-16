@@ -4,7 +4,7 @@ const fs = require("fs-extra");
 const path = require("path");
 
 const generateApi = (resource: string, model: string) => {
-  const templatePath = path.join(__dirname, "templates");
+  const templatePath = path.join(__dirname, "generator", "templates");
   const destinationPath = path.join(
     process.cwd(),
     "app",

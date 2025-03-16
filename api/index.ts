@@ -80,13 +80,14 @@ type GetResourceDataProps = {
 
 export const getResourceData = (props: GetResourceDataProps) => {
   const { resource, data } = props;
-  const { filters, take, skip, sort, include } = data;
+  const { filters, take, skip, sort, joinOperator, include } = data;
 
   const params = {
     take,
     skip,
     sort,
     include,
+    joinOperator
   };
   const searchParams = new URLSearchParams(params);
 

@@ -11,37 +11,34 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Ellipsis } from "lucide-react";
 import { DataTableRowAction } from "@/types/data-table";
-import { toast } from "sonner";
+import { QueryClient } from "@tanstack/react-query";
 
 interface GetColumnsProps {
   resource: string;
   setRowAction: React.Dispatch<
     React.SetStateAction<DataTableRowAction<TableData> | null>
   >;
+  queryClient: QueryClient;
 }
 
 export function getColumns({
   resource: resourceName,
   setRowAction,
+  queryClient,
 }: GetColumnsProps): ColumnDef<TableData>[] {
   const resource = resources.find((r) => r.resource === resourceName);
   if (!resource) {
     throw new Error("Resource not found");
   }
 
-  const checkboxCol: ColumnDef<TableData> = {
+  const selectRowColumn: ColumnDef<TableData> = {
     id: "select",
     header: ({ table }) => (
       <Checkbox
@@ -66,10 +63,29 @@ export function getColumns({
     enableHiding: false,
   };
 
-  const actionCol: ColumnDef<TableData> = {
+  const actionColumn: ColumnDef<TableData> = {
     id: "actions",
     cell: function Cell({ row }) {
-      const [isUpdatePending, startUpdateTransition] = React.useTransition();
+      const customActions = resource.list.find(
+        (field) => field.name === "actions"
+      );
+
+      const EditMenuItem = (
+        <DropdownMenuItem
+          onSelect={() => setRowAction({ row, type: "update" })}
+        >
+          Edit
+        </DropdownMenuItem>
+      );
+
+      const DeleteMenuItem = (
+        <DropdownMenuItem
+          onSelect={() => setRowAction({ row, type: "delete" })}
+        >
+          Delete
+          <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+        </DropdownMenuItem>
+      );
 
       return (
         <DropdownMenu>
@@ -83,50 +99,15 @@ export function getColumns({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
-            <DropdownMenuItem
-              onSelect={() => setRowAction({ row, type: "update" })}
-            >
-              Edit
-            </DropdownMenuItem>
-            {/*<DropdownMenuSub>
-              <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                <DropdownMenuRadioGroup
-                  value={row.original.label}
-                  onValueChange={(value) => {
-                    startUpdateTransition(() => {
-                      toast.promise(
-                        updateTask({
-                          id: row.original.id,
-                          label: value as Task["label"],
-                        }),
-                        {
-                          loading: "Updating...",
-                          success: "Label updated",
-                          error: (err) => getErrorMessage(err),
-                        },
-                      );
-                    });
-                  }}
-                >
-                  <DropdownMenuRadioItem
-                    key={"test"}
-                    value={"test"}
-                    className="capitalize"
-                    disabled={isUpdatePending}
-                  >
-                    {"test"}
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>*/}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onSelect={() => setRowAction({ row, type: "delete" })}
-            >
-              Delete
-              <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-            </DropdownMenuItem>
+            {resource.canEditItem === null || resource.canEditItem !== false && EditMenuItem}
+            {customActions?.render!({ row: row.original, queryClient })}
+
+            {resource.canRemoveItem === null || resource.canRemoveItem !== false && (
+              <>
+                <DropdownMenuSeparator />
+                {DeleteMenuItem}
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -134,21 +115,24 @@ export function getColumns({
     size: 40,
   };
 
-  const cols = resource.list.map((field) => {
-    const column = {
-      accessorKey: field.name,
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={field.header} />
-      ),
-      enableSorting: field.enableSort === undefined ? true : field.enableSort,
-      enableHiding: field.enableHide === undefined ? true : field.enableHide,
-    } as ColumnDef<TableData>;
-    if (field.render) {
-      column.cell = ({ row }) => {
-        return field.render!(row.original);
-      };
-    }
-    return column;
-  });
-  return [checkboxCol, ...cols, actionCol];
+  const columns = resource.list
+    .filter((field) => field.name !== "actions")
+    .map((field) => {
+      const column = {
+        accessorKey: field.name,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title={field.header} />
+        ),
+        enableSorting: field.enableSort === undefined ? true : field.enableSort,
+        enableHiding: field.enableHide === undefined ? true : field.enableHide,
+      } as ColumnDef<TableData>;
+      if (field.render) {
+        column.cell = ({ row }) => {
+          return field.render!({ row: row.original, queryClient });
+        };
+      }
+      return column;
+    });
+
+  return [selectRowColumn, ...columns, actionColumn];
 }

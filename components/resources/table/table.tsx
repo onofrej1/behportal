@@ -17,7 +17,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { TableFloatingBar } from "./table-floating-bar";
 import { TableToolbarActions } from "./table-toolbar-actions";
 import ResourceFormDialog from "../form-dialog";
-import { useFeatureFlags } from "@/app/(admin)/resource/[name]/_components/feature-flags-provider";
 import { TableData } from "@/types/resources";
 import { ResourceContext, useContext } from "@/app/resource-context";
 
@@ -26,9 +25,10 @@ interface TableProps {
 }
 
 export function Table(props: TableProps) {
-  const { resource: { resource, filter } } = useContext(ResourceContext);
+  const {
+    resource: { resource, filter, advancedFilter, floatingBar },
+  } = useContext(ResourceContext);
 
-  const { featureFlags } = useFeatureFlags();
   const queryClient = useQueryClient();
 
   const { data, numPages: pageCount } = React.use(props.dataPromise);
@@ -44,17 +44,13 @@ export function Table(props: TableProps) {
     React.useState<DataTableRowAction<TableData> | null>(null);
 
   const columns = React.useMemo(
-    () => getColumns({ resource, setRowAction }),
+    () => getColumns({ resource, setRowAction, queryClient }),
     [resource]
-  );
-  const enableAdvancedTable = React.useMemo(
-    () => featureFlags.includes("advancedTable"),
-    [featureFlags]
   );
 
   React.useEffect(() => {
     async function setupFilters() {
-      if (enableAdvancedTable) {
+      if (advancedFilter) {
         const filters = await getAdvancedFilters(queryClient, filter);
         setAdvancedFilterFields(filters);
       } else {
@@ -63,14 +59,14 @@ export function Table(props: TableProps) {
       }
     }
     setupFilters();
-  }, [resource, enableAdvancedTable]);
+  }, [resource]);
 
   const { table } = useDataTable({
     data,
     columns,
     pageCount,
     filterFields,
-    enableAdvancedFilter: enableAdvancedTable,
+    enableAdvancedFilter: advancedFilter,
     initialState: {
       sorting: [{ id: "createdAt", desc: true }],
       columnPinning: { right: ["actions"] },
@@ -80,17 +76,13 @@ export function Table(props: TableProps) {
     clearOnDefault: true,
   });
 
-  const enableFloatingBar = featureFlags.includes("floatingBar");
-
   return (
     <div className="mt-2">
       <DataTable
         table={table}
-        floatingBar={
-          enableFloatingBar ? <TableFloatingBar table={table} /> : null
-        }
+        floatingBar={floatingBar ? <TableFloatingBar table={table} /> : null}
       >
-        {enableAdvancedTable ? (
+        {advancedFilter ? (
           <DataTableAdvancedToolbar
             table={table}
             filterFields={advancedFilterFields}

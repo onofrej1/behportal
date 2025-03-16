@@ -10,7 +10,6 @@ const run: Resource = {
   relations: ['event'],
   rules: CreateRun,
   menuIcon: '',
-  group: 'Manage runs',
   filter: [],
   form: [
     { name: 'title', type: 'text', label: 'Title' },

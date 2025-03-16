@@ -1,7 +1,21 @@
+import { toggleEnableComments, updateStatus } from "@/actions/posts";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { TableData } from "@/types/resources";
 import { Resource } from "@/types/resources";
 import { CreatePost } from "@/validation";
-import { User } from "@prisma/client";
+import { Category, PostStatus, User } from "@prisma/client";
+import {
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/utils";
+import React from "react";
 
 const post: Resource = {
   name: "Post",
@@ -9,18 +23,16 @@ const post: Resource = {
   model: "post",
   resource: "posts",
   rules: CreatePost,
-  group: "Blog",
   menuIcon: "",
   relations: ["author", "categories", "tags"],
   filter: [
     //{ name: "title", type: "text", label: "Title" },
-    { name: "enableComments", type: "boolean", label: "enable comments" },
     {
       type: "multi-select",
       name: "categories",
       label: "Category",
       resource: "categories",
-      fields: ["id", "title"],
+      renderOption: (row: Category) => row.title,
       search: "categories_",
     },
     {
@@ -28,7 +40,6 @@ const post: Resource = {
       resource: "users",
       search: "author",
       type: "multi-select",
-      fields: ["id", "firstName", "lastName"],
       label: "Author",
       renderOption: (row: User) => `${row.lastName} ${row.firstName}`,
     },
@@ -66,26 +77,112 @@ const post: Resource = {
     },
   ],
   list: [
-    { name: "id", header: "Id" },
-    { name: "title", header: "Title" },
-    { name: "cover", header: "Cover" },
-    { name: "enableComments", header: "Enable comments" },
-    { name: "status", header: "Status" },
     {
       name: "authorId",
       header: "Author",
-      render: (row: TableData) => (
-        <span>
-          {row.author.lastName} {row.author.firstName}
+      render: ({ row }: TableData) => (
+        <div className="flex items-center gap-3">
+          <Avatar>
+            <AvatarImage
+              referrerPolicy={"no-referrer"}
+              src={row.author.avatar}
+              className="w-10 h-10"
+              width={10}
+              height={10}
+            />
+            <AvatarFallback>
+              {row.author.firstName?.[0].toUpperCase()}
+              {row.author.lastName?.[0].toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          {row.author.firstName} {row.author.lastName}
+        </div>
+      ),
+    },
+    {
+      name: "title",
+      header: "Title",
+      render: ({ row }) => <span className="font-semibold">{row.title}</span>,
+    },
+    { name: "cover", header: "Cover" },
+    {
+      name: "enableComments",
+      header: "Enable comments",
+      render: ({ row, queryClient }) => (
+        <Switch
+          checked={row.enableComments}
+          onCheckedChange={async () => {
+            await toggleEnableComments(row.id, !row.enableComments);
+            queryClient.invalidateQueries({
+              queryKey: ["getResourceData", "posts"],
+            });
+          }}
+        />
+      ),
+    },
+    { name: "status", header: "Status" },
+    {
+      name: "categories",
+      header: "Categories",
+      render: ({ row }) => (
+        <span className="flex gap-2">
+          {row.categories?.map((category: Category) => (
+            <Badge key={category.id} variant="outline">
+              {category.title}
+            </Badge>
+          ))}
         </span>
       ),
     },
     {
-      name: "categories",
-      header: "Categories",
-      render: (row: TableData) => (
-        <span>{row.categories?.map((c: any) => c.id).join(",")}</span>
-      ),
+      name: "actions",
+      header: "Actions",
+      render: ({ row, queryClient }) => {
+        const [isPending, startTransition] = React.useTransition();
+
+        return (
+          <DropdownMenuSub key={"update-status"}>
+            <DropdownMenuSubTrigger>Status</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuRadioGroup
+                value={row.status}
+                onValueChange={async (value) => {
+                  startTransition(async () => {
+                    await toast.promise(
+                      updateStatus(row.id, value as PostStatus),
+                      {
+                        loading: "Updating...",
+                        success: async () => {
+                          await queryClient.invalidateQueries({
+                            queryKey: ["getResourceData", "posts"],
+                          });
+                          return "Status updated";
+                        },
+                        error: (err) => getErrorMessage(err),
+                      }
+                    );
+                  });
+                }}
+              >
+                <DropdownMenuRadioItem
+                  key="draft"
+                  value="DRAFT"
+                  disabled={isPending}
+                >
+                  DRAFT
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem
+                  key="published"
+                  value="PUBLISHED"
+                  disabled={isPending}
+                >
+                  PUBLISHED
+                </DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        );
+      },
     },
   ],
 };

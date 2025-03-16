@@ -8,7 +8,6 @@ const venue: Resource = {
   resource: "venues",
   filter: [],
   menuIcon: "",
-  group: "Events",
   rules: CreateVenue,
   form: [{ name: "location", type: "text", label: "Location" }],
   list: [{ name: "location", header: "Location" }],

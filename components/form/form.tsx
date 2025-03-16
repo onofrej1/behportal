@@ -32,7 +32,6 @@ import { Form, FormField } from "@/components/ui/form";
 import PhoneInput from "@/components/form/phone-input";
 import { DateTimePicker } from "./datetime-picker";
 import Switch from "./switch";
-import FancySwitch from "./fancy-switch";
 import { MultipleSelector } from "./multiple-selector";
 import { z } from "zod";
 import CountrySelect from "./country-select";
@@ -216,23 +215,6 @@ export default function Form_({
               name={formField.name}
               render={({ field }) => (
                 <Switch field={field} label={label} className={className} />
-              )}
-            />
-          </>
-        )}
-
-        {type === "fancy-switch" && (
-          <>
-            <FormField
-              control={form.control}
-              name={formField.name}
-              render={({ field }) => (
-                <FancySwitch
-                  field={field}
-                  label={label}
-                  options={formField.options}
-                  className={className}
-                />
               )}
             />
           </>
