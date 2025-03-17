@@ -16,8 +16,8 @@ export async function getFilters(
   for (const filter of filters) {
     const filterField: DataTableFilterField<TableData> = {
       id: filter.name,
-      label: filter.label || filter.name,
-      placeholder: `${filter.name}...`,
+      label: filter.label,
+      placeholder: `${filter.label}...`,
     };
     if (filter.type === "multi-select") {
       const optionsData = await queryClient.fetchQuery({
@@ -44,8 +44,8 @@ export async function getAdvancedFilters(
     const filterField: DataTableAdvancedFilterField<TableData> = {
       type: filter.type,
       id: filter.name,
-      label: filter.label || filter.name,
-      placeholder: `${filter.name}...`,
+      label: filter.label,
+      placeholder: `${filter.label}...`,
     };
     if (filter.type === "multi-select" || filter.type === "select") {
       const optionsData = await queryClient.fetchQuery({

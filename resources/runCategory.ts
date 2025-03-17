@@ -6,7 +6,6 @@ const runCategory: Resource = {
   name_plural: "Categories",
   model: "runCategory",
   resource: "runCategories",
-  filter: [],
   menuIcon: "",
   rules: CreateRunCategory,
   form: [
@@ -17,5 +16,6 @@ const runCategory: Resource = {
     { name: "category", header: "Category" },
     { name: "title", header: "Title" },
   ],
+  filter: [{ name: "title", type: "text", label: "Title" }],
 };
 export { runCategory };

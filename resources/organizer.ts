@@ -6,10 +6,13 @@ const organizer: Resource = {
   name_plural: "Organizers",
   model: "organizer",
   resource: "organizers",
-  filter: [],
   menuIcon: "",
   rules: CreateOrganizer,
   form: [{ name: "name", type: "text", label: "Name" }],
-  list: [{ name: "name", header: "Name" }],
+  list: [
+    { name: "id", header: "Id" },
+    { name: "name", header: "Name" },
+  ],
+  filter: [{ name: "name", type: "text", label: "Name" }],
 };
 export { organizer };

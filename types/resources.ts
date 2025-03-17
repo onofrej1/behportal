@@ -163,7 +163,7 @@ type FormField =
 
 interface BaseFilterType {
   name: string;
-  label?: string;
+  label: string;
 }
 
 interface TextFilterType extends BaseFilterType {

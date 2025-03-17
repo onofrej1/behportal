@@ -1,4 +1,3 @@
-import { TableData } from "@/types/resources";
 import { Resource } from '@/types/resources';
 import { CreateRun } from "@/validation";
 
@@ -22,22 +21,21 @@ const run: Resource = {
       type: 'foreignKey',
       relation: 'event',
       label: 'Event',
-      resource: 'event',
+      resource: 'events',
       renderLabel: (row) => row.name,
     },
     {
       name: 'runCategories', 
       type: 'manyToMany',
       label: 'Categories',
-      resource: 'runCategory',
+      resource: 'runCategories',
       renderLabel: (row) => row.category,
     }  
   ],
   list: [
-    { name: 'id', header: 'Id'},
-    { name: 'event', header: 'Event', render: (row: TableData) => <span>{row.event.name}</span> },
+    { name: 'event', header: 'Event', render: ({ row }) => <span>{row.event.name}</span> },
     { name: 'title', header: 'Title' },
-    { name: 'distance', header: 'Distance', render: (row: TableData) => <span>{row.distance} km</span> },
+    { name: 'distance', header: 'Distance', render: ({ row }) => <span>{row.distance} m</span> },
   ],
 };
 export { run };

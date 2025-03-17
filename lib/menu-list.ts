@@ -43,7 +43,7 @@ export function getMenuList(pathname: string): Group[] {
     {
       groupLabel: "Contents",
       menus: [
-        {
+        /*{
           href: "",
           label: "Posts",
           icon: SquarePen,
@@ -52,11 +52,16 @@ export function getMenuList(pathname: string): Group[] {
               href: "/resource/posts",
               label: "All Posts"
             },
-            /*{
+            {
               href: "/posts/new",
               label: "New Post"
-            }*/
+            }
           ]
+        },*/
+        {
+          href: "/resource/posts",
+          label: "Posts",
+          icon: Bookmark
         },
         {
           href: "/resource/categories",
@@ -64,10 +69,15 @@ export function getMenuList(pathname: string): Group[] {
           icon: Bookmark
         },
         {
-          href: "/resource/posts",
-          label: "Posts",
-          icon: Bookmark
-        },
+          href: "/resource/tags",
+          label: "Tags",
+          icon: Tag
+        }
+      ]
+    },
+    {
+      groupLabel: "Events",
+      menus: [
         {
           href: "/resource/events",
           label: "Events",
@@ -79,10 +89,25 @@ export function getMenuList(pathname: string): Group[] {
           icon: Bookmark
         },
         {
-          href: "/resource/tags",
-          label: "Tags",
-          icon: Tag
-        }
+          href: "/resource/organizers",
+          label: "Organizers",
+          icon: Bookmark
+        },
+      ]
+    },
+    {
+      groupLabel: "Runs",
+      menus: [
+        {
+          href: "/resource/runs",
+          label: "Runs",
+          icon: Bookmark
+        },
+        {
+          href: "/resource/runCategories",
+          label: "Categories",
+          icon: Bookmark
+        },
       ]
     },
     {

@@ -20,7 +20,7 @@ export default function Resource() {
 
   const {
     page,
-    pageCount,
+    perPage,
     sort = "",
     joinOperator = 'AND',
     filters,
@@ -44,10 +44,7 @@ export default function Resource() {
   }
 
   const skip = (Number(page) || 1) - 1;
-  const take = Number(pageCount) || 10;
-
-  //console.log("filters", filters);
-  //console.log("base filters", baseFilters);
+  const take = Number(perPage) || 10;
 
   const query = {
     take: take,

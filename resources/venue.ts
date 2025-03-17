@@ -6,10 +6,10 @@ const venue: Resource = {
   name_plural: "Venues",
   model: "venue",
   resource: "venues",
-  filter: [],
   menuIcon: "",
   rules: CreateVenue,
   form: [{ name: "location", type: "text", label: "Location" }],
-  list: [{ name: "location", header: "Location" }],
+  list: [{ name: "id", header: "Id" }, { name: "location", header: "Location" }],
+  filter: [{ name: "location", type: "text", label: "Location" }],
 };
 export { venue };

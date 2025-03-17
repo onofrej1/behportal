@@ -6,10 +6,13 @@ const category: Resource = {
   name_plural: "Categories",
   model: "category",
   resource: "categories",
-  filter: [],
   menuIcon: "",
   rules: CreateCategory,
   form: [{ name: "title", type: "text", label: "Title" }],
-  list: [{ name: "title", header: "Title" }],
+  list: [
+    { name: "id", header: "Id" },
+    { name: "title", header: "Title" },
+  ],
+  filter: [{ name: "title", type: "text", label: "Title" }],
 };
 export { category };
