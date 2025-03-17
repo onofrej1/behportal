@@ -80,7 +80,13 @@ export const CreateRun = z.object({
   price: z.coerce.number(),
   elevation: z.coerce.number(),
   eventId: z.coerce.number(),
-  runCategories: z.array(z.coerce.number()).optional().default([]),
+  runCategories: z
+    .array(z.object({ value: z.number(), label: z.string() }))
+    .transform((arr) => {
+      return arr.map((v) => v.value);
+    })
+    .optional()
+    .default([]),  
 });
 
 export const CreateRegistration = z.object({
@@ -184,21 +190,3 @@ export type CreateRunResultType = z.infer<typeof CreateRunResult>;
 export type ResetPasswordRequestType = z.infer<typeof ResetPasswordRequest>;
 export type ContactFormType = z.infer<typeof ContactForm>;
 export type ResetPasswordType = z.infer<typeof ResetPassword>;
-
-export type RulesType =
-  | RegisterUserType
-  | LoginUserType
-  | ChangePasswordType
-  | CreatePostType
-  | CreateCategoryType
-  | CreateEventType
-  | CreateTagType
-  | CreateRunType
-  | CreateRunCategoryType
-  | CreateVenueType
-  | CreateOrganizerType
-  | CreateRegistrationType
-  | CreateRunResultType
-  | ResetPasswordRequestType
-  | ContactFormType
-  | ResetPasswordType;

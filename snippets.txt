@@ -354,3 +354,21 @@ value = Array.isArray(value)
           ? [parseFloat(value) || value]
           : [];
         if (!value.length) return;
+
+        export type RulesType =
+  | RegisterUserType
+  | LoginUserType
+  | ChangePasswordType
+  | CreatePostType
+  | CreateCategoryType
+  | CreateEventType
+  | CreateTagType
+  | CreateRunType
+  | CreateRunCategoryType
+  | CreateVenueType
+  | CreateOrganizerType
+  | CreateRegistrationType
+  | CreateRunResultType
+  | ResetPasswordRequestType
+  | ContactFormType
+  | ResetPasswordType;

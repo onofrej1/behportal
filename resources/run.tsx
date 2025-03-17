@@ -6,7 +6,7 @@ const run: Resource = {
   name_plural: 'Runs',
   model: 'run',
   resource: 'runs',
-  relations: ['event'],
+  relations: ['event', 'runCategories'],
   rules: CreateRun,
   menuIcon: '',
   filter: [],
@@ -29,7 +29,7 @@ const run: Resource = {
       type: 'manyToMany',
       label: 'Categories',
       resource: 'runCategories',
-      renderLabel: (row) => row.category,
+      renderLabel: (row) => `${row.category} - ${row.title}`,
     }  
   ],
   list: [

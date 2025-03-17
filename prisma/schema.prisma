@@ -104,10 +104,10 @@ model Account {
   user                  User?    @relation(fields: [userId], references: [id])
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
+  //type                     String
 
   @@unique([provider, providerAccountId])
   @@index([userId])
-  //type                     String
 }
 
 model Session {
@@ -361,15 +361,16 @@ model Attendee {
 }
 
 model EventSchedule {
-  id        Int      @id @default(autoincrement())
-  activity  String
-  location  String?
-  startTime DateTime
-  endTime   DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  event     Event    @relation(fields: [eventId], references: [id])
-  eventId   Int
+  id          Int      @id @default(autoincrement())
+  activity    String
+  description String?  @db.Text()
+  location    String?
+  startTime   DateTime
+  endTime     DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  event       Event    @relation(fields: [eventId], references: [id])
+  eventId     Int
 }
 
 model Run {
@@ -420,7 +421,7 @@ model Registration {
 model RunResult {
   id          Int     @id @default(autoincrement())
   rank        Int
-  bib         Int
+  bib         String
   name        String
   category    String
   gender      Gender

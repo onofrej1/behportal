@@ -23,7 +23,7 @@ export function MultipleSelector(props: MultipleSelectorProps) {
       onChange={field.onChange}
       className={cn(error && "text-destructive border-destructive", className)}
       defaultOptions={options}
-      placeholder="Select frameworks you like..."
+      placeholder={`Select ${label?.toLowerCase()}...`}
       emptyIndicator={
         <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
           no results found.

@@ -1,12 +1,41 @@
 "use server";
 
 import { prisma } from "@/db/prisma";
-import { Event, Venue } from "@prisma/client";
+import { Event, RunResult, Venue } from "@prisma/client";
 import { getSession } from "./auth";
 import { Model, Action } from "@/types";
 
 export async function getEvents() {
   return prisma.event.findMany();
+}
+
+export async function getRunEvents() {
+  return prisma.event.findMany({
+    where: {
+      runs: {
+        some: {},
+      },
+    },
+    include: {
+      runs: {
+        include: {
+          _count: {
+            select: {
+              runResults: true,
+            },
+          },
+        },
+      },
+      organizer: true,
+      venue: true,
+      _count: {
+        select: {
+          attachments: true,
+          galleries: true,
+        },
+      },
+    },
+  });
 }
 
 export async function createVenue(data: Venue) {
@@ -17,7 +46,7 @@ export async function createVenue(data: Venue) {
   const venue = await prisma.venue.create({
     data,
   });
-  
+
   return venue;
 }
 
@@ -45,7 +74,7 @@ export async function createEvent(data: Event) {
       objectId: event.id,
       verb: Action.created,
       time: new Date(),
-    }
+    },
   });
   return event;
 }
@@ -69,7 +98,7 @@ export async function updateEvent(data: Event) {
       objectId: event.id,
       verb: Action.updated,
       time: new Date(),
-    }
+    },
   });
   return event;
 }

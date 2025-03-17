@@ -76,9 +76,9 @@ export default function ResourceFormDialog(props: ResourceFormDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-fit overflow-y-scroll max-h-screen">
+      <DialogContent className="overflow-y-scroll max-h-screen">
         <DialogHeader>
-          <DialogTitle>{id ? "Add new" : "Update"} item</DialogTitle>
+          <DialogTitle>{id ? "Update" : "Add new"} item</DialogTitle>
         </DialogHeader>
         <Form
           fields={fields}
