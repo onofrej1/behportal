@@ -228,7 +228,8 @@ export default function Form_({
               render={({ field }) => (
                 <>
                   <DateTimePicker
-                    granularity="day"
+                    displayFormat={formField.displayFormat}
+                    granularity={formField.granularity || "day"}
                     label={label}
                     field={field}
                     className={className}

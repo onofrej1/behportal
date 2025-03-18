@@ -30,10 +30,8 @@ import {
   SheetDescription,
   SheetFooter,
   SheetHeader,
-  SheetTitle,
-  SheetTrigger,
+  SheetTitle,  
 } from "@/components/ui/sheet";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 const locales = {
   "en-US": require("date-fns/locale/en-US"),
@@ -81,7 +79,6 @@ export default function BigCalendar({
 
   const openEditEventModal = async (event: any) => {
     const data = await getEvent(Number(event.id));
-    console.log("data", data);
     setSelectedEvent(data);
     setIsOpen(true);
   };
@@ -171,9 +168,7 @@ export default function BigCalendar({
     <div>
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetContent className="max-h-screen overflow-y-scroll">
-          
-            {eventForm(selectedEvent)}
-          
+          {eventForm(selectedEvent)}
         </SheetContent>
       </Sheet>
 

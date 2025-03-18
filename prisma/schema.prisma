@@ -377,7 +377,7 @@ model Run {
   id            Int            @id @default(autoincrement())
   title         String
   distance      Int
-  price         Int
+  fee           Int
   elevation     Int?
   surface       String?
   tshirt        Boolean        @default(false)
@@ -402,6 +402,7 @@ model Registration {
   createdAt   DateTime    @default(now())
   firstName   String
   lastName    String
+  category    String
   gender      Gender
   dateOfBirth DateTime
   email       String

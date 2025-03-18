@@ -28,7 +28,7 @@ export default function CountrySelect(props: CountrySelectProps) {
     <CountryDropdown
       {...field}
       placeholder={placeholder}
-      onChange={field.onChange}
+      onChange={(value) => field.onChange(value.alpha3)}
       defaultValue={field.value}
       className={cn(error && "text-destructive border-destructive", className)}
     />

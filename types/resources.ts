@@ -101,6 +101,8 @@ export interface MultipleSelectorType extends BaseFormType {
 
 export interface DatePickerType extends BaseFormType {
   type: "date-picker";
+  granularity?: "day" | "hour" | "minute" | "second";
+  displayFormat?: { hour24?: string; hour12?: string };
 }
 
 export interface CheckboxType extends BaseFormType {

@@ -15,10 +15,11 @@ interface DateTimeProps {
   className?: string;
   field: ControllerRenderProps;
   granularity: Granularity;
+  displayFormat?: { hour24?: string; hour12?: string };
 }
 
 export function DateTimePicker(props: DateTimeProps) {
-  const { label, field, className, granularity = "second" } = props;
+  const { label, field, className, granularity = "second", displayFormat } = props;
   const value = field.value;
   const { error } = useFormField();
 
@@ -31,6 +32,7 @@ export function DateTimePicker(props: DateTimeProps) {
   const Element = (
     <DateTimePicker_
       granularity={granularity}
+      displayFormat={displayFormat}
       value={value ? new Date(value) : undefined}
       onChange={field.onChange}
       className={cn(error && "text-destructive border-destructive", className)}
