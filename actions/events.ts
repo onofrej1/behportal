@@ -55,6 +55,9 @@ export async function getEvent(id: number) {
     where: {
       id,
     },
+    include: {
+      runs: true,
+    }
   });
 }
 

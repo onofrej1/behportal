@@ -380,7 +380,7 @@ model Run {
   fee           Int
   elevation     Int?
   surface       String?
-  tshirt        Boolean        @default(false)
+  //tshirt        Boolean        @default(false)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   event         Event          @relation(fields: [eventId], references: [id])

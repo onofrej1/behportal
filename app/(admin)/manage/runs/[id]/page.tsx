@@ -105,7 +105,7 @@ export default function Run() {
       />*/}
 
     {uploadData && <Table>
-      <TableCaption>A list of your recent invoices.</TableCaption>
+      <TableCaption>Upload results</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead className="w-[100px]">Rank</TableHead>
