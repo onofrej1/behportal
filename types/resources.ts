@@ -29,7 +29,7 @@ export interface TableData {
   [key: string]: any;
 }
 
-interface TableHeader {
+export interface TableHeader {
   name: string;
   header: string;
   enableSort?: boolean;

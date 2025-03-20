@@ -380,6 +380,7 @@ model Run {
   fee           Int
   elevation     Int?
   surface       String?
+  maxAttendees  Int?
   //tshirt        Boolean        @default(false)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt

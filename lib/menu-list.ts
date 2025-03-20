@@ -52,10 +52,6 @@ export function getMenuList(pathname: string): Group[] {
               href: "/resource/posts",
               label: "All Posts"
             },
-            {
-              href: "/posts/new",
-              label: "New Post"
-            }
           ]
         },*/
         {
@@ -84,10 +80,15 @@ export function getMenuList(pathname: string): Group[] {
           icon: Bookmark
         },
         {
+          href: "/resource/eventTypes",
+          label: "Event types",
+          icon: Bookmark
+        },
+        /*{
           href: "/resource/venues",
           label: "Venues",
           icon: Bookmark
-        },
+        },*/
         {
           href: "/resource/organizers",
           label: "Organizers",
@@ -105,7 +106,7 @@ export function getMenuList(pathname: string): Group[] {
         },
         {
           href: "/resource/runCategories",
-          label: "Categories",
+          label: "Run categories",
           icon: Bookmark
         },
       ]

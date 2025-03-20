@@ -1,8 +1,9 @@
 import { Resource } from "@/types/resources";
 import { post } from "@/resources/post";
 import { category } from "@/resources/category";
-import { event } from "@/resources/event";
 import { tag } from "@/resources/tag";
+import { event } from "@/resources/event";
+import { eventType } from "@/resources/eventType";
 import { run } from "@/resources/run";
 import { runCategory } from "@/resources/runCategory";
 import { venue } from "@/resources/venue";
@@ -17,6 +18,7 @@ const resources: Resource[] = [
   runCategory,
   venue,
   organizer,
+  eventType
 ];
 
 export { resources };

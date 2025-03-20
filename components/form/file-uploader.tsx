@@ -34,8 +34,8 @@ export default function FileUploader(props: FileUploaderProps) {
     if (!uploadedFile) return;
 
     if (!allowedTypes.includes(uploadedFile.type)) {
-      alert("This file type is not supported !");
-      return;
+      //alert("This file type is not supported !");
+      //return;
     }
 
     if (uploadedFile.size > maxSize) {

@@ -130,6 +130,11 @@ export const CreateVenue = z.object({
   location: z.string().trim().min(1),
 });
 
+export const CreateEventType = z.object({
+  id: z.number().optional(),
+  type: z.string().trim().min(1),
+});
+
 export const CreateOrganizer = z.object({
   id: z.number().optional(),
   name: z.string().trim().min(1),
@@ -172,7 +177,7 @@ export type Rules =
   | typeof ResetPasswordRequest
   | typeof ContactForm
   | typeof ResetPassword
-  | typeof z.any;
+  | typeof CreateEventType;
 
 export type RegisterUserType = z.infer<typeof RegisterUser>;
 export type LoginUserType = z.infer<typeof LoginUser>;
@@ -190,3 +195,4 @@ export type CreateRunResultType = z.infer<typeof CreateRunResult>;
 export type ResetPasswordRequestType = z.infer<typeof ResetPasswordRequest>;
 export type ContactFormType = z.infer<typeof ContactForm>;
 export type ResetPasswordType = z.infer<typeof ResetPassword>;
+export type CreateEventTypeType = z.infer<typeof CreateEventType>;

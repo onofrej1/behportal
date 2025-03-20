@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/utils";
 import { Resource } from "@/types/resources";
 import { CreateEvent } from "@/validation";
 import { Event } from "@prisma/client";
@@ -56,6 +57,14 @@ const event: Resource = {
     { name: "startDate", type: "date-picker", label: "Start date" },
     { name: "endDate", type: "date-picker", label: "End date" },
     {
+      name: "eventTypeId",
+      type: "foreignKey",
+      relation: "eventType",
+      label: "Event type",
+      resource: "eventTypes",
+      renderLabel: (row) => row.type,
+    },
+    {
       name: "venueId",
       type: "foreignKey",
       relation: "venue",
@@ -78,14 +87,14 @@ const event: Resource = {
       name: "startDate",
       header: "Start date",
       render: ({ row }) => (
-        <span>{new Date(row.startDate).toLocaleDateString()}</span>
+        <span>{formatDate(row.startDate)}</span>
       ),
     },
     {
       name: "endDate",
       header: "End date",
       render: ({ row }) => (
-        <span>{new Date(row.endDate).toLocaleDateString()}</span>
+        <span>{formatDate(row.endDate)}</span>
       ),
     },
     {
