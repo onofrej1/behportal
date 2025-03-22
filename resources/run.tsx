@@ -1,5 +1,6 @@
 import { Resource } from '@/types/resources';
 import { CreateRun } from "@/validation";
+import { Event } from '@prisma/client';
 
 const run: Resource = {
   name: 'Run',
@@ -9,7 +10,17 @@ const run: Resource = {
   relations: ['event', 'runCategories'],
   rules: CreateRun,
   menuIcon: '',
-  filter: [],
+  filter: [
+    { name: "title", type: "text", label: "Title" },
+    {
+      type: "multi-select",
+      name: "event",
+      label: "Event",
+      resource: "events",
+      renderOption: (row: Event) => row.name,
+      search: "event",
+    },
+  ],
   form: [
     { name: 'title', type: 'text', label: 'Title' },
     { name: 'distance', type: 'number', label: 'Distance' },

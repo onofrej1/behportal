@@ -45,20 +45,6 @@ export const CreatePost = z.object({
   cover: z.string().optional().nullable(),
 });
 
-/*const CreateEvent_ = z.object({
-  id: z.number().optional(),
-  name: z.string().trim().min(1),
-  description: z.string().min(1),
-  status: z.string().min(1),
-  color: z.string().min(1).optional(),
-  location: z.string().optional(),
-  venueId: z.coerce.number().nullable().optional(),
-  organizerId: z.coerce.number().nullable().optional(),
-  maxAttendees: z.coerce.number().optional(),
-  startDate: z.date(),
-  endDate: z.date(),
-});*/
-
 export const CreateEvent = z.object({
   id: z.number().optional(),
   name: z.string().trim().min(1),
@@ -86,7 +72,7 @@ export const CreateRun = z.object({
       return arr.map((v) => v.value);
     })
     .optional()
-    .default([]),  
+    .default([]),
 });
 
 export const CreateRegistration = z.object({

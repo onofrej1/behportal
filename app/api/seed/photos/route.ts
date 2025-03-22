@@ -33,7 +33,7 @@ export async function GET() {
 
   for (const [i] of Array.from({ length: 80 }).entries()) {
     const fileName = "photo-" + i + ".jpeg";
-    const path = "/photos_new/" + fileName;
+    const path = "/photos/" + fileName;
 
     media.push({
       name: faker.lorem.words({ min: 1, max: 2 }).replace(" ", "_"),

@@ -8,7 +8,7 @@ import {
   Comment,
   User,
   EventSchedule,
-  Attendee,
+  //Attendee,
   Registration,
   RunResult,
   Tag,
@@ -114,7 +114,7 @@ export async function GET(request: Request) {
   const events: Partial<Event>[] = [];
   const eventTypes: Partial<EventType>[] = [];
   const eventSchedules: Partial<EventSchedule>[] = [];
-  const attendees: Partial<Attendee>[] = [];
+  //const attendees: Partial<Attendee>[] = [];
   const galleries: Partial<Gallery>[] = [];
 
   const runs: Partial<Run>[] = [];
@@ -205,20 +205,19 @@ export async function GET(request: Request) {
       eventId: i,
     });
 
-    attendees.push({
+    /*attendees.push({
       status: random(["PENDING", "YES", "MAYBE", "NO", "ATTENDED"]),
       eventId: random([1, 2, 3]),
       userId: random(userIds),
-    });
+    });*/
 
     runs.push({
       title: faker.lorem.words({ min: 2, max: 3 }),
       distance: random([5000, 10000, 21097, 15000]),
       elevation: faker.number.int({ min: 10, max: 600 }),
-      price: random([10, 15, 20, 25]),
+      fee: random([10, 15, 20, 25]),
       surface: random(["road", "grass"]),
       eventId: i,
-      tshirt: i % 2 === 0 ? true : false,
     });
 
     galleries.push({
@@ -250,6 +249,7 @@ export async function GET(request: Request) {
       dateOfBirth: faker.date.past(),
       city: faker.location.city(),
       nation: faker.location.state(),
+      category: random(["A", "B", "C", "D", "E", "F"]),
       club: random(clubs),
       paid: false,
       presented: false,
@@ -261,7 +261,7 @@ export async function GET(request: Request) {
       name: faker.person.fullName(),
       category: random(["A", "B", "C", "D", "E", "F"]),
       club: random(clubs),
-      bib: faker.number.int({ min: 50, max: 250 }),
+      bib: faker.number.int({ min: 50, max: 250 }).toString(),
       gender: random(["MALE", "FEMALE"]),
       rank: ++rank[runId],
       runId,
@@ -309,9 +309,9 @@ export async function GET(request: Request) {
   await prisma.eventSchedule.createMany({
     data: eventSchedules as EventSchedule[],
   });
-  await prisma.attendee.createMany({
+  /*await prisma.attendee.createMany({
     data: attendees as Attendee[],
-  });
+  });*/
   await prisma.run.createMany({ data: runs as Run[] });
   await prisma.runCategory.createMany({
     data: runCategories as RunCategory[],

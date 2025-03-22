@@ -10,24 +10,21 @@ const event: Resource = {
   model: "event",
   resource: "events",
   rules: CreateEvent,
-  advancedFilter: true,
+  advancedFilter: false,
   menuIcon: "",
   renderForm: ({ fields }) => {
     return (
       <div className="flex flex-col gap-4">
         {fields.name}
         {fields.description}
-        {fields.status}
-        {fields.color}
         {fields.contact}
         {fields.location}
-        {fields.venue}
         <div className="flex gap-2">
           <div className="flex-1">{fields.startDate}</div>
           <div className="flex-1">{fields.endDate}</div>
         </div>
         {fields.maxAttendees}
-        {fields.venueId}
+        {/* fields.venueId */}
         {fields.organizerId}
         <Button type="submit">Save</Button>
       </div>
