@@ -61,6 +61,7 @@ export interface ColorInputType extends BaseFormType {
 
 export interface RichtextType extends BaseFormType {
   type: "richtext";
+  contentClassName?: string;
 }
 
 export interface CountrySelectType extends BaseFormType {

@@ -15,6 +15,7 @@ import {
   RepeaterType,
   SelectType,
   TextAreaType,
+  RichtextType,
 } from "@/types/resources";
 import { Rules } from "@/validation";
 import FormInput from "@/components/form/input";
@@ -297,7 +298,14 @@ export default function Form_({
           <FormField
             control={form.control}
             name={formField.name}
-            render={({ field }) => <RichEditor field={field} label={label} />}
+            render={({ field }) => (
+              <RichEditor
+                field={field}
+                label={label}
+                className={className}
+                contentClassName={(formField as RichtextType).contentClassName}
+              />
+            )}
           />
         )}
 

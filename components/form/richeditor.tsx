@@ -5,23 +5,26 @@ import { ControllerRenderProps } from "react-hook-form";
 //import Editor from "../rich-text/editor";
 import { MinimalTiptapEditor } from "../minimal-tiptap";
 import { FormControl, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { cn } from "@/lib/utils";
 
 interface RichEditorProps {
   label?: string;
   className?: string;
+  contentClassName?: string;
   field: ControllerRenderProps;
 }
 
-export default function RichEditor({ label, field }: RichEditorProps) {
+export default function RichEditor(props: RichEditorProps) {
+  const { label, field, className, contentClassName } = props;
   // <Editor content={value} onChange={onChange} />
 
   const Element = (
     <MinimalTiptapEditor
       value={field.value}
       onChange={field.onChange}
-      className="w-full"
-      editorContentClassName="p-5"
-      output="html"
+      className={className}
+      editorContentClassName={cn("p-5", contentClassName)}
+      output="json"
       placeholder="Enter your description..."
       autofocus={true}
       editable={true}

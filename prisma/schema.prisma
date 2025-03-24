@@ -58,7 +58,7 @@ model User {
   // events
   events           Event[]
   eventAttachments EventAttachment[]
-  attendees        Attendee[]
+  //attendees        Attendee[]
   // runs
   registrations    Registration[]
   runResults       RunResult[]
@@ -143,7 +143,7 @@ model OAuthToken {
 model Post {
   id              Int        @id @default(autoincrement())
   title           String
-  content         String     @db.Text
+  content         String     @db.LongText
   summary         String?    @db.Text
   cover           String?    @db.Text
   slug            String?
@@ -162,8 +162,6 @@ model Post {
   likes           Like[]
   views           PostViews?
   galleries       Gallery[]
-  // published       Boolean   @default(false)
-  // metaKeywords String?
 }
 
 model PostViews {
@@ -291,34 +289,42 @@ model MediaCategory {
 }
 
 model Event {
-  id             Int               @id @default(autoincrement())
-  name           String
-  description    String?           @db.Text
-  color          String?
-  status         String?
-  location       String?
-  contact        String?
-  maxAttendees   Int?
-  onlineLink     String?
-  eventUrl       String?
-  startDate      DateTime
-  endDate        DateTime
-  allDay         Boolean           @default(false)
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
-  createdBy      User              @relation(fields: [createdById], references: [id])
-  createdById    String
-  venue          Venue?            @relation(fields: [venueId], references: [id])
-  venueId        Int?
-  eventSchedules EventSchedule[]
-  attendees      Attendee[]
-  organizer      Organizer?        @relation(fields: [organizerId], references: [id])
-  organizerId    Int?
-  eventType      EventType         @relation(fields: [eventTypeId], references: [id])
-  eventTypeId    Int
+  id               Int     @id @default(autoincrement())
+  name             String
+  description      String? @db.Text
+  color            String?
+  status           String?
+  location         String?
+  contact          String?
+  maxAttendees     Int?
+  onlineLink       String?
+  info             String? @db.LongText
+  eventUrl         String?
+  resultsLink      String?
+  registrationLink String?
+  galleriesLink    String?
+
+  startDate DateTime
+  endDate   DateTime
+  allDay    Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String
+
+  venue       Venue?     @relation(fields: [venueId], references: [id])
+  venueId     Int?
+  organizer   Organizer? @relation(fields: [organizerId], references: [id])
+  organizerId Int?
+  eventType   EventType  @relation(fields: [eventTypeId], references: [id])
+  eventTypeId Int
+
   runs           Run[]
+  eventSchedules EventSchedule[]
   attachments    EventAttachment[]
   galleries      Gallery[]
+  // attendees      Attendee[]
 }
 
 model EventType {
@@ -340,25 +346,34 @@ model EventAttachment {
 }
 
 model Organizer {
-  id     Int     @id @default(autoincrement())
-  name   String
-  events Event[]
+  id      Int     @id @default(autoincrement())
+  name    String
+  address String?
+  logo    String?
+  web     String?
+  email   String?
+  events  Event[]
 }
 
 model Venue {
-  id       Int     @id @default(autoincrement())
-  location String
-  events   Event[]
+  id        Int     @id @default(autoincrement())
+  location  String
+  address   String?
+  latitude  String?
+  longitude String?
+  events    Event[]
 }
 
-model Attendee {
-  id      Int     @id @default(autoincrement())
-  user    User    @relation(fields: [userId], references: [id])
-  userId  String
-  event   Event   @relation(fields: [eventId], references: [id])
-  eventId Int
-  status  String?
-}
+/**
+ * model Attendee {
+ * id      Int     @id @default(autoincrement())
+ * user    User    @relation(fields: [userId], references: [id])
+ * userId  String
+ * event   Event   @relation(fields: [eventId], references: [id])
+ * eventId Int
+ * status  String?
+ * }
+ */
 
 model EventSchedule {
   id          Int      @id @default(autoincrement())
@@ -366,7 +381,7 @@ model EventSchedule {
   description String?  @db.Text()
   location    String?
   startTime   DateTime
-  endTime     DateTime
+  endTime     DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   event       Event    @relation(fields: [eventId], references: [id])
@@ -374,21 +389,30 @@ model EventSchedule {
 }
 
 model Run {
-  id            Int            @id @default(autoincrement())
-  title         String
-  distance      Int
-  fee           Int
-  elevation     Int?
-  surface       String?
-  maxAttendees  Int?
-  //tshirt        Boolean        @default(false)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  event         Event          @relation(fields: [eventId], references: [id])
-  eventId       Int
-  registrations Registration[]
-  runResults    RunResult[]
-  runCategories RunCategory[]
+  id                Int            @id @default(autoincrement())
+  title             String
+  anniversary       Int
+  description       String?
+  location          String?  
+  startRegistration DateTime?
+  endRegistration   DateTime?
+  start             DateTime?
+  ceremony          DateTime?
+  distance          Int
+  elevation         Int?
+  surface           String?
+  maxAttendees      Int?
+  routeGpx          String?
+  routeImg          String?
+  fee               String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  event             Event          @relation(fields: [eventId], references: [id])
+  eventId           Int
+  registrations     Registration[]
+  runResults        RunResult[]
+  runCategories     RunCategory[]
+  notes             String?        @db.Text
 }
 
 model RunCategory {
@@ -399,8 +423,8 @@ model RunCategory {
 }
 
 model Registration {
-  id          Int         @id @default(autoincrement())
-  createdAt   DateTime    @default(now())
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
   firstName   String
   lastName    String
   category    String
@@ -411,12 +435,12 @@ model Registration {
   city        String
   club        String?
   phone       String?
-  presented   Boolean     @default(false)
-  paid        Boolean     @default(false)
-  tshirtSize  TshirtSize?
-  user        User?       @relation(fields: [userId], references: [id])
+  note        String?  @db.Text
+  presented   Boolean  @default(false)
+  paid        Boolean  @default(false)
+  user        User?    @relation(fields: [userId], references: [id])
   userId      String?
-  run         Run         @relation(fields: [runId], references: [id])
+  run         Run      @relation(fields: [runId], references: [id])
   runId       Int
 }
 
@@ -442,14 +466,16 @@ enum Orientation {
   SQUARE
 }
 
-enum TshirtSize {
-  S
-  M
-  L
-  XL
-  XXL
-  XXXL
-}
+/**
+ * enum TshirtSize {
+ * S
+ * M
+ * L
+ * XL
+ * XXL
+ * XXXL
+ * }
+ */
 
 enum Gender {
   MALE

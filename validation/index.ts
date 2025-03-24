@@ -53,10 +53,16 @@ export const CreateEvent = z.object({
   color: z.string().min(1),
   location: z.string().optional(),
   venueId: z.coerce.number().nullable(),
+  info: z.string().nullable(),
+  eventTypeId: z.coerce.number(),
   organizerId: z.coerce.number().nullable(),
   maxAttendees: z.coerce.number().nullable(),
-  startDate: z.date(),
-  endDate: z.date(),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date(),
+  resultsLink: z.string().nullable(),
+  registrationLink: z.string().nullable(),
+  galleriesLink: z.string().nullable(),
+  eventUrl: z.string().nullable(),
 });
 
 export const CreateRun = z.object({
