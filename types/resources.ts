@@ -127,8 +127,7 @@ export interface UploadType extends BaseFormType {
   type: "upload";
   allowedTypes?: string[];
   maxSize?: number;
-  uploadText?: string;
-  onFileSelect?: (data: { file: File; thumbNail?: string }) => void;
+  dir?: string;
 }
 
 /*export interface MediaUploadType extends BaseFormType {
@@ -221,7 +220,6 @@ type Resource = {
   renderForm?: FormRender;
   list: TableHeader[];
   filter: FilterField[];
-  // featureFlags
   advancedFilter?: boolean;
   floatingBar?: boolean;
   // permissions

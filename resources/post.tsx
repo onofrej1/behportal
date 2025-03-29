@@ -51,7 +51,8 @@ const post: Resource = {
     {
       name: "cover",
       type: "upload",
-      label: "Cover" /*, path: 'posts'*/,
+      label: "Cover",
+      dir: 'posts',
     },
     {
       name: "authorId",

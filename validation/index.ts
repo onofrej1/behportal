@@ -1,10 +1,27 @@
 import { z } from "zod";
 
+const many2many = z
+  .array(z.object({ value: z.number(), label: z.string() }))
+  .transform((arr) => {
+    return arr.map((v) => v.value);
+  })
+  .optional()
+  .default([]);
+
+const richText = z
+  .object({ type: z.string(), content: z.array(z.any()) })
+  .transform((obj) => {
+    return JSON.stringify(obj);
+  });
+
+const stringValue = z.string().trim().min(1);
+const numberValue = z.coerce.number();
+
 export const RegisterUser = z.object({
-  firstName: z.string().trim().min(1),
-  lastName: z.string().trim().min(1),
+  firstName: stringValue,
+  lastName: stringValue,
   email: z.string().email(),
-  password: z.string().min(1),
+  password: stringValue,
 });
 
 export const LoginUser = z.object({
@@ -14,47 +31,35 @@ export const LoginUser = z.object({
 
 export const CreateCategory = z.object({
   id: z.number().optional(),
-  title: z.string().trim().min(1),
+  title: stringValue,
 });
 
 export const CreateTag = z.object({
   id: z.number().optional(),
-  title: z.string().trim().min(1),
+  title: stringValue,
 });
 
 export const CreatePost = z.object({
   id: z.number().optional(),
-  title: z.string().trim().min(1),
-  status: z.string().min(1),
-  content: z.string().min(1),
-  authorId: z.string().min(1),
-  categories: z
-    .array(z.object({ value: z.number(), label: z.string() }))
-    .transform((arr) => {
-      return arr.map((v) => v.value);
-    })
-    .optional()
-    .default([]),
-  tags: z
-    .array(z.object({ value: z.number(), label: z.string() }))
-    .transform((arr) => {
-      return arr.map((v) => v.value);
-    })
-    .optional()
-    .default([]),
-  cover: z.string().optional().nullable(),
+  title: stringValue,
+  status: stringValue,
+  content: richText,
+  authorId: stringValue,
+  categories: many2many,
+  tags: many2many,
+  cover: z.record(z.string(), z.any()).optional(), //z.string().optional().nullable(),
 });
 
 export const CreateEvent = z.object({
   id: z.number().optional(),
-  name: z.string().trim().min(1),
-  description: z.string().min(1),
-  status: z.string().min(1),
-  color: z.string().min(1),
+  name: stringValue,
+  description: stringValue,
+  status: stringValue,
+  color: stringValue,
   location: z.string().optional(),
   venueId: z.coerce.number().nullable(),
   info: z.string().nullable(),
-  eventTypeId: z.coerce.number(),
+  eventTypeId: numberValue,
   organizerId: z.coerce.number().nullable(),
   maxAttendees: z.coerce.number().nullable(),
   startDate: z.coerce.date(),
@@ -67,76 +72,70 @@ export const CreateEvent = z.object({
 
 export const CreateRun = z.object({
   id: z.number().optional(),
-  title: z.string().trim().min(1),
-  distance: z.coerce.number(),
-  price: z.coerce.number(),
-  elevation: z.coerce.number(),
-  eventId: z.coerce.number(),
-  runCategories: z
-    .array(z.object({ value: z.number(), label: z.string() }))
-    .transform((arr) => {
-      return arr.map((v) => v.value);
-    })
-    .optional()
-    .default([]),
+  title: stringValue,
+  distance: numberValue,
+  price: numberValue,
+  elevation: numberValue,
+  eventId: numberValue,
+  runCategories: many2many,
 });
 
 export const CreateRegistration = z.object({
   id: z.number().optional(),
-  firstName: z.string().trim().min(1),
-  lastName: z.string().trim().min(1),
+  firstName: stringValue,
+  lastName: stringValue,
   dateOfBirth: z.coerce.date(),
   gender: z.enum(["MALE", "FEMALE"]),
   email: z.string().email(),
 
-  runId: z.coerce.number(),
+  runId: numberValue,
   nation: z.string().or(z.record(z.string(), z.any())),
-  city: z.string().trim().min(1),
-  club: z.string().trim().min(1),
-  phone: z.string().trim().min(1),
+  city: stringValue,
+  club: stringValue,
+  phone: stringValue,
 });
 
 export const CreateRunResult = z.array(
   z.object({
     id: z.number().optional(),
-    name: z.string().trim().min(1),
-    club: z.string().trim().min(1),
-    category: z.string().trim().min(1),
-    bib: z.coerce.number(),
-    rank: z.coerce.number(),
-    time: z.coerce.number(),
+    name: stringValue,
+    club: stringValue,
+    category: stringValue,
+    bib: stringValue,
+    rank: numberValue,
+    time: numberValue,
     gender: z.enum(["MALE", "FEMALE"]),
-    yearOfBirth: z.coerce.number(),
-    runId: z.coerce.number(),
+    yearOfBirth: numberValue,
+    runId: numberValue,
   })
 );
 
 export const CreateRunCategory = z.object({
   id: z.number().optional(),
-  category: z.string().trim().min(1),
-  title: z.string().trim().min(1),
+  category: stringValue,
+  title: stringValue,
 });
 
 export const CreateVenue = z.object({
   id: z.number().optional(),
-  location: z.string().trim().min(1),
+  location: stringValue,
 });
 
 export const CreateEventType = z.object({
   id: z.number().optional(),
-  type: z.string().trim().min(1),
+  type: stringValue,
 });
 
 export const CreateOrganizer = z.object({
   id: z.number().optional(),
-  name: z.string().trim().min(1),
+  name: stringValue,
 });
 
 export const ContactForm = z.object({
-  name: z.string().trim().min(1),
+  name: stringValue,
   email: z.string().email(),
-  message: z.string().trim().min(1),
-  myfiles: z.array(z.any()),
+  message: stringValue,
+  //myfiles: z.array(z.any()),
 });
 
 export const ResetPasswordRequest = z.object({
@@ -148,8 +147,8 @@ export const ResetPassword = z.object({
 });
 
 export const ChangePassword = z.object({
-  password: z.string().min(1),
-  confirmPassword: z.string().min(1),
+  password: stringValue,
+  confirmPassword: stringValue,
 });
 
 export type Rules =

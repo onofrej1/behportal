@@ -10,15 +10,17 @@ import { useEffect, useState } from "react";
 
 type RelationFormType = ForeignKeyType | MultipleSelectorType;
 
-export function useFormFields(form: FormField[], hasId: boolean) {
-  const [fields, setFields] = useState<FormField[]>([]);
+export function useRelationFields(formFields: FormField[], formData: Record<string, any>) {
+  const [fields, setFields] = useState<FormField[]>(formFields);
+  const [data, setData] = useState(formData);
   const queryClient = useQueryClient();
 
   useEffect(() => {
     async function getFields() {
-      const relations = form.filter((f) =>
+      const relations = formFields.filter((f) =>
         ["foreignKey", "manyToMany"].includes(f.type!)
       );
+
       for (const field of relations as RelationFormType[]) {
         const options = await queryClient.fetchQuery({
           queryKey: [field.resource],
@@ -29,13 +31,27 @@ export function useFormFields(form: FormField[], hasId: boolean) {
           value: value.id,
           label: field.renderLabel(value),
         }));
+
+        if (field.type === 'manyToMany' && formData?.id && formData[field.name]) {
+          const optionValues = formData[field.name].map(
+            (value: { id: string }) => {
+              const option = field.options?.find((o) => o.value === value.id);
+              return { label: option?.label, value: value.id };
+            }
+          );
+          formData[field.name] = optionValues;
+        }        
       }
       const idField: FormField = { name: "id", type: "hidden" };
 
-      setFields(hasId ? [idField, ...form] : form);
+      if (formData?.id) {
+        setData(formData);
+      }
+
+      setFields(formData?.id ? [idField, ...formFields] : formFields);
     }
     getFields();
-  }, []);
+  }, [formFields, formData]);
 
-  return { fields };
+  return { fields, data };
 }

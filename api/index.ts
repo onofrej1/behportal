@@ -105,3 +105,6 @@ export const getOptions = (resource: string) =>
     url: `/resources/${resource}/options`,
     method: "GET",
   });
+
+export type MutationFunction = typeof updateResource | typeof createResource;
+

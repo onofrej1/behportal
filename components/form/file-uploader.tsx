@@ -1,18 +1,25 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Trash2, Upload } from "lucide-react";
-import { generateVideoThumbnail } from "@/lib/utils";
+import { Trash2, Upload, File as FileIcon } from "lucide-react";
+import { formatFileSize, generateVideoThumbnail, urlToFile } from "@/lib/utils";
 import { ControllerRenderProps } from "react-hook-form";
 
 interface FileUploaderProps {
   field: ControllerRenderProps;
   allowedTypes?: string[];
   maxSize?: number;
+  label?: string;
 }
 
 export default function FileUploader(props: FileUploaderProps) {
-  const allowedFileTypes = ["image/png", "image/jpeg", "image/jpg"];
-  const {    
+  const allowedFileTypes = [
+    "image/png",
+    "image/jpeg",
+    "image/jpg",
+    "image/gif",
+  ];
+  const {
+    label,
     field,
     allowedTypes = allowedFileTypes,
     maxSize = 1024 * 1024,
@@ -21,9 +28,21 @@ export default function FileUploader(props: FileUploaderProps) {
   const imageRef = useRef<HTMLImageElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const getFile = async (filePath: string) => {
+    const uploadPath = process.env.NEXT_PUBLIC_UPLOAD_DIR;
+    return await urlToFile(`${uploadPath}/${filePath}`, filePath, "image/png");
+  };
+
   useEffect(() => {
     if (field.value?.file) {
       setFile(field.value.file);
+    } else if (field.value) {
+      getFile(field.value).then((file) => {
+        const fieldValue = { file, previousFile: file, isDirty: false };
+
+        field.onChange(fieldValue);
+        setFile(file);
+      });
     }
   }, [field.value]);
 
@@ -33,14 +52,14 @@ export default function FileUploader(props: FileUploaderProps) {
     const uploadedFile = event.target.files ? event.target.files[0] : null;
     if (!uploadedFile) return;
 
-    if (!allowedTypes.includes(uploadedFile.type)) {
-      //alert("This file type is not supported !");
-      //return;
+    if (!allowedTypes.includes(uploadedFile.type.toLowerCase())) {
+      alert("This file type is not supported !");
+      return;
     }
 
     if (uploadedFile.size > maxSize) {
-      //alert("Uploaded file is too big !");
-      //return;
+      alert("Uploaded file is too big !");
+      return;
     }
 
     if (uploadedFile.type.startsWith("video")) {
@@ -58,31 +77,52 @@ export default function FileUploader(props: FileUploaderProps) {
     field.onChange({ ...field.value, file: null, isDirty: true });
   };
 
-  const isImageFile = (type: string) => {
-    return ["image/jpeg", "image/png"].includes(type);
+  const isImage = (type: string) => {
+    return ["image/jpeg", "image/png", "image/jpg", "image/gif"].includes(
+      type.toLowerCase()
+    );
   };
 
-  const isVideoFile = (type: string) => {
+  const isVideo = (type: string) => {
     return ["video/mp4", "video/avi"].includes(type);
+  };
+
+  const uploadMessage = () => {
+    const types = allowedFileTypes.map((t) => {
+      const type = t.split("/");
+      if (type.length === 2) {
+        return type[1];
+      }
+      return t;
+    });
+    return `${types
+      .map((t) => t.toUpperCase())
+      .join(", ")} (MAX. ${formatFileSize(maxSize)})`;
   };
 
   return (
     <div>
       {file ? (
         <div className="flex flex-col justify-center">
-          {isImageFile(file.type) && (
+          {isImage(file.type) && (
             <div className="grid grid-cols-1 mb-2">
               <img className="w-full" src={URL.createObjectURL(file)} />
             </div>
           )}
 
-          {isVideoFile(file.type) && (
+          {isVideo(file.type) && (
             <div className="grid grid-cols-1 mb-2">
               <img
                 ref={imageRef}
                 src="/assets/images/upload.png"
                 width={"100%"}
               />
+            </div>
+          )}
+
+          {!isVideo(file.type) && !isImage(file.type) && (
+            <div className="grid grid-cols-1 mb-2">
+              <FileIcon /> {file.name} [${formatFileSize(file.size)}]
             </div>
           )}
 
@@ -106,35 +146,19 @@ export default function FileUploader(props: FileUploaderProps) {
         </div>
       ) : (
         <>
-          Choose a file...
+          <div className="mb-2">{label}</div>
           <div className="flex items-center justify-center w-full">
             <label
               htmlFor="dropzone-file"
               className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50"
             >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg
-                  className="w-8 h-8 mb-4 text-gray-500"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 20 16"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                  />
-                </svg>
-                <p className="mb-2 text-sm text-gray-500">
+                <Upload />
+                <p className="mb-2 mt-2 text-sm text-gray-500">
                   <span className="font-semibold">Click to upload</span> or drag
                   and drop
                 </p>
-                <p className="text-xs text-gray-500">
-                  SVG, PNG, JPG or GIF (MAX. 800x400px)
-                </p>
+                <p className="text-xs text-gray-500">{uploadMessage()}</p>
               </div>
             </label>
           </div>

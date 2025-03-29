@@ -391,7 +391,7 @@ model EventSchedule {
 model Run {
   id                Int            @id @default(autoincrement())
   title             String
-  anniversary       Int
+  runYear           Int?
   description       String?
   location          String?  
   startRegistration DateTime?
@@ -402,8 +402,11 @@ model Run {
   elevation         Int?
   surface           String?
   maxAttendees      Int?
+  timeLimit         Int?
   routeGpx          String?
   routeImg          String?
+  certifiedRoute    Boolean @default(false)
+  charityRun        Boolean @default(false)
   fee               String?
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt

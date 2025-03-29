@@ -5,19 +5,19 @@ import path from "node:path";
 const fs = require("fs");
 const fsp = fs.promises;
 
-const defaultUploadDir = process.env.UPLOAD_DIR!;
+const baseUploadDir = process.env.UPLOAD_DIR!;
 
-export async function uploadFiles(formData: FormData, uploadDir?: string) {
+export async function uploadFiles(formData: FormData, uploadDir: string = '') {
   const keys = Array.from(formData.keys());
 
   for (let i = 0; i < Number(keys.length); i++) {
     const file = formData.get(keys[i]) as File;
 
-    if (!file || file.name === 'img4.jpg') {
+    /*if (!file || file.name === 'img4.jpg') {
       throw new Error("Missing file data:" + keys[i]);
-    }
+    }*/
 
-    const targetPath = path.join(process.cwd(), uploadDir || defaultUploadDir);
+    const targetPath = path.join(process.cwd(), baseUploadDir, uploadDir);
 
     try {
       fs.mkdirSync(targetPath, { recursive: true });
@@ -36,7 +36,7 @@ export async function uploadFiles(formData: FormData, uploadDir?: string) {
 }
 
 export async function deleteFile(filePath: string) {
-  const file = path.join(process.cwd(), defaultUploadDir, filePath);
+  const file = path.join(process.cwd(), baseUploadDir, filePath);
   const fileToDelete = await fsp.readFile(file);
   if (fileToDelete) {
     await fsp.unlink(file);

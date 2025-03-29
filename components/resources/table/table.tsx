@@ -5,7 +5,6 @@ import {
   DataTableFilterField,
   DataTableRowAction,
 } from "@/types/data-table";
-import * as React from "react";
 
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableAdvancedToolbar } from "@/components/data-table/data-table-advanced-toolbar";
@@ -19,6 +18,7 @@ import { TableToolbarActions } from "./table-toolbar-actions";
 import ResourceFormDialog from "../form-dialog";
 import { TableData } from "@/types/resources";
 import { ResourceContext, useContext } from "@/app/resource-context";
+import { use, useEffect, useMemo, useState } from "react";
 
 interface TableProps {
   dataPromise: Promise<{ data: any; numPages: number }>;
@@ -31,24 +31,24 @@ export function Table(props: TableProps) {
 
   const queryClient = useQueryClient();
 
-  const { data, numPages: pageCount } = React.use(props.dataPromise);
+  const { data, numPages: pageCount } = use(props.dataPromise);
 
-  const [filterFields, setFilterFields] = React.useState<
+  const [filterFields, setFilterFields] = useState<
     DataTableFilterField<TableData>[]
   >([]);
-  const [advancedFilterFields, setAdvancedFilterFields] = React.useState<
+  const [advancedFilterFields, setAdvancedFilterFields] = useState<
     DataTableAdvancedFilterField<TableData>[]
   >([]);
 
   const [rowAction, setRowAction] =
-    React.useState<DataTableRowAction<TableData> | null>(null);
+    useState<DataTableRowAction<TableData> | null>(null);
 
-  const columns = React.useMemo(
+  const columns = useMemo(
     () => getColumns({ resource, setRowAction, queryClient }),
     [resource]
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     async function setupFilters() {
       if (advancedFilter) {
         const filters = await getAdvancedFilters(queryClient, filter);
@@ -97,12 +97,12 @@ export function Table(props: TableProps) {
         )}
       </DataTable>
 
-      <ResourceFormDialog
+      {rowAction?.type === "update" && <ResourceFormDialog
         key="updateResource"
         open={rowAction?.type === "update"}
         onOpenChange={() => setRowAction(null)}
         id={rowAction?.row.original.id}
-      />
+      />}
     </div>
   );
 }

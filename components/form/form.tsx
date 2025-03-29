@@ -8,15 +8,7 @@ import {
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { JSX, useEffect } from "react";
-import {
-  PhoneInputType,
-  FormField as FormField_,
-  MultipleSelectorType,
-  RepeaterType,
-  SelectType,
-  TextAreaType,
-  RichtextType,
-} from "@/types/resources";
+import { FormField as FormField_, SelectType } from "@/types/resources";
 import { Rules } from "@/validation";
 import FormInput from "@/components/form/input";
 import FormSelect from "@/components/form/select";
@@ -28,7 +20,6 @@ import Textarea from "./textarea";
 import RichEditor from "./richeditor";
 import FileUploader from "./file-uploader";
 import RepeaterInput from "./repeater";
-import { urlToFile } from "@/lib/utils";
 import { Form, FormField } from "@/components/ui/form";
 import PhoneInput from "@/components/form/phone-input";
 import { DateTimePicker } from "./datetime-picker";
@@ -78,59 +69,24 @@ export default function Form_({
 }: FormProps) {
   const { replace } = useRouter();
 
-  const defaultData = data;
-
   const form = useForm({
     mode: "onSubmit",
     resolver: zodResolver((validation as any) || z.any()),
-    defaultValues: defaultData,
+    defaultValues: data,
   });
 
   useEffect(() => {
-    if (data) {
-      const m2mFields = fields.filter((f) => f.type === "manyToMany");
-      for (const field of m2mFields) {
-        const selectValue = data[field.name as keyof typeof data].map(
-          (value: { id: string }) => {
-            const option = field.options?.find((o) => o.value === value.id);
-            return { label: option?.label, value: value.id };
-          }
-        );
-        data![field.name] = selectValue;
-      }
-      form.reset(data);
-    }
+    form.reset(data);
   }, [data]);
-
-  useEffect(() => {
-    async function setUploads(uploadFields: FormField_[]) {
-      for (const field of uploadFields) {
-        const value = data![field.name];
-        const uploadPath = process.env.NEXT_PUBLIC_UPLOAD_DIR;
-        if (value) {
-          const file = await urlToFile(
-            uploadPath + "/" + value,
-            value,
-            "image/png"
-          );
-          const v = { file, previousFile: file, isDirty: false };
-          form.setValue(field.name, v);
-        }
-      }
-    }
-    const uploadFields = fields.filter((f) => f.type === "upload");
-    if (data && uploadFields) {
-      setUploads(uploadFields);
-    }
-  }, [fields]);
 
   const { isValid, errors, isLoading } = form.formState;
 
   if (errors && Object.keys(errors).length > 0) {
-    console.log("errors", errors);
+    console.log("Validation errors:", errors);
   }
 
   const submitForm = async (data: unknown) => {
+    console.log(data);
     if (!action) return;
 
     try {
@@ -157,16 +113,14 @@ export default function Form_({
   };
 
   const renderField = (formField: FormField_) => {
-    const type = formField.type;
-    const label = formField.label;
-    const className = formField.className;
+    const { name, type, label, className } = formField;
 
     return (
       <>
         {["text", "number", "email", "hidden"].includes(type) && (
           <FormField
             control={form.control}
-            name={formField.name}
+            name={name}
             render={({ field }) => (
               <FormInput
                 field={field}
@@ -181,13 +135,13 @@ export default function Form_({
         {type === "textarea" && (
           <FormField
             control={form.control}
-            name={formField.name}
+            name={name}
             render={({ field }) => (
               <Textarea
                 field={field}
                 label={label}
                 className={className}
-                rows={(formField as TextAreaType).rows}
+                rows={formField.rows}
               />
             )}
           />
@@ -197,7 +151,7 @@ export default function Form_({
           <>
             <FormField
               control={form.control}
-              name={formField.name}
+              name={name}
               render={({ field }) => (
                 <FormCheckbox
                   field={field}
@@ -213,7 +167,7 @@ export default function Form_({
           <>
             <FormField
               control={form.control}
-              name={formField.name}
+              name={name}
               render={({ field }) => (
                 <Switch field={field} label={label} className={className} />
               )}
@@ -225,7 +179,7 @@ export default function Form_({
           <>
             <FormField
               control={form.control}
-              name={formField.name}
+              name={name}
               render={({ field }) => (
                 <>
                   <DateTimePicker
@@ -246,7 +200,7 @@ export default function Form_({
           <>
             <FormField
               control={form.control}
-              name={formField.name}
+              name={name}
               render={({ field }) => (
                 <>
                   <CountrySelect
@@ -263,7 +217,7 @@ export default function Form_({
         {["select", "foreignKey"].includes(type) && (
           <FormField
             control={form.control}
-            name={formField.name}
+            name={name}
             render={({ field }) => (
               <FormSelect
                 label={label}
@@ -275,10 +229,10 @@ export default function Form_({
           />
         )}
 
-        {["manyToMany"].includes(type) && (
+        {type === "manyToMany" && (
           <FormField
             control={form.control}
-            name={formField.name}
+            name={name}
             render={({ field }) => {
               return (
                 <>
@@ -286,7 +240,7 @@ export default function Form_({
                     field={field}
                     label={label}
                     className={className}
-                    options={(formField as MultipleSelectorType).options!}
+                    options={formField.options!}
                   />
                 </>
               );
@@ -294,29 +248,31 @@ export default function Form_({
           />
         )}
 
-        {["richtext"].includes(type) && (
+        {type === "richtext" && (
           <FormField
             control={form.control}
-            name={formField.name}
+            name={name}
             render={({ field }) => (
               <RichEditor
                 field={field}
                 label={label}
                 className={className}
-                contentClassName={(formField as RichtextType).contentClassName}
+                contentClassName={formField.contentClassName}
               />
             )}
           />
         )}
 
-        {["upload"].includes(type) && (
+        {type === "upload" && (
           <FormField
             control={form.control}
-            name={formField.name}
+            name={name}
             render={({ field }) => (
               <FileUploader
                 field={field}
-                allowedTypes={["image/png", "image/jpeg", "video/mp4"]}
+                label={label}
+                allowedTypes={formField.allowedTypes}
+                maxSize={formField.maxSize}
               />
             )}
           />
@@ -325,13 +281,13 @@ export default function Form_({
         {type === "phone-input" && (
           <FormField
             control={form.control}
-            name={formField.name}
+            name={name}
             render={({ field }) => (
               <PhoneInput
                 label={label}
                 field={field}
                 className={className}
-                defaultCountry={(formField as PhoneInputType).defaultCountry}
+                defaultCountry={formField.defaultCountry}
               />
             )}
           />
@@ -340,7 +296,7 @@ export default function Form_({
         {type === "datetime-picker" && (
           <FormField
             control={form.control}
-            name={formField.name}
+            name={name}
             render={({ field }) => (
               <DateTimePicker
                 granularity="second"
@@ -352,18 +308,18 @@ export default function Form_({
           />
         )}
 
-        {["repeater"].includes(type) && (
+        {type === "repeater" && (
           <FormField
             control={form.control}
-            name={formField.name}
+            name={name}
             render={({ field }) => (
               <RepeaterInput
                 control={form.control}
                 field={field}
                 label={label}
                 unregister={form.unregister}
-                fields={(formField as RepeaterType).fields}
-                render={(formField as RepeaterType).render}
+                fields={formField.fields}
+                render={formField.render}
                 renderField={renderField}
               />
             )}
