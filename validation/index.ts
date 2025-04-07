@@ -16,6 +16,7 @@ const richText = z
 
 const stringValue = z.string().trim().min(1);
 const numberValue = z.coerce.number();
+const dateValue = z.coerce.date();
 
 export const RegisterUser = z.object({
   firstName: stringValue,
@@ -58,12 +59,12 @@ export const CreateEvent = z.object({
   color: stringValue,
   location: z.string().optional(),
   venueId: z.coerce.number().nullable(),
-  info: z.string().nullable(),
+  info: richText,
   eventTypeId: numberValue,
   organizerId: z.coerce.number().nullable(),
   maxAttendees: z.coerce.number().nullable(),
-  startDate: z.coerce.date(),
-  endDate: z.coerce.date(),
+  startDate: dateValue,
+  endDate: dateValue,
   resultsLink: z.string().nullable(),
   registrationLink: z.string().nullable(),
   galleriesLink: z.string().nullable(),
@@ -84,7 +85,7 @@ export const CreateRegistration = z.object({
   id: z.number().optional(),
   firstName: stringValue,
   lastName: stringValue,
-  dateOfBirth: z.coerce.date(),
+  dateOfBirth: dateValue,
   gender: z.enum(["MALE", "FEMALE"]),
   email: z.string().email(),
 

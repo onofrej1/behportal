@@ -1,13 +1,10 @@
 'use client'
-import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 //import Alert from "@/components/common/alert";
 import { ReactQueryProvider } from "./react-query-provider";
-import AdminPanelLayout from "@/components/admin-panel/admin-panel-layout";
 //import { ContentLayout } from "@/components/admin-panel/content-layout";
 //import DialogModal from "@/components/common/dialog";
-import { Navbar } from "@/components/admin-panel/navbar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ConfirmDialogProvider } from "@omit/react-confirm-dialog";
@@ -25,11 +22,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <TooltipProvider>
             <html lang="en">
               <body>
-                <AdminPanelLayout>
-                  <Navbar title={"test"} />
-                  <div className="p-6">{children}</div>
-                  {/*<ContentLayout title="test">{children}</ContentLayout>*/}
-                </AdminPanelLayout>
+                {children}
                 <Toaster />
                 {/*<Alert />
                 <DialogModal />*/}

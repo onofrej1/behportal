@@ -34,9 +34,10 @@ export default function FileUploader(props: FileUploaderProps) {
   };
 
   useEffect(() => {
+    console.log(field.value);
     if (field.value?.file) {
       setFile(field.value.file);
-    } else if (field.value) {
+    } else if (field.value && typeof field.value === 'string') {
       getFile(field.value).then((file) => {
         const fieldValue = { file, previousFile: file, isDirty: false };
 

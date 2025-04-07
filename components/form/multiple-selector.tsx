@@ -19,6 +19,7 @@ export function MultipleSelector(props: MultipleSelectorProps) {
 
   const Element = (
     <MultipleSelector_
+      key={options?.length ? 'options' : 'no-options'}
       value={field.value}
       onChange={field.onChange}
       className={cn(error && "text-destructive border-destructive", className)}

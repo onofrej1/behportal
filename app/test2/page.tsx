@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import InfiniteScroll from "@/components/infinite-scroll";
 import { Loader2 } from "lucide-react";
+import { EmptyStateDefault } from "@/components/empty-state";
+import { TiltedScroll } from "@/components/title-scroll";
 
 interface DummyProductResponse {
   products: DummyProduct[];
@@ -74,6 +76,14 @@ export default function PhoneInputDefault() {
       setLoading(false);
     }, 800);
   };
+
+  const customItems = [
+    { id: "1", text: "Feature One" },
+    { id: "2", text: "Feature Two" },
+    { id: "3", text: "Feature Three" },
+    { id: "4", text: "Feature Four" },
+    { id: "5", text: "Feature Five" },
+  ]
 
   return (
     <div className="w-full space-y-8">
@@ -166,6 +176,15 @@ export default function PhoneInputDefault() {
           </InfiniteScroll>
         </div>
       </div>
+
+      <EmptyStateDefault />
+
+      <div className="space-y-8">
+      <TiltedScroll 
+        items={customItems}
+        className="mt-8"
+      />
+    </div>
     </div>
   );
 }

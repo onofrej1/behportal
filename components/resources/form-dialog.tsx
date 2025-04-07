@@ -12,6 +12,7 @@ import {
 import { createResource, getResource, updateResource } from "@/api";
 import { ResourceContext, useContext } from "@/app/resource-context";
 import { useSubmitForm } from "@/hooks/resources/use-submit-form";
+import { useRichtextFields } from "@/hooks/resources/use-richtext-fields";
 
 interface ResourceFormDialogProps {
   id?: string;
@@ -25,6 +26,7 @@ export default function ResourceFormDialog(props: ResourceFormDialogProps) {
   const { resource: { form, relations, resource, rules, renderForm } } = useContext(ResourceContext);
 
   const { data } = useQuery({
+    gcTime: 0,
     queryKey: ["getResource", resource, id],
     queryFn: () =>
       getResource({
@@ -33,20 +35,21 @@ export default function ResourceFormDialog(props: ResourceFormDialogProps) {
         include: relations,
       }),
     enabled: !!id,
-  });  
+  });
 
-  const { fields, data: formData } = useRelationFields(form, data);
+  const { fields, data: updatedData } = useRelationFields(form, data);
+  const { data: formData } = useRichtextFields(form, updatedData);
   const { submitForm, status } = useSubmitForm(resource, fields, data?.id ? updateResource : createResource);
 
   useEffect(() => {
     if (status === 'success') {
       onOpenChange?.(false);
     }
-  }, [status])
+  }, [status]);  
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="overflow-y-scroll h-[calc(100vh-30px)] my-auto min-w-fitXXX min-w-[700px]">
+      <DialogContent className="overflow-y-scroll max-h-[calc(100vh-30px)] my-auto min-w-fitXXX min-w-[700px]">
         <DialogHeader>
           <DialogTitle>{id ? "Update" : "Add new"} item</DialogTitle>
         </DialogHeader>

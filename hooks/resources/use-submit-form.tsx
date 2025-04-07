@@ -52,8 +52,8 @@ export function useSubmitForm(resource: string, fields: FormField[], mutationFn:
       if (!uploadData.entries().next().done) {
         await uploadFiles(uploadData);
       }
-      console.log('d', data);
-      //mutate({ resource, data });
+
+      mutate({ resource, data });
   };
 
   return { submitForm, status, responseData };
